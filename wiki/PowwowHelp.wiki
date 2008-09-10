@@ -1,4 +1,3 @@
-#labels Featured
 =P O W W O W=
 doc for version 1.2.13, last modified Oct 09, 2007
 
