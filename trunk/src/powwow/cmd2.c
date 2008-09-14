@@ -1182,7 +1182,7 @@ char *read_seq __P2 (char *,name, int *,len)
     tty_printf("number: %d", tmp);
     }
 #else
-    i = wrapper_get_keybind(seq);
+    i = wrapper_get_keybind(seq, name);
 #endif
     *len = i;
 
@@ -1348,6 +1348,7 @@ void parse_bind __P1 (char *,arg)
 		    np->funct = key_run_command;
 		}
                 if (opt_info) {
+                  PRINTF("WTF");
                     PRINTF("#redefined key: %s %s=%s\n", name,
 			       seq_name(np->sequence, np->seqlen),
 			       command);

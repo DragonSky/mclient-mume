@@ -339,7 +339,7 @@ void add_keynode __P5 (char *,name, char *,sequence, int,seqlen, function_str,fu
 	    free(new->call_data);
 	free(new);
 	return;
-    }	
+    }
     add_node((defnode*)new, (defnode**)&keydefs, ascii_sort);
 }
 

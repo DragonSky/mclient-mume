@@ -33,9 +33,9 @@ extern "C" void input_overtype_follow(char c);
 extern "C" void input_insert_follow_chars(char *str, int n);
 extern "C" void input_moveto(int new_pos);
 
+extern "C" void wrapper_input_set(char *str);
 //extern "C" void wrapper_edit_input_insert_follow_chars(char *str);
 //extern "C" void wrapper_set_input(QString contents, int position);
-extern "C" void wrapper_clear_input();
 
 extern "C" void tty_add_walk_binds();
 extern "C" void tty_add_initial_binds();

@@ -32,7 +32,6 @@ ObjectEditor::ObjectEditor(Wrapper *wrapper, QWidget *parent)
 {
   setupUi(this);
 
-  groupHash["*"] = true;   // default group is not disable-able
   addingNewAlias = false;
   addingNewAction = false;
   addingNewGroup = false;
@@ -40,9 +39,14 @@ ObjectEditor::ObjectEditor(Wrapper *wrapper, QWidget *parent)
   addingNewMark = false;
 
   /* Standard Object Editor Signals */
+  importButton = new QPushButton(tr("Import"));
+  importButton->setDefault(true);
+  buttonBox->addButton(importButton, QDialogButtonBox::ActionRole);
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-  connect(buttonBox, SIGNAL(clicked(QAbstractButton *)),
-          this, SLOT(buttonBoxClicked(QAbstractButton *)) );
+  connect(buttonBox, SIGNAL(helpRequested()), this, SLOT(helpClicked()) );
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveClicked()) );
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(closeClicked()) );
+  connect(importButton, SIGNAL(clicked()), this, SLOT(importClicked()) );
 
   /* Alias Tab */
   aliasTable->setColumnCount(2);
@@ -173,7 +177,7 @@ ObjectEditor::ObjectEditor(Wrapper *wrapper, QWidget *parent)
   bindTable->setColumnCount(3);
   bindTable->setSortingEnabled(true);
   bindTable->sortItems(0, Qt::AscendingOrder);
-  bindTable->setHeaderLabels(QStringList() << tr("Key") << tr("Bind") << tr("Command"));
+  bindTable->setHeaderLabels(QStringList() << tr("Name") << tr("Key") << tr("Command"));
   bindTable->setRootIsDecorated(false);
   bindTable->setAlternatingRowColors(true);
   
@@ -209,9 +213,48 @@ void ObjectEditor::tabChanged(int tabIndex)
   };
 }
 
-void ObjectEditor::buttonBoxClicked(QAbstractButton *button)
-{
-  qDebug("Button Box: uhm, now what?");
+void ObjectEditor::helpClicked() {
+  QUrl url;
+  switch (tabWidget->currentIndex())
+  {
+    case TAB_ALIAS:
+      url = QUrl::fromEncoded("http://mume.org/wiki/index.php/Powwow_Help_Alias");
+      break;
+    case TAB_ACTION:
+      url = QUrl::fromEncoded("http://mume.org/wiki/index.php/Powwow_Help_Action");
+      break;
+    case TAB_GROUP:
+      url = QUrl::fromEncoded("http://mume.org/wiki/index.php/Powwow_Help_Group");
+      break;
+    case TAB_VAR:
+      url = QUrl::fromEncoded("http://mume.org/wiki/index.php/Powwow_Help_Variable");
+      break;
+    case TAB_MARK:
+      url = QUrl::fromEncoded("http://mume.org/wiki/index.php/Powwow_Help_Mark");
+      break;
+    case TAB_BIND:
+      url = QUrl::fromEncoded("http://mume.org/wiki/index.php/Powwow_Help_Bind");
+      break;
+  };
+  if (!QDesktopServices::openUrl(url))
+    qDebug("Failed to open web browser");
+}
+
+void ObjectEditor::importClicked() {
+  QString powwow_cmd, fileName = QFileDialog::getOpenFileName(this);
+  if (!fileName.isEmpty()) {
+    QTextStream(&powwow_cmd) << "#exe <" << fileName;
+    parse_user_input(powwow_cmd.toAscii().data(), 0);
+  }
+}
+
+void ObjectEditor::saveClicked() {
+  qDebug("SAVE");
+}
+
+void ObjectEditor::closeClicked() {
+  qDebug("CLOSE");
+  hide();
 }
 
 
@@ -219,44 +262,63 @@ void ObjectEditor::buttonBoxClicked(QAbstractButton *button)
 
 void ObjectEditor::loadGroupTab()
 {
-  int disabledActionCount, actionCount, j;
-  QTreeWidgetItem *item;
+  int disabledActionCount, actionCount, aliasCount;
+  QTreeWidgetItem *item, *actionItem;
+  actionnode *p;
+  QVariant v;
   QString group;
 
-  loadAliasTab();   // load actions after the aliases to ensure that
-  loadActionTab();  // the alias groups are present
+  loadAliasTab(); // only aliases populate groupHash
+  loadActionTab();
 
   groupTable->clear();
 
-  QHashIterator<QString, QTreeWidgetItem*> i(actionGroupHash);
+  QHashIterator<QString, bool> i(groupHash);
   // Step through each group in the actions
   while (i.hasNext())
   {
     i.next();
     group = i.key();
-    item = i.value();
 
-    disabledActionCount = 0;
-    actionCount = item->childCount();
-    for (j = 0; j < actionCount; j++)
-    {
-      actionnode *p = actionHash[item->child(j)];
-      if (!p->active)
-        disabledActionCount++;
+    // Iterate over alias groups to find the current group
+    aliasCount = 0;
+    QTreeWidgetItemIterator aliasIterator(aliasTable, QTreeWidgetItemIterator::NotSelectable);
+    for (; (*aliasIterator); ++aliasIterator) {
+      if ((*aliasIterator)->data(0, Qt::UserRole).toString() == group)
+        aliasCount = (*aliasIterator)->childCount();
     }
 
-    //qDebug("Current Group: %s %d (-%d)", group.toAscii().data(), actionCount, disabledActionCount);
-    if (!aliasGroupHash.contains(group)) // since we know aliases would be disabled then
-      groupHash[group] = !(disabledActionCount == actionCount);
+    // Iterate over action groups
+    QTreeWidgetItemIterator actionIterator(actionTable, QTreeWidgetItemIterator::NotSelectable);
+    for (actionItem = NULL; (*actionIterator); ++actionIterator) {
+      if ((*actionIterator)->data(0, Qt::UserRole).toString() == group)
+        actionItem = (*actionIterator);
+    }
+
+    if (actionItem != NULL) {
+      // Iterate over the children of the current group
+      disabledActionCount = 0;
+      actionCount = actionItem->childCount();
+
+      for (int i = 0; i < actionCount; i++) {
+        v = actionItem->child(i)->data(0, Qt::UserRole);
+        p = (actionnode*) v.value<void *>();
+  
+        if (!p->active)
+          disabledActionCount++;
+      }
+
+      // If no aliases are there then the action over-rides this 
+      if (aliasCount == 0)
+        groupHash[group] = !(actionCount == disabledActionCount);
+    }
 
     item = new QTreeWidgetItem(groupTable);
-    if (i.key().compare("*") == 0)
-      item->setText(0, "default");
-    else {
-      item->setText(0, group);
-      item->setCheckState(0, groupHash[group] ? Qt::Checked : Qt::Unchecked);
-    }
-    item->setText(1, QString("%1").arg(aliasGroupHash[group]->childCount()));
+    item->setText(0, group.isEmpty() ? "default" : group);
+    item->setData(0, Qt::CheckStateRole, QVariant(groupHash[group]));
+    item->setData(0, Qt::UserRole, QVariant(group));
+    //item->setCheckState(0, groupHash[group] ? Qt::Checked : Qt::Unchecked);
+    item->setText(1, QString("%1").arg(aliasCount));
 
     if (actionCount == 0 || disabledActionCount == 0) item->setText(2, QString("%1").arg(actionCount));
     else if (actionCount == disabledActionCount) item->setText(2, QString("%1 disabled").arg(actionCount));
@@ -276,46 +338,45 @@ void ObjectEditor::groupAddClicked() {
 }
 
 void ObjectEditor::groupRemoveClicked() {
-  QTreeWidgetItem *item, *group;
+  QTreeWidgetItem *item;
+
   if (groupTable->selectedItems().count() <= 0)
     return;
+
   item = groupTable->currentItem();
-  QString name = item->text(0);
+  QVariant group = item->data(0, Qt::UserRole);
+
   int ret = QMessageBox::warning(this, tr("Object Editor"),
                                  tr("Are you sure you want to delete all the aliases\n"
-                                     "and actions within the \'%1\' group?").arg(name),
+                                     "and actions within the \'%1\' group?").arg(group.toString()),
                                     QMessageBox::Yes | QMessageBox::No);
   if (ret == QMessageBox::No)
     return ;
-  if (name.compare("default") == 0) name = "*";
-  group = actionGroupHash[name];
 
-  QHashIterator<QTreeWidgetItem*, actionnode*> i(actionHash);
-  while (i.hasNext()) {
-    i.next();
-    item = i.key();
-    if (item->parent() == group) {
+  // Iterate over action groups
+  QTreeWidgetItemIterator actionIterator(actionTable, QTreeWidgetItemIterator::Selectable);
+  for (item = NULL; (*actionIterator); ++actionIterator) {
+    item = (*actionIterator);
+    if (item->parent()->data(0, Qt::UserRole) == group) {
       actionTable->setCurrentItem(item);
       actionRemoveClicked();
     }
   }
-  group = aliasGroupHash[name];
-  QHashIterator<QTreeWidgetItem*, aliasnode*> j(aliasHash);
-  while (j.hasNext()) {
-    j.next();
-    item = j.key();
-    if (item->parent() == group) {
+
+  QTreeWidgetItemIterator aliasIterator(aliasTable, QTreeWidgetItemIterator::Selectable);
+  for (item = NULL; (*aliasIterator); ++aliasIterator) {
+    item = (*aliasIterator);
+    if (item->parent()->data(0, Qt::UserRole) == group) {
       aliasTable->setCurrentItem(item);
       aliasRemoveClicked();
     }
   }
 
   // Remove group item from list
-  if (name.compare("*") != 0) {
+  if (!group.toString().isEmpty()) {
     groupTable->currentItem()->setHidden(true);
-    groupHash.remove(name);
-    actionGroupHash.remove(name);
-    aliasGroupHash.remove(name);
+    //groupTable->currentItem()->~QTreeWidgetItem();
+    groupHash.remove(group.toString());
   }
   else
   {
@@ -331,7 +392,7 @@ void ObjectEditor::groupCheckBoxClicked() { // TODO
     return ;
   }
   item = groupTable->currentItem();
-  if (item->text(0).compare("default") == 0) {
+  if (item->text(0) == "default") {
     qDebug("Group Name is default, can't disable");
     return ;
   }
@@ -368,11 +429,9 @@ void ObjectEditor::groupNameEditingFinished() {
   if (addingNewGroup) {
     item = new QTreeWidgetItem(aliasTable);
     item->setText(0, name);
-    aliasGroupHash[name] = item;
 
     item = new QTreeWidgetItem(actionTable);
     item->setText(0, name);
-    actionGroupHash[name] = item;
 
     groupHash[name] = groupCheckBox->isChecked();
     item = new QTreeWidgetItem(groupTable);
@@ -407,9 +466,10 @@ void ObjectEditor::groupNameEditingFinished() {
 
     item->setText(0, name);
     groupHash.remove(oldName);
-    groupHash[name] = item;
     tabWidget->setFocus();
 
+    /*
+    // TODO
     group = actionGroupHash[oldName];
     actionGroupHash.remove(oldName);
     QHashIterator<QTreeWidgetItem*, actionnode*> i(actionHash);
@@ -428,19 +488,21 @@ void ObjectEditor::groupNameEditingFinished() {
     }
     group = aliasGroupHash[oldName];
     aliasGroupHash.remove(oldName);
-    QHashIterator<QTreeWidgetItem*, aliasnode*> j(aliasHash);
-    while (j.hasNext()) {
-      j.next();
-      item = j.key();
-      if (item->parent() == group) {
-        lp = aliasHash[item];
+    QTreeWidgetItemIterator it(aliasTable, QTreeWidgetItemIterator::Selectable);
+    while (*it) {
+      if ((*it)->data(0, Qt::UserRole) == group) {
+        item = (*it);
+        QVariant v = item->data(0, Qt::UserRole);
+        lp = (aliasnode*) v.value<void *>();
         escape_specials(buf, lp->name);
         QTextStream(&powwow_cmd) << buf << group_delim << name << "=" << lp->subst;
         qDebug("#alias %s", powwow_cmd.toAscii().data());
         parse_alias(powwow_cmd.toAscii().data());
+        powwow_cmd.clear();
       }
-      powwow_cmd.clear();
+      it++;
     }
+    */
   }
 }
 
@@ -466,71 +528,65 @@ void ObjectEditor::groupItemClicked(QTreeWidgetItem* item, int) {
 void ObjectEditor::loadAliasTab()
 {
   QTreeWidgetItem *currentGroup;
+  aliasnode *p;
 
   aliasGroup->clear();
   aliasTable->clear();
 
-  /* (re?)populate the aliasTable */
-  QHashIterator<QString, bool> i(groupHash);
-  while (i.hasNext())
-  {
-    i.next();
-    currentGroup = new QTreeWidgetItem();
-    currentGroup->setText(0, i.key());
-    currentGroup->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-    aliasGroupHash[i.key()] = currentGroup;
-    aliasTable->addTopLevelItem(currentGroup);
-  }
-  currentGroup = aliasGroupHash["*"];
+  // add default group
+  QVariant group = QVariant();
+  currentGroup = new QTreeWidgetItem(aliasTable);
   currentGroup->setText(0, "default");
+  currentGroup->setData(0, Qt::UserRole, group); // NULL QVariant since the standard Powwow group is NULL
+  currentGroup->setFlags(Qt::ItemIsEnabled); // this is the only flag we need
+  currentGroup->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+  groupHash[group.toString()] = true;
+  aliasGroup->addItem("default", group );
 
-  aliasnode *p;
+  for (p = sortedaliases; p; p = p->snext) addAliasNode(p); // add Aliases
 
-  for (p = sortedaliases; p; p = p->snext) 
-    addAliasNode(p);
-
-  /* generate the groups for the combo */
-  aliasGroup->addItem("default", QVariant(QString("\0")) );
-  QHashIterator<QString, QTreeWidgetItem*> j(aliasGroupHash);
-  while (j.hasNext())
-  {
-    j.next();
-    //j.value()->setExpanded(true); // HACK to fix moving groups
-
-    if (j.key() != "*")
-      aliasGroup->addItem(j.key(), QVariant(j.key()));
-  }
+  aliasGroup->model()->sort(0, Qt::AscendingOrder);
 }
 
 QTreeWidgetItem* ObjectEditor::addAliasNode(aliasnode* p)
 {
-  QTreeWidgetItem *item, *groupItem;
+  QTreeWidgetItem *item, *groupItem = NULL;
   char buf[BUFSIZE];
 
   escape_specials(buf, p->name);
-  //QString active = QString("%1").arg(p->active ? "" : "(disabled) ");
   QString name = QString(buf);
-  QString group = QString("%1").arg(p->group == NULL ? "*" : p->group);
+  QVariant group = p->group == NULL ? QVariant() : QVariant(QString(p->group));
   QString subst = QString(p->subst);
 
-  if (aliasGroupHash.contains(group)) {
-    groupItem = aliasGroupHash[group];
-  } else {
-    qDebug("Add Alias Node: New group '%s'", group.toAscii().data() );
-    groupItem = new QTreeWidgetItem(aliasTable);
-    groupItem->setText(0, group);
-    aliasGroupHash[group] = groupItem;
-    groupHash[group] = p->active;
+  QTreeWidgetItemIterator it(aliasTable, QTreeWidgetItemIterator::NotSelectable); // Iterate over Groups
+  while (*it) {
+    if ((*it)->data(0, Qt::UserRole) == group)
+      groupItem = (*it);
+    ++it;
   }
-  if (!p->active) // if one alias is inactive the entire group is
-    groupHash[group] = p->active;
+
+  if (!groupItem) {
+    qDebug("Add Alias Node: New group '%s'", group.toString().toAscii().data() );
+    groupItem = new QTreeWidgetItem(aliasTable);
+    groupItem->setText(0, group.toString());
+    groupItem->setData(0, Qt::UserRole, group);
+    groupItem->setFlags(Qt::ItemIsEnabled);
+    aliasGroup->addItem(group.toString(), group);
+    groupHash[group.toString()] = p->active;
+  }
 
   item = new QTreeWidgetItem(groupItem);
   item->setText(0, name);
   item->setText(1, subst);
-  //item->setDisabled(!p->active);
+  item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
 
-  aliasHash[item] = p;
+  /*
+  qDebug("added data set");
+  QVariant v = item->data(0, Qt::UserRole);
+  p = (aliasnode*) v.value<void *>();
+  qDebug("added alias data: %s", p->subst);
+  */
+
   return item;
 }
 
@@ -581,7 +637,7 @@ void ObjectEditor::aliasNameEditingFinished() {
     item = aliasTable->currentItem();
     deleteAlias(item);
     updateAliasTable();
-    aliasHash.remove(item);
+    //aliasHash.remove(item);
   }
 }
 
@@ -595,6 +651,9 @@ bool ObjectEditor::isCurrentAlias(const char* source) {
 
   item = aliasTable->currentItem();
   name = item->text(0);
+
+  /*
+
   QList<QTreeWidgetItem *> list = aliasTable->findItems(name, Qt::MatchRecursive);
 
   if ((aliasGroupHash.contains(name) || name.compare("default") == 0) && list.size() == 1)
@@ -611,6 +670,7 @@ bool ObjectEditor::isCurrentAlias(const char* source) {
     qDebug("Alias %s: Unknown item selected", source);
     return false;
   }
+  */
 
   qDebug("Alias %s: \"%s\" selected", source, name.toAscii().data());
   return true;
@@ -624,7 +684,10 @@ void ObjectEditor::aliasItemClicked(QTreeWidgetItem* item, int column) {
   if (!isCurrentAlias("Clicked"))
     return ;
 
-  p = aliasHash[item];
+  //p = aliasHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  p = (aliasnode*) v.value<void *>();
+
   escape_specials(buf, p->name);
   name = QString(buf);
   group = QString("%1").arg(p->group == NULL ? "default" : p->group);
@@ -638,24 +701,26 @@ void ObjectEditor::aliasItemClicked(QTreeWidgetItem* item, int column) {
 
 /* Updates an alias-item from the various user-provided inputs */
 void ObjectEditor::updateAliasTable() {
-  QTreeWidgetItem *item, *parent;
-  aliasnode *p;
-  QString name, subst, group, powwow_cmd;
-
   if (addingNewAlias) {
-    if (aliasCommand->text().isEmpty() || aliasName->text().isEmpty()) {
-      qDebug("Alias Updater: Unable to add item because of insufficient data.");
-      return ;
-    }
-    qDebug("Alias Updater: Building item...");
-
-  } else {
-    if (!isCurrentAlias("Updater"))
-      return ;
-    item = aliasTable->currentItem();
-    //item->setHidden(true); // HACK because items don't like being deleted
-                           // instead of moving always create a new item
+    updateAliasTableCreate();
   }
+  else
+  {
+    updateAliasTableEdit();
+  }
+}
+
+/* Updates an alias-item from the various user-provided inputs */
+void ObjectEditor::updateAliasTableCreate() {
+  QString name, subst, group, powwow_cmd;
+  QTreeWidgetItem *item;
+  aliasnode *p;
+
+  if (aliasCommand->text().isEmpty() || aliasName->text().isEmpty()) {
+    qDebug("Alias Updater: Unable to add item because of insufficient data.");
+    return ;
+  }
+  qDebug("Alias Updater: Building item...");
 
   // Generate Powwow command
   name = aliasName->text();
@@ -667,47 +732,66 @@ void ObjectEditor::updateAliasTable() {
   parse_alias(powwow_cmd.toAscii().data());
   p = *(lookup_alias(name.toAscii().data()));
 
-  if (addingNewAlias) {
-    // Add new item
-    item = addAliasNode(p);
+  // Add new item
+  item = addAliasNode(p);
 
-    qDebug("Added new item.");
-    addingNewAlias = false;
-    //aliasName->setEnabled(true);
-    aliasTable->setEnabled(true);
-    aliasAdd->setEnabled(true);
-    aliasRemove->setEnabled(true);
-  }
-  else
+  qDebug("Added new item.");
+  addingNewAlias = false;
+  //aliasName->setEnabled(true);
+  aliasTable->setEnabled(true);
+  aliasAdd->setEnabled(true);
+  aliasRemove->setEnabled(true);
+
+  aliasTable->setFocus();
+  aliasTable->setCurrentItem(item);
+  aliasTable->scrollToItem(item);
+}
+
+/* Updates an alias-item from the various user-provided inputs */
+void ObjectEditor::updateAliasTableEdit() {
+  QTreeWidgetItem *item, *parent, *newParent = NULL;
+  aliasnode *p;
+  QString name, subst, powwow_cmd;
+  QVariant group;
+  int index;
+
+  if (!isCurrentAlias("Updater"))
+    return ;
+
+  // Generate Powwow command
+  name = aliasName->text();
+  subst = aliasCommand->text();
+  group = aliasGroup->itemData(aliasGroup->currentIndex());
+  QTextStream(&powwow_cmd) << name << group_delim << group.toString() << "=" <<  subst;
+  qDebug("#alias %s", powwow_cmd.toAscii().data());
+
+  parse_alias(powwow_cmd.toAscii().data());
+  p = *(lookup_alias(name.toAscii().data()));
+
+  // Reuse existing item
+  item = aliasTable->currentItem();
+
+  item->setText(0, name);
+  item->setText(1, subst);
+  item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
+  parent = item->parent();
+  index = parent->indexOfChild(item);
+  if (parent->data(0, Qt::UserRole) != group)
   {
-    // Reuse existing item
-    aliasHash[item] = p;
-
-    item->setText(0, name);
-    item->setText(1, subst);
-    parent = item->parent();
-    group = group.isEmpty() ? "*" : group;
-    int index = parent->indexOfChild(item);
-    if (item->parent() != aliasGroupHash[group]) {
-      // Update group
-      qDebug("Moving item %d from group \"%s\" to \"%s\"",
-             index,
-             parent->text(0).toAscii().data(),
-             group.toAscii().data());
-      QTreeWidgetItem *newParent = aliasGroupHash[group];
-      QList<QTreeWidgetItem*> children = parent->takeChildren();
-      for (int i = 0; i < children.count(); i++)
-        if (children.at(i) == item) children.removeAt(i);
-      newParent->addChild(item);
-      parent->addChildren(children);
-      /*
-      if ((item = parent->takeChild(index)) == 0)
-        qDebug("Error, child wasn't removed");
-      parent = aliasGroupHash[group];
-      parent->addChild(item);
-      */
+    // Update group
+    QTreeWidgetItemIterator it(aliasTable, QTreeWidgetItemIterator::NotSelectable); // Iterate over Groups
+    while (*it) {
+      if ((*it)->data(0, Qt::UserRole) == group)
+        newParent = (*it);
+      ++it;
     }
-    aliasHash[item] = p;
+    if (newParent == NULL) qDebug("Uhm..");
+
+    qDebug("Moving item %d from group \"%s\" to \"%s\" in the UI",
+           index, parent->text(0).toAscii().constData(), newParent->text(0).toAscii().constData());
+
+    item = parent->takeChild(index);
+    newParent->addChild(item);
   }
 
   aliasTable->setFocus();
@@ -715,16 +799,16 @@ void ObjectEditor::updateAliasTable() {
   aliasTable->scrollToItem(item);
 }
 
-
 void ObjectEditor::aliasRemoveClicked() {
   QTreeWidgetItem *parent, *item = aliasTable->currentItem();
 
   if (!isCurrentAlias("Remove")) return ;
 
   deleteAlias(item);
-  aliasHash.remove(item);
-  parent = item->parent();
-  parent->removeChild(item);
+  //aliasHash.remove(item);
+  //parent = item->parent();
+  //parent->removeChild(item);
+  delete item;
 
   aliasName->clear();
   aliasCommand->clear();
@@ -732,7 +816,10 @@ void ObjectEditor::aliasRemoveClicked() {
 }
 
 void ObjectEditor::deleteAlias(QTreeWidgetItem* item) {
-  aliasnode *p = aliasHash[item];
+  //aliasnode *p = aliasHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  aliasnode *p = (aliasnode*) v.value<void *>();
+
   QString command;
   QTextStream(&command) << p->name << "=";
   qDebug("#alias %s", command.toAscii().data() );
@@ -746,59 +833,53 @@ void ObjectEditor::deleteAlias(QTreeWidgetItem* item) {
 void ObjectEditor::loadActionTab()
 {
   QTreeWidgetItem *currentGroup;
-  QHashIterator<QString, bool> i(groupHash);
 
   actionGroup->clear();
   actionTable->clear();
 
-  /* (re?)populate the actionTable */
-  while (i.hasNext())
-  {
-    i.next();
-    currentGroup = new QTreeWidgetItem(actionTable);
-    currentGroup->setText(0, i.key());
-    currentGroup->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-    actionGroupHash[i.key()] = currentGroup;
-  }
-  currentGroup = actionGroupHash["*"];
+  // add default group
+  QVariant group = QVariant(); // NULL QVariant since the standard Powwow group is NULL
+  currentGroup = new QTreeWidgetItem(actionTable);
   currentGroup->setText(0, "default");
+  currentGroup->setData(0, Qt::UserRole, group);
+  currentGroup->setFlags(Qt::ItemIsEnabled); // this is the only flag we need
+  currentGroup->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+  groupHash[group.toString()] = true;
+  actionGroup->addItem("default", group );
 
   actionnode *p;
-  for (p = wrapper->getActions(); p; p = p->next)
-    addActionNode(p);
+  for (p = wrapper->getActions(); p; p = p->next) addActionNode(p);
 
-  /* populate group combobox */
-  actionGroup->addItem("default", QVariant(QString()) );
-  QHashIterator<QString, QTreeWidgetItem*> j(actionGroupHash);
-  while (j.hasNext())
-  {
-    j.next();
-
-    if (j.key() != "*")
-      actionGroup->addItem(j.key(), QVariant(j.key()));
-  }
+  actionGroup->model()->sort(0, Qt::AscendingOrder);
 }
 
 QTreeWidgetItem* ObjectEditor::addActionNode(actionnode* p)
 {
-  QTreeWidgetItem *item, *currentGroup;
+  QTreeWidgetItem *item, *currentGroup = NULL;
 
-  //QString type = QString("%1").arg(action_chars[p->type] == '>' ? "default" : "regex");
   QString active = QString("%1").arg(p->active ? '+' : '-');
   QString label = QString(p->label);
-  QString group = QString("%1").arg(p->group == NULL ? "*" : p->group);
+  QVariant group = p->group == NULL ? QVariant() : QVariant(QString(p->group));
   QString pattern = QString(p->pattern);
   QString command = QString(p->command);
 
-  if (actionGroupHash.contains(group))
-    currentGroup = actionGroupHash[group];
-  else {
-    qDebug("Add Action Node: New group '%s'", group.toAscii().data() );
+  QTreeWidgetItemIterator it(actionTable, QTreeWidgetItemIterator::NotSelectable); // Iterate over Groups
+  while (*it) {
+    if ((*it)->data(0, Qt::UserRole) == group)
+      currentGroup = (*it);
+    ++it;
+  }
+
+  if (!currentGroup) {
+    qDebug("Add Action Node: New group '%s'", group.toString().toAscii().data() );
     currentGroup = new QTreeWidgetItem(actionTable);
-    currentGroup->setText(0, group);
-    actionGroupHash[group] = currentGroup;
+    currentGroup->setText(0, group.toString());
+    currentGroup->setFlags(Qt::ItemIsEnabled);
+    currentGroup->setData(0, Qt::UserRole, group);
     currentGroup->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-    groupHash[group] = true; // since we're not sure at this point in time
+    actionGroup->addItem(group.toString(), group);
+    if (!groupHash.contains(group.toString()))
+      groupHash[group.toString()] = false;
   }
 
   item = new QTreeWidgetItem(currentGroup);
@@ -806,9 +887,8 @@ QTreeWidgetItem* ObjectEditor::addActionNode(actionnode* p)
   item->setText(0, label);
   item->setText(1, pattern);
   item->setText(2, command);
-  //item->setText(3, type);
+  item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
 
-  actionHash[item] = p;
   return item;
 }
 
@@ -836,6 +916,7 @@ bool ObjectEditor::isCurrentAction(const char* source) {
 
   item = actionTable->currentItem();
   name = item->text(0);
+    /*
   QList<QTreeWidgetItem *> list = actionTable->findItems(name, Qt::MatchRecursive);
 
   if ((actionGroupHash.contains(name) || name.compare("default") == 0)  && list.size() == 1)
@@ -848,6 +929,7 @@ bool ObjectEditor::isCurrentAction(const char* source) {
     qDebug("Action %s: Unknown item selected", source);
     isCurrent = false;
   }
+  */
 
   if (isCurrent) {
     qDebug("Action %s: \"%s\" selected", source, name.toAscii().data());
@@ -869,9 +951,10 @@ void ObjectEditor::actionRemoveClicked() {
 
   item = actionTable->currentItem();
   deleteAction(item);
-  actionHash.remove(item);
-  parent = item->parent();
-  parent->removeChild(item);
+  //actionHash.remove(item);
+  //parent = item->parent();
+  //parent->removeChild(item);
+  delete item;
 
   actionLabel->clear();
   actionCommand->clear();
@@ -881,7 +964,9 @@ void ObjectEditor::actionRemoveClicked() {
 }
 
 void ObjectEditor::deleteAction(QTreeWidgetItem* item) {
-  actionnode *p = actionHash[item];
+  //actionnode *p = actionHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  actionnode *p = (actionnode*) v.value<void *>();
 
   QString label = p->label;
   QString command;
@@ -902,7 +987,7 @@ void ObjectEditor::actionLabelEditingFinished() {
     item = actionTable->currentItem();
     deleteAction(item);
     updateActionTable();
-    actionHash.remove(item);
+    //actionHash.remove(item);
   }
 }
 
@@ -919,7 +1004,9 @@ void ObjectEditor::toggleAction(bool state) {
   if (!isCurrentAction("Toggle")) return ;
 
   item = actionTable->currentItem();
-  p = actionHash[item];
+  //p = actionHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  p = (actionnode*) v.value<void *>();
 
   actionCheckBox->setChecked(state);
   item->setCheckState(0, state ? Qt::Checked : Qt::Unchecked);
@@ -933,11 +1020,11 @@ void ObjectEditor::toggleAction(bool state) {
 
 void ObjectEditor::actionItemClicked(QTreeWidgetItem* item, int column) {
   QString label, group, pattern, command, type;
-  actionnode *p;
 
   if (!isCurrentAction("Clicked")) return ;
 
-  p = actionHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  actionnode *p = (actionnode*) v.value<void *>();
 
   label = QString(p->label);
   group = QString("%1").arg(p->group == NULL ? "default" : p->group);
@@ -958,9 +1045,11 @@ void ObjectEditor::actionItemClicked(QTreeWidgetItem* item, int column) {
 }
 
 void ObjectEditor::updateActionTable() {
-  QTreeWidgetItem* item;
+  QTreeWidgetItem* item, *parent, *newParent = NULL;
   actionnode *p;
-  QString active, label, pattern, command, type, group, powwow_cmd;
+  QString active, label, pattern, command, type, powwow_cmd;
+  QVariant group;
+  int index;
 
   if (addingNewAction) {
     if (actionCommand->text().isEmpty() ||  actionPattern->text().isEmpty()) {
@@ -971,10 +1060,6 @@ void ObjectEditor::updateActionTable() {
 
   } else {
     if (!isCurrentAction("Update")) return;
-    item = actionTable->currentItem();
-
-    // Remove previous item
-    item->setHidden(true);
   }
 
   // Generate Powwow command
@@ -983,26 +1068,58 @@ void ObjectEditor::updateActionTable() {
   pattern = actionPattern->text();
   command = actionCommand->text();
   type = actionType->itemData(actionType->currentIndex()).toString();
-  group = actionGroup->itemData(actionGroup->currentIndex()).toString();
-  QTextStream(&powwow_cmd) << type << active << label << group_delim << group << " " << pattern << "=" << command;
+  group = actionGroup->itemData(actionGroup->currentIndex());
+  QTextStream(&powwow_cmd) << type << active << label << group_delim << group.toString()
+      << " " << pattern << "=" << command;
   qDebug("#action %s", powwow_cmd.toAscii().data());
 
   parse_action(powwow_cmd.toAscii().data(), 0);
   p = *(lookup_action_pattern(pattern.toAscii().data() ));
 
-  // Add new item
-  item = addActionNode(p);
-
   if (addingNewAction) {
+  // Add new item
     qDebug("Added new item.");
+    item = addActionNode(p);
+
     addingNewAction = false;
     //actionLabel->setEnabled(true);
     actionTable->setEnabled(true);
     actionAdd->setEnabled(true);
     actionRemove->setEnabled(true);
   }
+  else
+  {
+    // Update existing item
+    item = actionTable->currentItem();
 
-  tabWidget->setFocus();
+    item->setCheckState(0, p->active ? Qt::Checked : Qt::Unchecked);
+    item->setText(0, label);
+    item->setText(1, pattern);
+    item->setText(2, command);
+    item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
+
+    parent = item->parent();
+    index = parent->indexOfChild(item);
+    if (parent->data(0, Qt::UserRole) != group)
+    {
+    // Update group
+      QTreeWidgetItemIterator it(actionTable, QTreeWidgetItemIterator::NotSelectable); // Iterate over Groups
+      while (*it) {
+        if ((*it)->data(0, Qt::UserRole) == group)
+          newParent = (*it);
+        ++it;
+      }
+      if (newParent == NULL) qDebug("Uhm..");
+
+      qDebug("Moving item %d from group \"%s\" to \"%s\" in the UI",
+             index, parent->text(0).toAscii().constData(), newParent->text(0).toAscii().constData());
+
+      item = parent->takeChild(index);
+      newParent->addChild(item);
+    }
+  }
+
+  actionTable->setFocus();
   actionTable->setCurrentItem(item);
   actionTable->scrollToItem(item);
 }
@@ -1082,6 +1199,8 @@ void ObjectEditor::variableRemoveClicked() {
   }
   item = varTable->currentItem();
   deleteVariable(item);
+
+  delete item;
 }
 
 void ObjectEditor::deleteVariable(QTreeWidgetItem* item) {
@@ -1101,8 +1220,6 @@ void ObjectEditor::deleteVariable(QTreeWidgetItem* item) {
   qDebug("#var %s", powwow_cmd.toAscii().data());
 
   wrapper_cmd_var(powwow_cmd.toAscii().data());
-
-  varTable->setItemHidden(item, true);
 }
 
 void ObjectEditor::variableNameEditingFinished() {
@@ -1127,11 +1244,11 @@ void ObjectEditor::variableNameEditingFinished() {
       return;
     }
   }
-  updateVariableTable(COMPLETE_REBUILD);
+  updateVariableTable();
 }
 
-void ObjectEditor::variableValueEditingFinished() { updateVariableTable(UPDATE); }
-void ObjectEditor::variableTypeActivated(int) { updateVariableTable(COMPLETE_REBUILD); }
+void ObjectEditor::variableValueEditingFinished() { updateVariableTable(); }
+void ObjectEditor::variableTypeActivated(int) { updateVariableTable(); }
 
 void ObjectEditor::variableItemClicked(QTreeWidgetItem* item, int column) {
   if (varTable->selectedItems().count() <= 0) {
@@ -1150,7 +1267,7 @@ void ObjectEditor::variableItemClicked(QTreeWidgetItem* item, int column) {
   varValue->setCursorPosition(0);
 }
 
-void ObjectEditor::updateVariableTable(bool completeRebuild) {
+void ObjectEditor::updateVariableTable() {
   QTreeWidgetItem *item;
   QString name, value, type, powwow_cmd;
   if (addingNewVariable) {
@@ -1168,7 +1285,7 @@ void ObjectEditor::updateVariableTable(bool completeRebuild) {
     }
     // Remove from table
     varTable->setItemHidden(item, true);
-    if (completeRebuild) deleteVariable(item);
+    //if (completeRebuild) deleteVariable(item);
   }
 
   // Rebuild
@@ -1221,7 +1338,7 @@ void ObjectEditor::loadMarkTab() {
     item = new QTreeWidgetItem(markTable);
     item->setText(0, attributes);
     item->setText(1, pattern);
-    markHash[item] = p;
+    item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
   }
 }
 
@@ -1235,11 +1352,13 @@ bool ObjectEditor::isCurrentMark(const char* source) {
   item = markTable->currentItem();
   name = item->text(1);
 
+  /*
   if (!markHash.contains(item))
   {
     qDebug("Mark %s: Unknown item selected", source);
     return false;
   }
+  */
 
   qDebug("Mark %s: \"%s\" selected", source, name.toAscii().data());
   return true;
@@ -1255,7 +1374,9 @@ void ObjectEditor::markItemClicked(QTreeWidgetItem* item, int column) {
   if (!isCurrentMark("Clicked"))
     return ;
 
-  p = markHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  p = (marknode*) v.value<void *>();
+
   pattern = QString("%1%2").arg(p->mbeg ? "^" : "").arg(p->pattern);
   attributes = attr_name(p->attrcode);
 
@@ -1344,9 +1465,9 @@ void ObjectEditor::updateMarkTable() {
     markAdd->setEnabled(true);
     markRemove->setEnabled(true);
   }
-  markHash[item] = p;
   item->setText(0, attr_name(p->attrcode));
   item->setText(1, QString("%1%2").arg(p->mbeg ? "^" : "").arg(p->pattern));
+  item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
 
   markTable->setFocus();
   markTable->setCurrentItem(item);
@@ -1372,16 +1493,18 @@ void ObjectEditor::markAddClicked() {
 
 void ObjectEditor::markRemoveClicked() {
   QTreeWidgetItem *parent, *item = markTable->currentItem();
+  marknode *p;
 
   if (!isCurrentMark("Remove")) return ;
 
-  marknode *p = markHash[item];
+  QVariant v = item->data(0, Qt::UserRole);
+  p = (marknode*) v.value<void *>();
+
   QString command;
   QTextStream(&command) << QString("%1%2").arg(p->mbeg ? "^" : "").arg(p->pattern) << "=";
   qDebug("#mark %s", command.toAscii().data() );
   parse_mark(command.toAscii().data());
 
-  markHash.remove(item);
   markPattern->clear();
   markTable->setFocus();
   markBold->setChecked(false);
@@ -1391,11 +1514,10 @@ void ObjectEditor::markRemoveClicked() {
   markForegroundColor->setCurrentIndex(markForegroundColor->findText("none"));
   markBackgroundColor->setCurrentIndex(markBackgroundColor->findText("none"));
 
-  item->setHidden(true);  // HACK
-  /*
-  parent = item->parent();
-  parent->removeChild(item);
-  */
+  //item->setHidden(true);  // HACK
+  //parent = item->parent();
+  //parent->removeChild(item);
+  delete item;
 }
 
 
@@ -1409,7 +1531,7 @@ void ObjectEditor::loadBindTab() {
   bindTable->clear();
 
   for (p = keydefs; p; p = p->next) {
-    if (p->funct == key_run_command) {
+    //if (p->funct == key_run_command) {
       name = p->name;
       seq = seq_name(p->sequence, p->seqlen);
       call = p->call_data;
@@ -1417,10 +1539,9 @@ void ObjectEditor::loadBindTab() {
       item = new QTreeWidgetItem(bindTable);
       item->setText(0, name);
       item->setText(1, seq);
-      item->setText(2, call);
-      item->setText(3, command);
-      bindHash[item] = p;
-    }
+      item->setText(2, call == NULL ? command : call);
+      item->setData(0, Qt::UserRole, qVariantFromValue((void *)p));
+    //}
   }
 }
 

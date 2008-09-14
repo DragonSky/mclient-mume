@@ -28,7 +28,7 @@
 #include "wrapper.h"
 #include "objecteditor.h"
 #include "configdialog.h"
-
+#include "profiledialog.h"
 
 MainWindow::MainWindow(int argc, char **argv)
 {
@@ -38,7 +38,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
   inputBar = new InputBar(this);
   textView = new TextView(inputBar, this);
-  wrapper = new Wrapper(argc, argv, inputBar, textView, this);
+  wrapper = new Wrapper(inputBar, textView, this);
 
   vbox->addWidget(textView);
   vbox->addWidget(inputBar);
@@ -57,6 +57,7 @@ MainWindow::MainWindow(int argc, char **argv)
   readSettings();
 
   objectEditor = NULL;
+  profileDialog = NULL;
 
   /*connect(textView->document(), SIGNAL(contentsChanged()),
           this, SLOT(documentWasModified()));*/
@@ -68,6 +69,7 @@ MainWindow::MainWindow(int argc, char **argv)
   connect(wrapper, SIGNAL(inputInsertText(QString)), inputBar, SLOT(inputInsertText(QString)) );
   connect(wrapper, SIGNAL(inputMoveTo(int)), inputBar, SLOT(inputMoveTo(int)) );
   connect(wrapper, SIGNAL(inputDeleteChars(int)), inputBar, SLOT(inputDeleteChars(int)) );
+  connect(wrapper, SIGNAL(inputClear()), inputBar, SLOT(inputClear()) );
 
   connect(inputBar, SIGNAL(returnPressed()), this, SLOT(sendUserInput()) );
   connect(inputBar, SIGNAL(keyPressed(const QString&)), this, SLOT(sendUserBind(const QString&)) );
@@ -80,7 +82,10 @@ MainWindow::MainWindow(int argc, char **argv)
 
   QString intro("mClient (QtPowwow) alpha version 0.1 \251 2008 by Jahara\n");
   textView->addText(intro);
-  wrapper->start();
+
+  selectProfile();
+
+  wrapper->start(argc, argv);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -128,12 +133,26 @@ bool MainWindow::saveAs()
   return saveFile(fileName);
 }
 
-void MainWindow::about()
+void MainWindow::aboutmClient()
 {
-  QMessageBox::about(this, tr("About QtPowwow"),
+  QMessageBox::about(this, tr("About mClient"),
                      tr("The <b>Application</b> example demonstrates how to "
                          "write modern GUI applications using Qt, with a menu bar, "
                          "toolbars, and a status bar."));
+}
+
+void MainWindow::aboutPowwow()
+{
+  QMessageBox::about(this, tr("About Powwow"),
+                     tr("The <b>Application</b> example demonstrates how to "
+                         "write modern GUI applications using Qt, with a menu bar, "
+                         "toolbars, and a status bar."));
+}
+
+void MainWindow::help()
+{
+  if (!QDesktopServices::openUrl(QUrl::fromEncoded("http://mume.org/wiki/index.php/mClient_Help")))
+    qDebug("Failed to open web browser");
 }
 
 void MainWindow::documentWasModified()
@@ -203,9 +222,17 @@ void MainWindow::createActions()
   settingsAct->setStatusTip(tr("Change mClient settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(changeConfiguration()) );
 
-  aboutAct = new QAction(tr("&About"), this);
-  aboutAct->setStatusTip(tr("Show the application's About box"));
-  connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+  helpAct = new QAction(tr("Help &FAQ"), this);
+  helpAct->setStatusTip(tr("View the mClient/Powwow FAQ"));
+  connect(helpAct, SIGNAL(triggered()), this, SLOT(help()));
+
+  aboutmClientAct = new QAction(tr("&About mClient"), this);
+  aboutmClientAct->setStatusTip(tr("Show the application's About box"));
+  connect(aboutmClientAct, SIGNAL(triggered()), this, SLOT(aboutmClient()));
+
+  aboutPowwowAct = new QAction(tr("About &Powwow"), this);
+  aboutPowwowAct->setStatusTip(tr("Show Powwow's About box"));
+  connect(aboutPowwowAct, SIGNAL(triggered()), this, SLOT(aboutPowwow()));
 
   aboutQtAct = new QAction(tr("About &Qt"), this);
   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
@@ -241,7 +268,10 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
-  helpMenu->addAction(aboutAct);
+  helpMenu->addAction(helpAct);
+  helpMenu->addSeparator();
+  helpMenu->addAction(aboutmClientAct);
+  helpMenu->addAction(aboutPowwowAct);
   helpMenu->addAction(aboutQtAct);
 }
 
@@ -367,13 +397,14 @@ void MainWindow::editObjects() {
 }
 
 void MainWindow::changeConfiguration() {
-  /*
-  if (!configDialog) {
-    configDialog = new ConfigDialog;
-  }
-  configDialog->show();
-  configDialog->activateWindow();
-  */
   ConfigDialog dialog;
   dialog.exec();
+}
+
+void MainWindow::selectProfile() {
+  if (!profileDialog) {
+  profileDialog = new ProfileDialog(this);
+  }
+  profileDialog->show();
+  profileDialog->activateWindow();
 }

@@ -14,22 +14,19 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "wrapper_cmd.h"
-#include "wrapper.h"
+#ifndef _PROFILEDIALOG_H
+#define _PROFILEDIALOG_H
 
-#include "keybinder.h"
+#include <QDialog>
+#include "ui_profiledialog.h"
 
-void suspend_powwow() {}
+class ProfileDialog : public QDialog, public Ui::ProfileDialog
+{
+  Q_OBJECT
 
-int wrapper_get_keybind(char *seq) { return wrapper->getKeyBind(seq); }
+  public:
+    ProfileDialog(QWidget* parent);
+    virtual ~ProfileDialog();
+};
 
-int Wrapper::getKeyBind(char *seq) {
-  QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)m_parent);
-  if (dlg->exec()) {
-    strcpy(seq, sequence.toAscii().constData());
-  }
-  delete dlg;
-  return strlen(seq);
-}
-
+#endif /* _PROFILEDIALOG_CMD_H */

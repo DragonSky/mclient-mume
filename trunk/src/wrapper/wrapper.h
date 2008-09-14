@@ -22,7 +22,6 @@
  */
 
 #ifdef __cplusplus
-#include <QThread>
 #include <QObject>
 #include <QHash>
 #include <QTimer>
@@ -41,49 +40,34 @@ class Wrapper;
 class WrapperSocket;
 class WrapperProcess;
 
-/* Powwow runs in its own Thread */
-class WrapperThreader: public QThread
-{
-  public:
-    WrapperThreader(Wrapper*);
-    ~WrapperThreader();
-
-    void run();
-
-  protected:
-    Q_OBJECT
-    Wrapper *wrapper; // Parent object
-
-};
-
 /* This is the interacting parent object */
 class Wrapper: public QObject
 {
   Q_OBJECT
 
   public:
-    Wrapper(int argc, char **argv, InputBar* ib, TextView* tv, QObject *parent);
+    Wrapper(InputBar* ib, TextView* tv, QObject *parent);
     ~Wrapper();
 
-    void start(); // from MainWindow
+    void start(int, char**); // from MainWindow
 
     // for Object Editor
     actionnode* getActions();
     QHash<QString, QString> getNUMVARs(int);
 
     /* main.h */
-    int computeDelaySleeptime();
     void getUserInput(QString input);
     void getUserBind(QString input);
 
     /* tty.h */
     void getRemoteInput(int fd);
     void writeToStdout(QString str) { emit addText(str); } // to TextView
-    void toggleEcho();
+    void toggleEcho() { emit toggleEchoMode(); }
     void emitMoveCursor(int fromcol, int fromline, int tocol, int toline);
     void emitInputInsertText(QString str) { emit inputInsertText(str); }
     void emitInputMoveTo(int new_pos) { emit inputMoveTo(new_pos); }
     void emitInputDeleteChars(int n) { emit inputDeleteChars(n); }
+    void emitInputSet(char *str);
 
     /* tcp.h */
     void createSocket(char *addr, int port, char *initstr, int i);
@@ -110,6 +94,7 @@ class Wrapper: public QObject
     void inputInsertText(QString);
     void inputMoveTo(int);
     void inputDeleteChars(int);
+    void inputClear();
     void close();            // to MainWindow
 
   private slots:
@@ -120,16 +105,14 @@ class Wrapper: public QObject
 
   private:
     void mainLoop();
+    void redrawEverything();
+    int computeDelaySleeptime();
 
     TextView *textView;
     InputBar *inputBar;
 
-    int argc;
-    char **argv;
     QTimer *delayTimer;
     QObject *m_parent;         // MainWindow
-    WrapperThreader *thread; // Powwow thread
-    bool threaded;
 };
 
 #else

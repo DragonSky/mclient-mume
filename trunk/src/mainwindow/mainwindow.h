@@ -32,6 +32,7 @@ class TextView;
 class Wrapper;
 class ObjectEditor;
 class ConfigDialog;
+class ProfileDialog;
 
 class MainWindow:public QMainWindow
 {
@@ -49,8 +50,10 @@ class MainWindow:public QMainWindow
     void open();
     bool save();
     bool saveAs();
-    void about();
+    void aboutmClient();
+    void aboutPowwow();
     void documentWasModified();
+    void help();
 
     void editObjects();
     void changeConfiguration();
@@ -70,7 +73,9 @@ class MainWindow:public QMainWindow
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 
-    ConfigDialog *configDialog;
+    void selectProfile();
+
+    ProfileDialog *profileDialog;
     ObjectEditor *objectEditor;
     Wrapper *wrapper;
     TextView *textView;
@@ -91,7 +96,9 @@ class MainWindow:public QMainWindow
     QAction *cutAct;
     QAction *copyAct;
     QAction *pasteAct;
-    QAction *aboutAct;
+    QAction *helpAct;
+    QAction *aboutmClientAct;
+    QAction *aboutPowwowAct;
     QAction *aboutQtAct;
 
     QAction *objectAct;

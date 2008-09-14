@@ -19,7 +19,6 @@ int startPowwow(Wrapper *wrapper, int argc, char **argv);
 void exec_delays         __P ((void));
 void prompt_reset_iac    __P ((void));
 void get_remote_input    __P ((void));
-void redraw_everything __P0 (void);
 #endif
 
 /* shared functions from main.c */

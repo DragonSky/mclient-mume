@@ -43,12 +43,8 @@ extern "C" void mainloop() {}
 extern "C" void wrapper_debug(const char *format, ...);
 extern "C" void wrapper_toggle_echo() { wrapper->toggleEcho(); };
 
-void Wrapper::toggleEcho() { emit toggleEchoMode(); }
-
 /* utils.c */
 extern "C" void wrapper_quit() { wrapper->wrapperQuit(); };
-
-void suspend_powwow() { wrapper->writeToStdout("Error, QtPowwow not suspendable."); }
 
 /* main.c
  * The select() mainloop has been replaced by QTimer and
@@ -62,7 +58,7 @@ void Wrapper::mainLoop() {
   exec_delays();
 
   tcp_flush();
-  redraw_everything();
+  redrawEverything();
   prompt_reset_iac();
 
   delayTimer->start(sleeptime);
@@ -83,6 +79,24 @@ int Wrapper::computeDelaySleeptime() {
     return 10 * mSEC_PER_SEC;
 
   return sleeptime;
+}
+
+void Wrapper::redrawEverything() {
+  if (prompt_status == 1 && line_status == 0)
+    line_status = 1;
+  if (prompt_status == 1)
+    draw_prompt();
+  else if (prompt_status == -1) {
+    promptzero();
+    col0 = surely_isprompt = '\0';
+  }
+  if (line_status == 1) {  // InputBar needs to updated to the internal buffer
+      //qDebug("updating inputbar: %s %d", edbuf, edlen);
+      //emit inputClear();
+      //emit inputInsertText(edbuf);
+      //edlen = 0;
+      line_status = 0;
+  }
 }
 
 /* A socket has gotten input, signal the main loop */
@@ -122,7 +136,7 @@ void Wrapper::getUserBind(QString input) {
   keynode *p;
 
   for (p = keydefs; (p && (p->seqlen < input.length() || 
-       memcmp(input.toAscii().constData(), p->sequence, input.length())));
+       memcmp(input.toAscii().constData(), p->sequence, input.length()))) ;
        p = p->next);
 
   if (!p) {
@@ -167,13 +181,13 @@ void Wrapper::getUserInput(QString input) {
   } else {
     /* normal mode (line mode, echo). */
     if (n >= BUFSIZE) n = BUFSIZE - 1;
-    memmove(edbuf, input.toAscii().constData(), n);
+    memmove(edbuf, input.toAscii().data(), n);
     edlen = n;
     pos = n;
     edbuf[edlen] = '\0';
     last_edit_cmd = (function_any)enter_line;
     if (line_status == 0)
-      tty_printf("%s", input.toAscii().constData());
+      tty_printf("%s", edbuf);
     enter_line("dummy");
   }
 
@@ -188,29 +202,8 @@ void Wrapper::getUserInput(QString input) {
 
 /* Objects */
 
-WrapperThreader::WrapperThreader(Wrapper* wrapper):
-    wrapper(wrapper)
-{
-  qDebug("WrapperThreader Created");
-}
-
-WrapperThreader::~WrapperThreader()
-{
-  if (wrapper)
-    delete wrapper;
-}
-
-void WrapperThreader::run() {
-  try {
-    qDebug("Powwow Started");
-    exec();
-  } catch (char const * error) {
-    throw error;
-  }
-}
-
-void Wrapper::start() {
-  thread->start();
+void Wrapper::start(int argc, char** argv) {
+  //thread->start();
   startPowwow(this, argc, argv);
   if (argc > 2) {
     tcp_open("main", (*initstr ? initstr : NULL), argv[argc - 2], atoi(argv[argc - 1]));
@@ -218,15 +211,11 @@ void Wrapper::start() {
   delayTimer->start(1000);
 }
 
-
-Wrapper::Wrapper(int c, char **v, InputBar *ib, TextView *tv, QObject *parent): QObject(NULL)
+Wrapper::Wrapper(InputBar *ib, TextView *tv, QObject *parent): QObject(NULL)
 {
   m_parent = parent;
   textView = tv;
   inputBar = ib;
-  argc = c;
-  argv = v;
-  thread = new WrapperThreader(this);
 
   qDebug("Wrapper Started");
 

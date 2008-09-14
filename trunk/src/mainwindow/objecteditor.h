@@ -25,9 +25,6 @@
 
 enum TabIndexName   { TAB_ALIAS = 0, TAB_ACTION, TAB_GROUP, TAB_VAR, TAB_MARK, TAB_BIND };
 
-#define COMPLETE_REBUILD true
-#define UPDATE false
-
 class Wrapper;
 
 class ObjectEditor : public QDialog, public Ui::ObjectEditor
@@ -45,20 +42,21 @@ class ObjectEditor : public QDialog, public Ui::ObjectEditor
     void loadMarkTab();
     void loadBindTab();
 
+    QPushButton *importButton;
     Wrapper* wrapper;
     QHash<QString, bool> groupHash;
-    QHash<QString, QTreeWidgetItem*> aliasGroupHash, actionGroupHash; // contains group items
-    QHash<QTreeWidgetItem*, aliasnode*> aliasHash;
-    QHash<QTreeWidgetItem*, actionnode*> actionHash;
+    //QHash<QString, QTreeWidgetItem*> actionGroupHash; // contains group items
     //QHash<QString, QString> variableStringHash, variableIntegerHash;
-    QHash<QTreeWidgetItem*, keynode*> bindHash;
-    QHash<QTreeWidgetItem*, marknode*> markHash;
+    //QHash<QTreeWidgetItem*, keynode*> bindHash;
+    //QHash<QTreeWidgetItem*, marknode*> markHash;
 
     bool addingNewAlias, addingNewAction, addingNewGroup, addingNewVariable, addingNewMark;
 
     QTreeWidgetItem* addAliasNode(aliasnode*);
     bool isCurrentAlias(const char*);
     void updateAliasTable();
+    void updateAliasTableCreate();
+    void updateAliasTableEdit();
     void deleteAlias(QTreeWidgetItem*);
 
     QTreeWidgetItem* addActionNode(actionnode*);
@@ -67,7 +65,7 @@ class ObjectEditor : public QDialog, public Ui::ObjectEditor
     void deleteAction(QTreeWidgetItem*);
     void toggleAction(bool);
 
-    void updateVariableTable(bool completeRebuild);
+    void updateVariableTable();
     void deleteVariable(QTreeWidgetItem*);
 
     bool isCurrentMark(const char*);
@@ -75,7 +73,10 @@ class ObjectEditor : public QDialog, public Ui::ObjectEditor
 
   private slots:
     void tabChanged(int);
-    void buttonBoxClicked(QAbstractButton *);
+    void importClicked();
+    void helpClicked();
+    void saveClicked();
+    void closeClicked();
 
     void aliasAddClicked();
     void aliasRemoveClicked();

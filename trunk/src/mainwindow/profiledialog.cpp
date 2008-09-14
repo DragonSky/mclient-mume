@@ -14,22 +14,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "wrapper_cmd.h"
-#include "wrapper.h"
+#include "profiledialog.h"
 
-#include "keybinder.h"
+/* Objects */
 
-void suspend_powwow() {}
+ProfileDialog::ProfileDialog(QWidget*parent) : QDialog(parent)
+{
+  setupUi(this);
 
-int wrapper_get_keybind(char *seq) { return wrapper->getKeyBind(seq); }
+  QGraphicsScene *scene = new QGraphicsScene();
+  scene->addPixmap(QPixmap(":/images/mclient.png"));
+  profilePicture->setScene(scene);
+  profilePicture->show();
+  playButton->setFocus();
 
-int Wrapper::getKeyBind(char *seq) {
-  QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)m_parent);
-  if (dlg->exec()) {
-    strcpy(seq, sequence.toAscii().constData());
-  }
-  delete dlg;
-  return strlen(seq);
+  treeWidget->setHeaderLabels(QStringList() << tr("Profile"));
+
 }
+
+ProfileDialog::~ProfileDialog() {}
 
