@@ -1320,7 +1320,7 @@ static void cmd_exe __P1 (char *,arg)
     long offset, start, end, i = 1;
     FILE *fp;
     ptr pbuf = (ptr)0;
-    
+
     arg = redirect(arg, &pbuf, &kind, "exe", 0, &start, &end);
     if (REAL_ERROR || !arg)
 	return;

@@ -19,7 +19,7 @@
 
 #include "keybinder.h"
 
-bool KeyBinder::isAcceptableKey(QKeyEvent* ke) {
+bool isAcceptableKey(QKeyEvent* ke) {
   switch (ke->modifiers()) {
 
     case Qt::NoModifier:
@@ -47,9 +47,9 @@ bool KeyBinder::isAcceptableKey(QKeyEvent* ke) {
       };
       break;
 
-    case Qt::ControlModifier:
-    case Qt::AltModifier:
-    case Qt::MetaModifier:
+    case Qt::ControlModifier: if (ke->key() == Qt::Key_Control) break;
+    case Qt::AltModifier: if (ke->key() == Qt::Key_Alt) break;
+    case Qt::MetaModifier: if (ke->key() == Qt::Key_Meta) break;
     case Qt::ControlModifier ^ Qt::KeypadModifier:
     case Qt::AltModifier ^ Qt::KeypadModifier:
     case Qt::MetaModifier ^ Qt::KeypadModifier:
@@ -89,24 +89,33 @@ bool KeyBinder::isAcceptableKey(QKeyEvent* ke) {
   return false;
 }
 
-QString KeyBinder::generateKeyCodeSequence(QKeyEvent *ke) {
+QString generateKeyCodeSequence(QKeyEvent *ke) {
   char *seq = (char*)malloc(20);
-  int len = 0;
-  seq[len++] = 27;
+  int len = 0, key = ke->key();
 
   const Qt::KeyboardModifiers modifiers = ke->modifiers();
+
+  if (key > Qt::Key_Escape) 
+  {
+    seq[len++] = 27;
+    seq[len++] = '[';
+    key = ke->key() % 0x01000000;
+  }
+
   if (modifiers & Qt::ControlModifier) seq[len++] = Qt::Key_Control;
   if (modifiers & Qt::AltModifier) seq[len++] = Qt::Key_Alt;
   if (modifiers & Qt::MetaModifier) seq[len++] = Qt::Key_Meta;
   if (modifiers & Qt::KeypadModifier) seq[len++] = Qt::Key_NumLock;
-  seq[len++] = (char)ke->key();
+  seq[len++] = (char)key;
   seq[len] = '\0';
 
   QString keyResult(seq);
 
+  int cnt = 0;
   char ch;
-  QString out, tmp;
+  QString out, tmp, ls;
   while (len--) {
+    ls += QString("%1, ").arg((int)keyResult.at(cnt++).toAscii());
     ch = *(seq++);
     if (ch == '\033') {
       out += "esc ";
@@ -125,12 +134,12 @@ QString KeyBinder::generateKeyCodeSequence(QKeyEvent *ke) {
     else
       out += tmp.sprintf("%c ", ch);
   }
-  qDebug("%s (%d)", (const char*)out.toAscii(), ke->key());
+  qDebug("%s (%s) (%s/%d)", out.toAscii().constData(), ls.toAscii().constData(), ke->text().toAscii().data(), ke->key());
 
   return keyResult;
 }
 
-QString KeyBinder::generateSequenceText(QString sequence) {
+QString generateSequenceText(QString sequence) {
   char *seq = (char*)malloc(20);
   sprintf(seq, "%s", sequence.toAscii().data());
   int len = strlen(seq);
@@ -183,9 +192,6 @@ bool KeyBinder::event(QEvent *event)
 }
 
 /* Objects */
-
-KeyBinder::KeyBinder()
-{}
 
 KeyBinder::KeyBinder(QString label, QString &s, QWidget*parent) : QDialog(parent)
 {

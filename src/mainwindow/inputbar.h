@@ -35,22 +35,14 @@ class InputBar : public QLineEdit
     void mergeInputWrapper(QString, int);
 
   private:
-    void transposeCharacters();
-    void transposeWords();
-    void getNextLine();
-    void getPreviousLine();
-    void completeWord();
-    void completeLine();
-    void uppercaseWord();
-    void lowercaseWord();
-
-    void emitFakeKey(QKeyEvent *);
+    bool emitFakeKey(QKeyEvent *);
 
   public slots:
     void toggleEchoMode();
     void inputInsertText(QString);
     void inputMoveTo(int new_pos);
     void inputDeleteChars(int num);
+    void inputClear();
 };
 
 #endif /* _INPUTBAR_H_ */

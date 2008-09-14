@@ -23,19 +23,4 @@ extern "C" int wrapper_get_keybind(char *seq);
 
 class Wrapper;
 
-/*
-class WrapperKeyBinder : public QDialog
-{
-  Q_OBJECT
-
-  public:
-    WrapperKeyBinder(char *, QObject* parent);
-    virtual ~WrapperKeyBinder();
-    
-    char *seq;
-
-    bool event(QEvent *event);
-};
-*/
-
 #endif /* _WRAPPER_CMD_H */

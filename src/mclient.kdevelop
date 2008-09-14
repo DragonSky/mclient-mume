@@ -13,8 +13,8 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
-    <defaultencoding></defaultencoding>
+    <description/>
+    <defaultencoding/>
   </general>
   <kdevfileview>
     <groups>
@@ -22,7 +22,13 @@
       <group pattern="*.ui" name="User Interface" />
       <group pattern="*.png" name="Icons" />
       <group pattern="*" name="Others" />
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonlocation>false</hidenonlocation>
     </groups>
+    <tree>
+      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+    </tree>
   </kdevfileview>
   <kdevdoctreeview>
     <ignoretocs>
@@ -64,11 +70,11 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
-      <gdbpath></gdbpath>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <dbgshell/>
+      <gdbpath>/home/nschimme/src/mclient-mume/bin/debug/mclient</gdbpath>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -88,7 +94,7 @@
       <designerintegration>ExternalDesigner</designerintegration>
       <root>/usr/lib/qt4</root>
       <qmake>/usr/bin/qmake-qt4</qmake>
-      <designer>/usr/bin/designer-qt4</designer>
+      <designer></designer>
       <designerpluginpaths/>
     </qt>
     <codecompletion>
@@ -115,7 +121,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -127,6 +133,7 @@
       <synchronize>true</synchronize>
       <orientation>Vertical</orientation>
     </splitheadersource>
+    <references/>
   </kdevcppsupport>
   <kdevfilecreate>
     <useglobaltypes>
@@ -142,23 +149,32 @@
     </general>
     <run>
       <directoryradio>executable</directoryradio>
-      <mainprogram>../build/release/mclient</mainprogram>
-      <programargs>mume.org 23</programargs>
-      <globaldebugarguments></globaldebugarguments>
-      <globalcwd>.</globalcwd>
+      <mainprogram>/home/nschimme/src/mclient-mume/bin/debug/mclient</mainprogram>
+      <programargs>qtconfig.pow mume.org 23</programargs>
+      <globaldebugarguments/>
+      <globalcwd>/home/nschimme/powwow</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
       <envvars/>
+      <runarguments>
+        <mclient/>
+      </runarguments>
+      <cwd>
+        <mclient>/home/nschimme/src/mclient-mume/src/../bin</mclient>
+      </cwd>
+      <debugarguments>
+        <mclient/>
+      </debugarguments>
     </run>
     <make>
       <abortonerror>true</abortonerror>
       <runmultiplejobs>false</runmultiplejobs>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <prio>0</prio>
       <envvars/>
     </make>

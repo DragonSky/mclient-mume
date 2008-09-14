@@ -496,11 +496,7 @@ static void printmotd __P0 (void)
 }
 #endif
 
-#ifdef QTPOWWOW
-void redraw_everything __P0 (void)
-#else
 static void redraw_everything __P0 (void)
-#endif
 {
     if (prompt_status == 1 && line_status == 0)
 	line_status = 1;
@@ -510,10 +506,8 @@ static void redraw_everything __P0 (void)
 	promptzero();
 	col0 = surely_isprompt = '\0';
     }
-#ifndef QTPOWWOW
     if (line_status == 1)
 	draw_input_line();
-#endif
 }
 
 /* how much can we sleep in select() ? */

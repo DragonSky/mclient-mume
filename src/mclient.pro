@@ -25,7 +25,8 @@ SOURCES += main.cpp \
            ./configuration/generalpage.cpp \
            ./configuration/ansicombo.cpp \
            ./configuration/colorfontpage.cpp \
-           ./mainwindow/keybinder.cpp
+           ./mainwindow/keybinder.cpp \
+           ./mainwindow/profiledialog.cpp
 HEADERS += ./mainwindow/mainwindow.h \
            ./mainwindow/textview.h \
            ./wrapper/wrapper.h \
@@ -55,23 +56,29 @@ HEADERS += ./mainwindow/mainwindow.h \
            ./configuration/generalpage.h \
            ./configuration/ansicombo.h \
            ./configuration/colorfontpage.h \
-           ./ mainwindow/keybinder.h
+           ./mainwindow/keybinder.h \
+           ./mainwindow/profiledialog.h
 TEMPLATE = app
-FORMS += ./mainwindow/objecteditor.ui ./configuration/generalpage.ui ./configuration/colorfontpage.ui ./mainwindow/keybinder.ui
+FORMS += ./mainwindow/objecteditor.ui \
+         ./configuration/generalpage.ui \
+         ./configuration/colorfontpage.ui \
+         ./mainwindow/keybinder.ui \
+         ./mainwindow/profiledialog.ui
 QT += network gui
 CONFIG += warn_on \
           thread \
           qt \
           network
+CONFIG -= release
+CONFIG += debug
 TARGET = mclient
 INCLUDEPATH += . ./mainwindow ./powwow ./win32 ./wrapper ./configuration
 macx : LIBS += 
 win32 : LIBS += -llibgnurx
-unix : LIBS += -lm -Wall -W -pedantic
+unix : LIBS += -lm -W -Wall -O -pedantic
 DEPENDPATH += .
 DEFINES += USE_REGEXP=1 QTPOWWOW=1 VERSION=\\\"1.2.13\\\"
 RESOURCES = resources/application.qrc
-RCC_DIR = ../build/resources
 UI_DIR = ../build/ui
 MOC_DIR = ../build/moc
 debug {
@@ -82,5 +89,4 @@ release {
     DESTDIR = ../bin/release
     OBJECTS_DIR = ../build/release-obj
 }
-
 

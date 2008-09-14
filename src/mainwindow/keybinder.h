@@ -20,21 +20,21 @@
 #include <QDialog>
 #include "ui_keybinder.h"
 
+bool isAcceptableKey(QKeyEvent* ke);
+QString generateKeyCodeSequence(QKeyEvent *ke);
+QString generateSequenceText(QString sequence);
+
 class KeyBinder : public QDialog, public Ui::KeyBinder
 {
   Q_OBJECT
 
   public:
     KeyBinder(QString, QString&, QWidget* parent);
-    KeyBinder();
     virtual ~KeyBinder();
 
     QString *seq;
 
     bool event(QEvent *event);
-    bool isAcceptableKey(QKeyEvent* ke);
-    QString generateKeyCodeSequence(QKeyEvent *ke);
-    QString generateSequenceText(QString sequence);
 };
 
 
