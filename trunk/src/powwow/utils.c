@@ -654,7 +654,7 @@ char *split_first_word __P3 (char *,dst, int,dstlen, char *,src)
     return tmp;
 }
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 static void sig_pipe_handler __P1 (int,signum)
 {
     tty_puts("\n#broken pipe.\n");
@@ -849,7 +849,7 @@ void syserr __P1 (char *,msg)
     tty_puts("#settings NOT saved to file.\n");
 #endif
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     tty_quit();
 #endif
     exit(1);
@@ -1312,7 +1312,7 @@ void exit_powwow __P0 (void)
     if (moviefile)   fclose(moviefile);
     (void)save_settings();
     show_stat();
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     tty_quit();
     exit(0);
 #else

@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 void wrapper_cmd_var            __P ((char *arg));
 #endif
 

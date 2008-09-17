@@ -34,7 +34,7 @@ TextView::TextView(QLineEdit *lineEdit, QWidget *parent) : QTextEdit(parent)
   setReadOnly(true);
   setOverwriteMode(true);
   setUndoRedoEnabled(false);
-  setDocumentTitle("QtPowwow");
+  setDocumentTitle("mClient");
   setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
   setTabChangesFocus(false);
   setFocusProxy(lineEdit);

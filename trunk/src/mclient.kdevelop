@@ -13,8 +13,8 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
-    <defaultencoding/>
+    <description></description>
+    <defaultencoding></defaultencoding>
   </general>
   <kdevfileview>
     <groups>
@@ -70,11 +70,11 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
+      <dbgshell></dbgshell>
       <gdbpath>/home/nschimme/src/mclient-mume/bin/debug/mclient</gdbpath>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -94,7 +94,7 @@
       <designerintegration>ExternalDesigner</designerintegration>
       <root>/usr/lib/qt4</root>
       <qmake>/usr/bin/qmake-qt4</qmake>
-      <designer></designer>
+      <designer>/usr/bin/designer-qt4</designer>
       <designerpluginpaths/>
     </qt>
     <codecompletion>
@@ -121,7 +121,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -150,8 +150,8 @@
     <run>
       <directoryradio>executable</directoryradio>
       <mainprogram>/home/nschimme/src/mclient-mume/bin/debug/mclient</mainprogram>
-      <programargs>qtconfig.pow mume.org 23</programargs>
-      <globaldebugarguments/>
+      <programargs></programargs>
+      <globaldebugarguments></globaldebugarguments>
       <globalcwd>/home/nschimme/powwow</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <terminal>false</terminal>
@@ -174,7 +174,7 @@
       <runmultiplejobs>false</runmultiplejobs>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <prio>0</prio>
       <envvars/>
     </make>
@@ -193,4 +193,11 @@
       <implementationsuffix>.cpp</implementationsuffix>
     </filetemplates>
   </cppsupportpart>
+  <kdevdocumentation>
+    <projectdoc>
+      <docsystem/>
+      <docurl/>
+      <usermanualurl/>
+    </projectdoc>
+  </kdevdocumentation>
 </kdevelop>

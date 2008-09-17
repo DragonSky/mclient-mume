@@ -21,6 +21,7 @@
 #include "wrapper.h"
 #include "wrapper_tcp.h"
 #include "wrapper_process.h"
+#include "wrapper_profile.h"
 #include "wrapper_tty.h"
 #include "wrapper_cmd.h"
 
@@ -203,17 +204,34 @@ void Wrapper::getUserInput(QString input) {
 /* Objects */
 
 void Wrapper::start(int argc, char** argv) {
-  //thread->start();
+  /*
+  void Wrapper::start(QStringList args) {
+  // create "old" arguments
+  int argc = args.size();
+  char **argv = (char**) malloc(argc * sizeof(char*)); // TODO: free?
+  for (int i = 0; i < argc; ++i) {
+    argv[i] = (char*) malloc(args.at(i).length() * sizeof(char*));
+    strcpy(argv[i], args.at(i).toAscii().data());
+  }
   startPowwow(this, argc, argv);
   if (argc > 2) {
-    tcp_open("main", (*initstr ? initstr : NULL), argv[argc - 2], atoi(argv[argc - 1]));
-  }
+  tcp_open("main", (*initstr ? initstr : NULL), args.at(argc - 2).toAscii().data(), args.at(argc - 1).toInt());
+  */
+  startPowwow(this, argc, argv);
   delayTimer->start(1000);
 }
+    /*
 
-Wrapper::Wrapper(InputBar *ib, TextView *tv, QObject *parent): QObject(NULL)
+void Wrapper::loadProfile(QString profile) {
+  if (argc > 2) {
+  tcp_open("main", (*initstr ? initstr : NULL), argv[argc - 2], atoi(argv[argc - 1]));
+}
+}
+    */
+
+Wrapper::Wrapper(InputBar *ib, TextView *tv, QObject *p): QObject(NULL)
 {
-  m_parent = parent;
+  parent = p;
   textView = tv;
   inputBar = ib;
 

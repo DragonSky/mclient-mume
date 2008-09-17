@@ -16,7 +16,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <errno.h>
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/socket.h>
@@ -38,7 +38,7 @@
 #  include "client.h"
 #endif
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 # include "wrapper.h"
 #endif
 
@@ -70,7 +70,7 @@ connsess conn_list[MAX_CONNECTS];    /* connection list */
 
 byte conn_table[MAX_FDSCAN];         /* fd -> index translation table */
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 fd_set fdset;                   /* set of descriptors to select() on */
 #endif
 
@@ -96,7 +96,7 @@ static void dosubopt __P1 (byte *,str)
                     256-7, term, IAC, SE);      /* 0 == IS */
             
             len = strlen(term) + 6;
-#ifndef QTPOWWOW
+#ifndef MCLIENT
             while ((err = write(tcp_fd, buf, len)) < 0 && errno == EINTR);
 #else
             err = wrapper_tcp_write(tcp_fd, buf, len);
@@ -122,7 +122,7 @@ static void sendopt __P2 (byte,what, byte,opt)
     int i;
     buf[1] = what; buf[2] = opt;
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     while ((i = write(tcp_fd, buf, 3)) < 0 && errno == EINTR);
 #else
     i = wrapper_tcp_write(tcp_fd, buf, 3);
@@ -140,7 +140,7 @@ static void sendopt __P2 (byte,what, byte,opt)
 #endif
 }
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 /*
  * connect to remote host
  * Warning: some voodoo code here
@@ -328,7 +328,7 @@ int tcp_read __P3 (int,fd, char *,buffer, int,maxsize)
   static int subchars;
   byte *p, *s, *linestart;
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
   while ((i = read(fd, buffer, maxsize)) < 0 && errno == EINTR);
 #else
   i = wrapper_tcp_read(fd, buffer, maxsize);
@@ -455,7 +455,7 @@ int tcp_read __P3 (int,fd, char *,buffer, int,maxsize)
                  * subsidiary connection password entries to block anything
                  * in the main connection
                  */
-#ifdef QTPOWWOW
+#ifdef MCLIENT
                 wrapper_toggle_echo();
 #endif
                 if (fd == tcp_main_fd)
@@ -465,7 +465,7 @@ int tcp_read __P3 (int,fd, char *,buffer, int,maxsize)
              case TELOPT_SGA:
                 /* this can't hurt */
                 linemode |= LM_CHAR;
-#ifndef QTPOWWOW
+#ifndef MCLIENT
                 tty_special_keys();
 #endif
                 sendopt(DO, *s);
@@ -484,7 +484,7 @@ int tcp_read __P3 (int,fd, char *,buffer, int,maxsize)
 #endif
             if (*s == TELOPT_ECHO) {
                 /* host no longer echoes, we do it instead */
-#ifdef QTPOWWOW
+#ifdef MCLIENT
               wrapper_toggle_echo();
 #endif
                 linemode &= ~LM_NOECHO;
@@ -501,7 +501,7 @@ int tcp_read __P3 (int,fd, char *,buffer, int,maxsize)
             switch(*s) {
              case TELOPT_SGA:
                 linemode |= LM_CHAR;
-#ifndef QTPOWWOW
+#ifndef MCLIENT
                 tty_special_keys();
 #endif
                 /* FALLTHROUGH */
@@ -526,7 +526,7 @@ int tcp_read __P3 (int,fd, char *,buffer, int,maxsize)
 #endif
             if (*s == TELOPT_SGA) {
                 linemode &= ~LM_CHAR;
-#ifndef QTPOWWOW
+#ifndef MCLIENT
                 tty_special_keys();
 #endif
             }
@@ -575,7 +575,7 @@ void tcp_raw_write __P3 (int,fd, char *,data, int,len)
     int i;
     tcp_flush();
     while (len > 0) {
-#ifndef QTPOWWOW
+#ifndef MCLIENT
         while ((i = write(fd, data, len)) < 0 && errno == EINTR);
 #else
         i = wrapper_tcp_write(fd, data, len);
@@ -711,7 +711,7 @@ void tcp_flush __P0 (void)
         return;
     
     while (output_len) {
-#ifndef QTPOWWOW
+#ifndef MCLIENT
         while ((n = write(output_socket, p, output_len)) < 0 && errno == EINTR);
 #else
         n = wrapper_tcp_write(output_socket, p, output_len);
@@ -790,7 +790,7 @@ void tcp_set_main __P1 (int,fd)
     tcp_main_fd = fd;
     if (linemode & LM_CHAR) {
       linemode = 0;
-#ifndef QTPOWWOW
+#ifndef MCLIENT
       tty_special_keys();
 #endif
     }
@@ -836,7 +836,7 @@ void tcp_open __P4 (char *,id, char *,initstring, char *,host, int,port)
         return;
     }
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     /* dial the number by moving the right index in small circles */
     if ((newtcp_fd = tcp_connect(host, port)) < 0) {
         free(CONN_INDEX(i).host);
@@ -874,7 +874,7 @@ void wrapper_tcp_connect_slot __P4 (char *,initstring, int,port, int,i, int,newt
     if (conn_max_index <= i)
         conn_max_index = i+1;
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     FD_SET(newtcp_fd, &fdset);          /* add socket to select() set */
 #else
     wrapper_tcp_assign_id(CONN_INDEX(i).fd, CONN_INDEX(i).id);
@@ -917,10 +917,10 @@ void tcp_close __P1 (char *,id)
     } else
         sfd = tcp_fd;  /* connection closed by remote host */
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     shutdown(sfd, 2);
     close(sfd);
-#endif QTPOWWOW
+#endif MCLIENT
 
     abort_edit_fd(sfd);
     
@@ -953,7 +953,7 @@ void tcp_close __P1 (char *,id)
     if (tcp_fd == sfd)
         tcp_fd = -1; /* no further I/O allowed on sfd, as we just closed it */
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     FD_CLR(sfd, &fdset);
 #else
     wrapper_tcp_close_socket(sfd);
@@ -1008,7 +1008,7 @@ void tcp_togglesnoop __P1 (char *,id)
     }
 }
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 void tcp_spawn __P2 (char *,id, char *,cmd)
 {
     int i, childpid, sockets[2];

@@ -7,6 +7,7 @@
       <file>editpaste.xpm</file>
       <file>filesave.xpm</file>
       <file>icons/page.png</file>
+      <file>icons/m.png</file>
       <file>images/mclient.png</file>
 </qresource>
 </RCC>

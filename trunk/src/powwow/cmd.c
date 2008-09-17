@@ -474,7 +474,7 @@ static void cmd_clear __P1 (char *,arg)
     }
 }
 
-#if !defined(NO_SHELL) && !defined(QTPOWWOW)
+#if !defined(NO_SHELL) && !defined(MCLIENT)
 static void cmd_shell __P1 (char *,arg)
 {
     if (!*arg) {
@@ -1539,7 +1539,7 @@ write_cleanup2:
     ptrdel(p2);
 }
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 void wrapper_cmd_var __P1 (char *,arg) {
   cmd_var(arg);
 }

@@ -22,7 +22,7 @@
 #define EPOCHFILETIME (116444736000000000LL)
 #endif
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 struct timeval {
     long tv_sec;        /* seconds */
     long tv_usec;  /* microseconds */

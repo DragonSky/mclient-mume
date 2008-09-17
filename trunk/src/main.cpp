@@ -25,13 +25,14 @@ int main(int argc, char *argv[])
       QApplication app(argc, argv);
       Config().read();
       MainWindow * mw = new MainWindow(argc, argv);
+
       /*
       if (Config().m_autoLoadWorld && Config().m_autoLoadFileName!="")
       {
         mw.loadFile(Config().m_autoLoadFileName);
       }
       */
-      mw->show();
+      //mw->show();
       int ret = app.exec();
       Config().write();
       return ret;

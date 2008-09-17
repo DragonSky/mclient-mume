@@ -20,6 +20,8 @@
 #include <QDialog>
 #include "ui_profiledialog.h"
 
+class ProfileManagerDialog;
+
 class ProfileDialog : public QDialog, public Ui::ProfileDialog
 {
   Q_OBJECT
@@ -27,6 +29,25 @@ class ProfileDialog : public QDialog, public Ui::ProfileDialog
   public:
     ProfileDialog(QWidget* parent);
     virtual ~ProfileDialog();
+
+    QString selectedProfile();
+
+  private:
+    ProfileManagerDialog *dialog;
+
+    /** Create the Default "Quick Connect" MUME Profile */
+    void createDefaultProfile();
+
+  signals:
+    void profileSelected();
+
+  private slots:
+    void playClicked();
+    void profileClicked();
+    void relayLoadProfile(const QString&);
+    void doubleClicked(const QModelIndex &index);
+    void selectionChanged(const QItemSelection &index);
+
 };
 
-#endif /* _PROFILEDIALOG_CMD_H */
+#endif /* _PROFILEDIALOG_H */

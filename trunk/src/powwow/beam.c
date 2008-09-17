@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 #include <sys/wait.h>
 #include <unistd.h>
 #endif
@@ -140,7 +140,7 @@ void abort_edit_fd __P1 (int,fd)
 	if (p->fd != fd)
 	    continue;
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 	if (kill(p->pid, SIGKILL) < 0) {       /* Editicide */
 #else
         if (wrapper_kill_process(p->pid)) {
@@ -163,7 +163,7 @@ void cancel_edit __P1 (editsess *,sp)
     char buf[BUFSIZE];
     char keystr[16];
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     if (kill(sp->pid, SIGKILL) < 0) {       /* Editicide */
 #else
     if (wrapper_kill_process(sp->pid)) {
@@ -182,7 +182,7 @@ void cancel_edit __P1 (editsess *,sp)
  * send back edited text to server, or cancel the editing session if the
  * file was not changed.
  */
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 static void finish_edit __P1 (editsess *,sp)
 #else
 void finish_edit __P1 (editsess *,sp)
@@ -338,7 +338,7 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
     }
     text[i++] = '\0';
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     sprintf(tmpname, "/tmp/powwow.%u.%d%d", key, getpid(), abs(rand()) >> 8);
 #else
     wrapper_generate_tmpfile(tmpname, key, getpid(), abs(rand()) >> 8);
@@ -383,7 +383,7 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
 #ifdef _WIN32
             editor = "notepad";
 #else
-#  ifdef QTPOWWOW
+#  ifdef MCLIENT
 	    editor = "emacs";
 #  else
             editor = "more";
@@ -404,7 +404,7 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
     } else
 	waitforeditor = 1;
     
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     if (waitforeditor) {
 	tty_quit();
 	/* ignore SIGINT since interrupting the child would interrupt us too,
@@ -441,7 +441,7 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
 	while ((i = waitpid(childpid, (int*)NULL, 0)) == -1 && errno == EINTR)
 	    ;
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 	signal_start();		/* reset SIGINT and SIGCHLD handlers */
 	tty_start();
 #endif
@@ -473,7 +473,7 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
 
 }
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 /*
  * Our child has snuffed it. check if it was an editor, and update the
  * session list if that is the case.

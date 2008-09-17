@@ -19,7 +19,7 @@ extern "C" {
 
 #define memzero(a,b)	memset((a), 0, (b))
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 #define get_random rand
 #define init_random srand
 #else

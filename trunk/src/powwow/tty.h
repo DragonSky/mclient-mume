@@ -43,7 +43,7 @@ void input_overtype_follow		__P ((char c));
 void input_insert_follow_chars		__P ((char *str, int n));
 void input_moveto			__P ((int new_pos));
 
-#if !defined(USE_LOCALE) && !defined(QTPOWWOW)
+#if !defined(USE_LOCALE) && !defined(MCLIENT)
 
 #define tty_puts(s) fputs((s), stdout)
 /* printf("%s", (s)); would be as good */
