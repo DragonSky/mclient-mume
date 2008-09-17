@@ -17,7 +17,7 @@
 #ifndef _WRAPPER_H_
 #define _WRAPPER_H_
 
-/*   This file is loaded by Powwow C and the QtPowwow C++
+/*   This file is loaded by Powwow C and the mClient C++
  *   As such we need to make sure its cross-compatible.
  */
 
@@ -86,6 +86,8 @@ class Wrapper: public QObject
 
     /* other */
     void wrapperQuit() { emit close(); }
+    void loadProfile(QString &profile);
+
 
   signals:
     void addText(QString&);  // to TextView
@@ -96,6 +98,7 @@ class Wrapper: public QObject
     void inputDeleteChars(int);
     void inputClear();
     void close();            // to MainWindow
+    void setCurrentProfile(const QString&);
 
   private slots:
     void delayTimerExpired(); // used for exec_delays
@@ -112,7 +115,7 @@ class Wrapper: public QObject
     InputBar *inputBar;
 
     QTimer *delayTimer;
-    QObject *m_parent;         // MainWindow
+    QObject *parent;         // MainWindow
 };
 
 #else

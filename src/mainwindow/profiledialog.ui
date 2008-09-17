@@ -13,7 +13,7 @@
    <string>mClient Profiles</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2" >
-   <item rowspan="2" row="0" column="0" >
+   <item rowspan="3" row="0" column="0" >
     <widget class="QGraphicsView" name="profilePicture" >
      <property name="verticalScrollBarPolicy" >
       <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -26,13 +26,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Help</set>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1" >
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
@@ -42,30 +35,31 @@
       <item row="0" column="0" >
        <widget class="QPushButton" name="playButton" >
         <property name="text" >
-         <string>Play</string>
+         <string>&amp;Play</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QPushButton" name="profileButton" >
+        <property name="text" >
+         <string>Profile &amp;Manager</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QTreeWidget" name="treeWidget" >
-        <column>
-         <property name="text" >
-          <string>1</string>
-         </property>
-        </column>
-       </widget>
+       <widget class="QTreeView" name="profileView" />
       </item>
      </layout>
-     <zorder>treeWidget</zorder>
-     <zorder>playButton</zorder>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Help</set>
+     </property>
     </widget>
    </item>
   </layout>
-  <zorder>profilePicture</zorder>
-  <zorder>groupBox</zorder>
-  <zorder>treeWidget</zorder>
-  <zorder>playButton</zorder>
-  <zorder>buttonBox</zorder>
  </widget>
  <resources/>
  <connections>

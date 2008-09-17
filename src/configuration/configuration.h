@@ -44,6 +44,9 @@ class Configuration {
     void setWindowPosition(QPoint pos) {windowPosition = pos; change(); }
     void setWindowSize(QSize size) { windowSize = size; change(); }
 
+    QString profilePath;
+    void setProfilePath(QString str) { profilePath = str; change(); }
+
     QColor blackColor, redColor, greenColor, yellowColor, blueColor, magentaColor;
     QColor cyanColor, grayColor, darkGrayColor, brightRedColor, brightGreenColor;
     QColor brightYellowColor, brightBlueColor, brightMagentaColor, brightCyanColor;

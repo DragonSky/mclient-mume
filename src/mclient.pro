@@ -26,7 +26,12 @@ SOURCES += main.cpp \
            ./configuration/ansicombo.cpp \
            ./configuration/colorfontpage.cpp \
            ./mainwindow/keybinder.cpp \
-           ./mainwindow/profiledialog.cpp
+           ./mainwindow/profiledialog.cpp \
+           ./mainwindow/profilemanagerdialog.cpp \
+           ./mainwindow/profileeditdialog.cpp \
+           ./kmuddy/cprofilemanager.cpp \
+           ./kmuddy/cprofilesettings.cpp \
+ wrapper/wrapper_profile.cpp
 HEADERS += ./mainwindow/mainwindow.h \
            ./mainwindow/textview.h \
            ./wrapper/wrapper.h \
@@ -57,13 +62,20 @@ HEADERS += ./mainwindow/mainwindow.h \
            ./configuration/ansicombo.h \
            ./configuration/colorfontpage.h \
            ./mainwindow/keybinder.h \
-           ./mainwindow/profiledialog.h
+           ./mainwindow/profiledialog.h \
+           ./mainwindow/profilemanagerdialog.h \
+           ./mainwindow/profileeditdialog.h \
+           ./kmuddy/cprofilemanager.cpp \
+           ./kmuddy/cprofilesettings.cpp \
+ wrapper/wrapper_profile.h
 TEMPLATE = app
 FORMS += ./mainwindow/objecteditor.ui \
          ./configuration/generalpage.ui \
          ./configuration/colorfontpage.ui \
          ./mainwindow/keybinder.ui \
-         ./mainwindow/profiledialog.ui
+         ./mainwindow/profiledialog.ui \
+         ./mainwindow/profilemanagerdialog.ui \
+         ./mainwindow/profileeditdialog.ui
 QT += network gui
 CONFIG += warn_on \
           thread \
@@ -72,12 +84,12 @@ CONFIG += warn_on \
 CONFIG -= release
 CONFIG += debug
 TARGET = mclient
-INCLUDEPATH += . ./mainwindow ./powwow ./win32 ./wrapper ./configuration
+INCLUDEPATH += . ./mainwindow ./powwow ./win32 ./wrapper ./configuration ./kmuddy
 macx : LIBS += 
 win32 : LIBS += -llibgnurx
 unix : LIBS += -lm -W -Wall -O -pedantic
 DEPENDPATH += .
-DEFINES += USE_REGEXP=1 QTPOWWOW=1 VERSION=\\\"1.2.13\\\"
+DEFINES += USE_REGEXP=1 MCLIENT=1 VERSION=\\\"1.2.13\\\"
 RESOURCES = resources/application.qrc
 UI_DIR = ../build/ui
 MOC_DIR = ../build/moc

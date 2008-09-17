@@ -14,22 +14,39 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "wrapper_cmd.h"
-#include "wrapper.h"
+#ifndef _PROFILEEDITDIALOG_H
+#define _PROFILEEDITDIALOG_H
 
-#include "keybinder.h"
+#include <QDialog>
+#include "ui_profileeditdialog.h"
 
-void suspend_powwow() {}
+class ProfileEditDialog : public QDialog, public Ui::ProfileEditDialog
+{
+  Q_OBJECT
 
-int wrapper_get_keybind(char *seq) { return wrapper->getKeyBind(seq); }
+  public:
+    ProfileEditDialog(QWidget* parent);
+    virtual ~ProfileEditDialog();
 
-int Wrapper::getKeyBind(char *seq) {
-  QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)parent);
-  if (dlg->exec()) {
-    strcpy(seq, sequence.toAscii().constData());
-  }
-  delete dlg;
-  return strlen(seq);
-}
+  public:
+    /** values in LineEdits */
+    QString name();
+    QString server();
+    int port();
+    QString definitions();
 
+    /** set new values! */
+    void setName(QString name);
+    void setServer(QString server);
+    void setPort(int port);
+    void setDefinitions(QString path);
+
+  signals:
+    void loadClicked();
+
+  private slots:
+    void slotOk();
+    void slotBrowse();
+};
+
+#endif /* _PROFILEEDITDIALOG_H */

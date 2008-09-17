@@ -25,6 +25,10 @@
 
 #include <configuration.h>
 
+#ifdef _WIN32
+#include <stdlib.h> // for getenv()
+#endif
+
 Configuration::Configuration() {
     read();
     configurationChanged = false;
@@ -39,6 +43,16 @@ void Configuration::read()
   windowPosition = conf.value("Window Position", QPoint(200, 200)).toPoint();
   windowSize = conf.value("Window Size", QSize(400, 400)).toSize();
   scrollbackSize = conf.value("Scrollback Size", 20000).toInt();
+  conf.endGroup();
+
+  conf.beginGroup("Profiles");
+#ifdef _WIN32
+  // for Windows
+  profilePath = conf.value("Profile Path", QString(getenv("APPDATA")) + "\\mClient").toString();
+#else
+  // for Linux/Mac
+  profilePath = conf.value("Profile Path", QDir::homePath() + "/.mclient" ).toString();
+#endif
   conf.endGroup();
 
   conf.beginGroup("Colors");
@@ -77,6 +91,10 @@ void Configuration::write() const {
   conf.setValue("Window Position", windowPosition);
   conf.setValue("Window Size", windowSize);
   conf.setValue("Scrollback Size", scrollbackSize);
+  conf.endGroup();
+
+  conf.beginGroup("Profiles");
+  conf.setValue("Profile Path", profilePath);
   conf.endGroup();
 
   conf.beginGroup("Colors");

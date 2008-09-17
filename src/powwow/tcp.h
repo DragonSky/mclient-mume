@@ -3,7 +3,7 @@
 #ifndef _TCP_H_
 #define _TCP_H_
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 #include "defines.h"
 
 #  ifdef __cplusplus
@@ -77,7 +77,7 @@ extern byte conn_table[MAX_FDSCAN];	     /* fd -> index translation table */
 #define CONN_LIST(n) conn_list[conn_table[n]]
 #define CONN_INDEX(n) conn_list[n]
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 extern fd_set fdset;               /* set of descriptors to select() on */
 #endif
 

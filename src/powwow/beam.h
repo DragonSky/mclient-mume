@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 void finish_edit __P ((editsess *sp));
 #endif
 

@@ -14,22 +14,45 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "wrapper_cmd.h"
-#include "wrapper.h"
+#ifndef _PROFILEMANAGERDIALOG_H
+#define _PROFILEMANAGERDIALOG_H
 
-#include "keybinder.h"
+#include <QDialog>
+#include "ui_profilemanagerdialog.h"
 
-void suspend_powwow() {}
+class ProfileEditDialog;
 
-int wrapper_get_keybind(char *seq) { return wrapper->getKeyBind(seq); }
+class ProfileManagerDialog : public QDialog, public Ui::ProfileManagerDialog
+{
+  Q_OBJECT
 
-int Wrapper::getKeyBind(char *seq) {
-  QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)parent);
-  if (dlg->exec()) {
-    strcpy(seq, sequence.toAscii().constData());
-  }
-  delete dlg;
-  return strlen(seq);
-}
+  public:
+    ProfileManagerDialog(QItemSelectionModel *model, QWidget* parent);
+    virtual ~ProfileManagerDialog();
 
+    QString selectedProfile ();
+
+  private:
+    void updateProfileFromDialog(const QString &profile);
+    ProfileEditDialog *mdlg;
+    QPushButton *loadButton;
+
+  signals:
+    void loadProfile(const QString &profile);
+
+  public slots:
+    void doAdd();
+    void doModify();
+
+  private slots:
+    void addClicked();
+    void modifyClicked();
+    void deleteClicked();
+    void duplicateClicked();
+    void loadClicked();
+    void doubleClicked(const QModelIndex &index);
+    void selectionChanged(const QItemSelection &index);
+    
+};
+
+#endif /* _PROFILEMANAGERDIALOG_H */

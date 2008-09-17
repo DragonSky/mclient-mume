@@ -21,7 +21,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 #include <sys/socket.h>
 #include <unistd.h>
 #include <errno.h>
@@ -77,7 +77,7 @@ void show_aliases __P0 (void)
  * return 1 if illegal name (and print reason).
  * if valid, print a warning for unbalanced () {} and ""
  */
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 static int check_alias __P1 (char *,name)
 #else
 int check_alias __P1 (char *,name)
@@ -1050,7 +1050,7 @@ static char *unescape_seq __P3 (char *,buf, char *,seq, int *,seqlen)
     return seq;
 }
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 /*
  * read a single character from tty, with timeout in milliseconds.
  * timeout == 0 means wait indefinitely (no timeout).
@@ -1168,7 +1168,7 @@ char *read_seq __P2 (char *,name, int *,len)
     PRINTF("#please press the key \"%s\" : ", name);
     tty_flush();
 
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     if ((tmp = get_one_char(0)) >= 0)
 	seq[0] = tmp;
     else {

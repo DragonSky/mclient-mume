@@ -60,7 +60,7 @@ edit_function internal_functions[] = {
     {"&kill-to-eol", kill_to_eol, },
     {"&transpose", transpose_chars, },
     {"&transpose-words", transpose_words, },
-#ifndef QTPOWWOW
+#ifndef MCLIENT
     {"&suspend", (function_str)suspend_powwow, }, /* yep, it's an hack */
 #endif
     {"&del-word-left", del_word_left, },
@@ -144,14 +144,12 @@ void clear_input_line __P1 (int,deleteprompt)
 	int newcol = deleteprompt ? 0 : col0;
 	int realpos = line_status == 0 ? pos : (prompt_status == 0 ? 0 : -col0);
 	
-#ifndef QTPOWWOW
 	tty_gotoxy_opt(CURCOL(realpos), CURLINE(realpos), newcol, line0);
 	tty_puts(edattrend);
 	if (line0 < lines - 1)
 	    tty_puts(tty_clreoscr);
         else
 	    tty_puts(tty_clreoln);
-#endif
 	col0 = newcol;
     } else {
 	tty_puts(edattrend);
@@ -301,7 +299,7 @@ void transpose_chars __P1 (char *,dummy)
 	    i = pos - 2;
 	}
 	c = edbuf[j]; edbuf[j] = edbuf[i]; edbuf[i] = c;
-#ifndef QTPOWWOW
+#ifndef MCLIENT
 	if (line_status == 0) {
 	    tty_gotoxy_opt(CURCOL(pos), CURLINE(pos), CURCOL(i), CURLINE(i));
 	    tty_putc(edbuf[i]);
@@ -339,7 +337,7 @@ void kill_to_eol __P1 (char *,dummy)
 	    tty_puts(edattrbeg);
     }
     edbuf[edlen = pos] = '\0';
-#ifdef QTPOWWOW
+#ifdef MCLIENT
     wrapper_input_set(edbuf);
 #endif
 }
@@ -530,7 +528,7 @@ void complete_line __P1 (char *,dummy)
         pos = edlen;
         curr_line = i;
     }
-#ifdef QTPOWWOW
+#ifdef MCLIENT
     wrapper_input_set(edbuf);
 #endif
 }
@@ -603,7 +601,7 @@ void enter_line __P1 (char *,dummy)
 {
     char *p;
     if (line_status == 0)
-#ifndef QTPOWWOW
+#ifndef MCLIENT
       input_moveto(edlen);
 #else
       ;
@@ -765,7 +763,7 @@ void prev_line __P1 (char *,dummy)
 	clear_input_line(0);
 	strcpy(edbuf, hist[pickline]);
 	pos = edlen = strlen(edbuf);
-#ifdef QTPOWWOW
+#ifdef MCLIENT
         wrapper_input_set(edbuf);
 #endif
     }
@@ -793,7 +791,7 @@ void next_line __P1 (char *,dummy)
 	clear_input_line(0);
 	strcpy(edbuf, hist[pickline]);
 	edlen = pos = strlen(edbuf);
-#ifdef QTPOWWOW
+#ifdef MCLIENT
         wrapper_input_set(edbuf);
 #endif
     }

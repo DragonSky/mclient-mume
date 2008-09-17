@@ -29,9 +29,12 @@
 #include "objecteditor.h"
 #include "configdialog.h"
 #include "profiledialog.h"
+#include "profilemanagerdialog.h"
 
 MainWindow::MainWindow(int argc, char **argv)
 {
+  setWindowIcon(QIcon(":/icons/m.png"));
+
   QVBoxLayout *vbox = new QVBoxLayout();
   vbox->setSpacing(0);
   vbox->setContentsMargins(0, 0, 0, 0);
@@ -47,7 +50,6 @@ MainWindow::MainWindow(int argc, char **argv)
   mainWidget->setLayout(vbox);
 
   setCentralWidget(mainWidget);
-  inputBar->setFocus();
 
   createActions();
   createMenus();
@@ -58,6 +60,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
   objectEditor = NULL;
   profileDialog = NULL;
+  profileManager = NULL;
 
   /*connect(textView->document(), SIGNAL(contentsChanged()),
           this, SLOT(documentWasModified()));*/
@@ -70,6 +73,7 @@ MainWindow::MainWindow(int argc, char **argv)
   connect(wrapper, SIGNAL(inputMoveTo(int)), inputBar, SLOT(inputMoveTo(int)) );
   connect(wrapper, SIGNAL(inputDeleteChars(int)), inputBar, SLOT(inputDeleteChars(int)) );
   connect(wrapper, SIGNAL(inputClear()), inputBar, SLOT(inputClear()) );
+  connect(wrapper, SIGNAL(setCurrentProfile(const QString&)), this, SLOT(setCurrentProfile(const QString&)) );
 
   connect(inputBar, SIGNAL(returnPressed()), this, SLOT(sendUserInput()) );
   connect(inputBar, SIGNAL(keyPressed(const QString&)), this, SLOT(sendUserBind(const QString&)) );
@@ -77,15 +81,18 @@ MainWindow::MainWindow(int argc, char **argv)
 
   //connect(inputBar, SIGNAL(textEdited(const QString &)), this, SLOT(signalStdin(const QString &)));
 
-  setCurrentFile("");
+ setCurrentProfile("");
   qDebug("MainWindow created.");
 
-  QString intro("mClient (QtPowwow) alpha version 0.1 \251 2008 by Jahara\n");
-  textView->addText(intro);
-
-  selectProfile();
-
+  // Initialize Powwow
   wrapper->start(argc, argv);
+
+  show();
+
+  if (argc == 1)
+    selectProfile();
+
+  inputBar->setFocus();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -102,7 +109,7 @@ void MainWindow::newFile()
 {
   if (maybeSave()) {
     textView->clear();
-    setCurrentFile("");
+   setCurrentProfile("");
   }
 }
 
@@ -117,10 +124,10 @@ void MainWindow::open()
 
 bool MainWindow::save()
 {
-  if (curFile.isEmpty()) {
+  if (currentProfile.isEmpty()) {
     return saveAs();
   } else {
-    return saveFile(curFile);
+    return saveFile(currentProfile);
   }
 }
 
@@ -135,18 +142,25 @@ bool MainWindow::saveAs()
 
 void MainWindow::aboutmClient()
 {
+#ifdef SVN_REVISION
+  QString version = tr("Subversion Revision ") + QString::number(SVN_REVISION));
+#else
+  QString version = tr("Alpha Release 0.2.0");
+#endif
   QMessageBox::about(this, tr("About mClient"),
-                     tr("The <b>Application</b> example demonstrates how to "
-                         "write modern GUI applications using Qt, with a menu bar, "
-                         "toolbars, and a status bar."));
-}
-
-void MainWindow::aboutPowwow()
-{
-  QMessageBox::about(this, tr("About Powwow"),
-                     tr("The <b>Application</b> example demonstrates how to "
-                         "write modern GUI applications using Qt, with a menu bar, "
-                         "toolbars, and a status bar."));
+                     tr("<FONT SIZE=\"+1\"><B>mClient ") + version + tr("</B></FONT><P>"
+                         "Copyright \251 2008 Jahara<P>"
+                         "mClient is a modern, fully functional, and highly portable fork of the mud client "
+                         "powwow<P>"
+                         "mClient has incorporated code and ideas from the mud clients "
+                         "<A HREF=\"http://www.kmuddy.com\">KMuddy</A> and JMC respectively.<P>"
+                         "Powwow is a console-based mud client written for Unix machines which prevented "
+                         "its portability to other systems and ease of use for new-comers. Its main engine "
+                         "has been rewritten with Qt libraries allowing it to run on any operating system "
+                         "supported by Trolltech's Qt framework.<P>"
+                         "Contributors: Mint, Yants, Kalev<BR>"
+                         "Visit the <A HREF=\"http://code.google.com/p/mclient-mume/\">mClient website</A> "
+                         "for more information."));
 }
 
 void MainWindow::help()
@@ -215,24 +229,24 @@ void MainWindow::createActions()
   connect(pasteAct, SIGNAL(triggered()), inputBar, SLOT(paste()));
 
   objectAct = new QAction(tr("&Object Editor"), this);
-  objectAct->setStatusTip(tr("Edit Powwow objects"));
+  objectAct->setStatusTip(tr("Edit Powwow objects such as aliases and actions"));
   connect(objectAct, SIGNAL(triggered()), this, SLOT(editObjects()));
+  
+  profileAct = new QAction(tr("Profile &Manager"), this);
+  profileAct->setStatusTip(tr("Manage mClient profile settings"));
+  connect(profileAct, SIGNAL(triggered()), this, SLOT(manageProfiles()));
 
   settingsAct = new QAction(tr("&Preferences"), this);
   settingsAct->setStatusTip(tr("Change mClient settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(changeConfiguration()) );
 
-  helpAct = new QAction(tr("Help &FAQ"), this);
-  helpAct->setStatusTip(tr("View the mClient/Powwow FAQ"));
+  helpAct = new QAction(tr("&Help Contents"), this);
+  helpAct->setStatusTip(tr("View the mClient/Powwow help file"));
   connect(helpAct, SIGNAL(triggered()), this, SLOT(help()));
 
   aboutmClientAct = new QAction(tr("&About mClient"), this);
   aboutmClientAct->setStatusTip(tr("Show the application's About box"));
   connect(aboutmClientAct, SIGNAL(triggered()), this, SLOT(aboutmClient()));
-
-  aboutPowwowAct = new QAction(tr("About &Powwow"), this);
-  aboutPowwowAct->setStatusTip(tr("Show Powwow's About box"));
-  connect(aboutPowwowAct, SIGNAL(triggered()), this, SLOT(aboutPowwow()));
 
   aboutQtAct = new QAction(tr("About &Qt"), this);
   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
@@ -263,6 +277,7 @@ void MainWindow::createMenus()
 
   settingsMenu = menuBar()->addMenu(tr("&Settings"));
   settingsMenu->addAction(objectAct);
+  settingsMenu->addAction(profileAct);
   settingsMenu->addAction(settingsAct);
 
   menuBar()->addSeparator();
@@ -271,7 +286,6 @@ void MainWindow::createMenus()
   helpMenu->addAction(helpAct);
   helpMenu->addSeparator();
   helpMenu->addAction(aboutmClientAct);
-  helpMenu->addAction(aboutPowwowAct);
   helpMenu->addAction(aboutQtAct);
 }
 
@@ -308,7 +322,7 @@ void MainWindow::writeSettings()
 bool MainWindow::maybeSave()
 {
   if (textView->document()->isModified()) {
-    int ret = QMessageBox::warning(this, tr("QtPowwow"),
+    int ret = QMessageBox::warning(this, tr("mClient"),
                                    tr("The document has been modified.\n"
                                        "Do you want to save your changes?"),
                                        QMessageBox::Yes | QMessageBox::Default,
@@ -326,7 +340,7 @@ void MainWindow::loadFile(const QString &fileName)
 {
   QFile file(fileName);
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
-    QMessageBox::warning(this, tr("QtPowwow"),
+    QMessageBox::warning(this, tr("mClient"),
                          tr("Cannot read file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
@@ -340,7 +354,7 @@ void MainWindow::loadFile(const QString &fileName)
   textView->addText(input);
   QApplication::restoreOverrideCursor();
 
-  setCurrentFile(fileName);
+ setCurrentProfile(fileName);
   statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
@@ -348,7 +362,7 @@ bool MainWindow::saveFile(const QString &fileName)
 {
   QFile file(fileName);
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
-    QMessageBox::warning(this, tr("QtPowwow"),
+    QMessageBox::warning(this, tr("mClient"),
                          tr("Cannot write file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
@@ -360,22 +374,22 @@ bool MainWindow::saveFile(const QString &fileName)
   out << textView->toPlainText();
   QApplication::restoreOverrideCursor();
 
-  setCurrentFile(fileName);
+ setCurrentProfile(fileName);
   statusBar()->showMessage(tr("File saved"), 2000);
   return true;
 }
 
-void MainWindow::setCurrentFile(const QString &fileName)
+void MainWindow::setCurrentProfile(const QString &profile)
 {
-  curFile = fileName;
-  textView->document()->setModified(false);
+  currentProfile = profile;
+  //textView->document()->setModified(false);
   setWindowModified(false);
 
   QString shownName;
-  if (curFile.isEmpty())
-    shownName = "TODO";
+  if (currentProfile.isEmpty())
+    shownName = "Undefined";
   else
-    shownName = strippedName(curFile);
+    shownName = strippedName(currentProfile);
 
   setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("mClient")));
 }
@@ -396,6 +410,15 @@ void MainWindow::editObjects() {
   objectEditor->activateWindow();
 }
 
+void MainWindow::manageProfiles() {
+  if (!profileManager) {
+    profileManager = new ProfileManagerDialog(0, this);
+    //connect(profileManager, SIGNAL(loadClicked()), this, SLOT(relayConnect() ));
+  }
+  profileManager->show();
+  profileManager->activateWindow();
+}
+
 void MainWindow::changeConfiguration() {
   ConfigDialog dialog;
   dialog.exec();
@@ -405,6 +428,22 @@ void MainWindow::selectProfile() {
   if (!profileDialog) {
   profileDialog = new ProfileDialog(this);
   }
+  /*
   profileDialog->show();
   profileDialog->activateWindow();
+  */
+  connect (profileDialog, SIGNAL(profileSelected() ), this, SLOT(profileSelected() ));
+
+  profileDialog->exec();
+
+  delete profileDialog;
+  profileDialog = NULL;
+}
+
+void MainWindow::profileSelected() {
+  QString name = profileDialog->selectedProfile();
+  qDebug("Got signal to start new session %s", name.toAscii().constData());
+  //create cSession object and related stuff
+  //int s = cSessionManager::self()->addSession (true);   //TODO
+  wrapper->loadProfile(name);
 }

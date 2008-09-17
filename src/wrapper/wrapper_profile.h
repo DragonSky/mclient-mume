@@ -14,22 +14,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "wrapper_cmd.h"
-#include "wrapper.h"
+#ifndef _WRAPPER_PROFILE_H
+#define _WRAPPER_PROFILE_H
 
-#include "keybinder.h"
+//extern "C" int wrapper_get_keybind(char *seq);
 
-void suspend_powwow() {}
+class Wrapper;
 
-int wrapper_get_keybind(char *seq) { return wrapper->getKeyBind(seq); }
-
-int Wrapper::getKeyBind(char *seq) {
-  QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)parent);
-  if (dlg->exec()) {
-    strcpy(seq, sequence.toAscii().constData());
-  }
-  delete dlg;
-  return strlen(seq);
-}
-
+#endif /* _WRAPPER_PROFILE_H */

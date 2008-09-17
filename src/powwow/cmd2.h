@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 int check_alias         __P ((char *name));
 #endif
 

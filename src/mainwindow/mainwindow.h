@@ -30,9 +30,11 @@ class QMenu;
 class InputBar;
 class TextView;
 class Wrapper;
+
 class ObjectEditor;
 class ConfigDialog;
 class ProfileDialog;
+class ProfileManagerDialog;
 
 class MainWindow:public QMainWindow
 {
@@ -51,14 +53,17 @@ class MainWindow:public QMainWindow
     bool save();
     bool saveAs();
     void aboutmClient();
-    void aboutPowwow();
     void documentWasModified();
     void help();
 
     void editObjects();
+    void manageProfiles();
     void changeConfiguration();
+
     void sendUserInput();
     void sendUserBind(const QString&);
+    void profileSelected();
+    void setCurrentProfile(const QString &profile);
 
   private:
     void createActions();
@@ -70,17 +75,17 @@ class MainWindow:public QMainWindow
     bool maybeSave();
     void loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);
-    void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 
     void selectProfile();
 
+    ProfileManagerDialog *profileManager;
     ProfileDialog *profileDialog;
     ObjectEditor *objectEditor;
     Wrapper *wrapper;
     TextView *textView;
     InputBar *inputBar;
-    QString curFile;
+    QString currentProfile;
 
     QMenu *fileMenu;
     QMenu *editMenu;
@@ -98,9 +103,9 @@ class MainWindow:public QMainWindow
     QAction *pasteAct;
     QAction *helpAct;
     QAction *aboutmClientAct;
-    QAction *aboutPowwowAct;
     QAction *aboutQtAct;
 
+    QAction *profileAct;
     QAction *objectAct;
     QAction *settingsAct;
 };

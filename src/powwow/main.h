@@ -6,7 +6,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#ifdef QTPOWWOW
+#ifdef MCLIENT
 #include "defines.h"
 #include "wrapper.h"
 
@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-/* global functions for QtPowwow */
+/* global functions for mClient */
 int startPowwow(Wrapper *wrapper, int argc, char **argv);
 void exec_delays         __P ((void));
 void prompt_reset_iac    __P ((void));

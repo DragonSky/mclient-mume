@@ -128,8 +128,8 @@ void tty_puts(const char *s) {
   if (!result.isEmpty()) wrapper->writeToStdout(result);
 }
 void tty_putc(unsigned char c) { wrapper->writeToStdout(QString(c)); }
-void tty_gets(char* s, int size) { PRINTF("<-- tty_gets"); }
-int tty_read(char *buf, int cnt) { PRINTF("<-- tty_read"); }//return wrapper->wrapper_stdin.read(buf, cnt); }
+void tty_gets(char* s, int size) { PRINTF("<-- tty_gets not implemented\n"); }
+int tty_read(char *buf, int cnt) { PRINTF("<-- tty_read not implemented\n"); }//return wrapper->wrapper_stdin.read(buf, cnt); }
 
 void tty_gotoxy_opt(int fromcol, int fromline, int tocol, int toline) {
   wrapper->emitMoveCursor(fromcol, fromline, tocol, toline);
