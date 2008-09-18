@@ -17,7 +17,7 @@
 #include <QtGui>
 #include <QTextStream>
 #include <QCloseEvent>
-#include <QFileDialog>
+//#include <QFileDialog>
 #include <QVBoxLayout>
 
 #include "mainwindow.h"
@@ -57,6 +57,7 @@ MainWindow::MainWindow(int argc, char **argv)
   createStatusBar();
 
   readSettings();
+
 
   objectEditor = NULL;
   profileDialog = NULL;
@@ -105,6 +106,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   }
 }
 
+/*
 void MainWindow::newFile()
 {
   if (maybeSave()) {
@@ -139,8 +141,9 @@ bool MainWindow::saveAs()
 
   return saveFile(fileName);
 }
+*/
 
-void MainWindow::aboutmClient()
+void MainWindow::about()
 {
 #ifdef SVN_REVISION
   QString version = tr("Subversion Revision ") + QString::number(SVN_REVISION));
@@ -163,16 +166,18 @@ void MainWindow::aboutmClient()
                          "for more information."));
 }
 
-void MainWindow::help()
+void MainWindow::clientHelp()
 {
   if (!QDesktopServices::openUrl(QUrl::fromEncoded("http://mume.org/wiki/index.php/mClient_Help")))
     qDebug("Failed to open web browser");
 }
 
+/*
 void MainWindow::documentWasModified()
 {
   setWindowModified(true);
 }
+*/
 
 void MainWindow::sendUserInput()
 {
@@ -187,68 +192,75 @@ void MainWindow::sendUserBind(const QString& input)
 
 void MainWindow::createActions()
 {
-  newAct = new QAction(QIcon(":/filenew.xpm"), tr("&New"), this);
-  newAct->setStatusTip(tr("Create a new file"));
-  connect(newAct, SIGNAL(triggered()), this, SLOT(newFile()));
+  connectAct = new QAction(QIcon(":/crystal/connect.png"), tr("&Connect..."), this);
+  connectAct->setStatusTip(tr("Load a new session and connect to the remote host"));
+  connect(connectAct, SIGNAL(triggered()), this, SLOT(selectProfile() ));
 
-  openAct = new QAction(QIcon(":/fileopen.xpm"), tr("&Open..."), this);
-  openAct->setShortcut(tr("Ctrl+O"));
-  openAct->setStatusTip(tr("Open an existing file"));
-  connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+  disconnectAct = new QAction(QIcon(":/crystal/disconnect.png"), tr("&Disconnect"), this);
+  disconnectAct->setStatusTip(tr("Disconnect from the current session"));
+  //connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-  saveAct = new QAction(QIcon(":/filesave.xpm"), tr("&Save"), this);
-  saveAct->setShortcut(tr("Ctrl+S"));
-  saveAct->setStatusTip(tr("Save the document to disk"));
-  connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+  reconnectAct = new QAction(QIcon(":/crystal/reconnect.png"), tr("&Reconnect"), this);
+  reconnectAct->setStatusTip(tr("Reconnect to the current session's remote host"));
+  //connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  saveAsAct = new QAction(tr("Save &As..."), this);
-  saveAsAct->setStatusTip(tr("Save the document under a new name"));
-  connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
-
-  exitAct = new QAction(tr("E&xit"), this);
-  exitAct->setShortcut(tr("Ctrl+Q"));
+  exitAct = new QAction(QIcon(":/crystal/exit.png"), tr("E&xit"), this);
   exitAct->setStatusTip(tr("Exit the application"));
   connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  cutAct = new QAction(QIcon(":/editcut.xpm"), tr("Cu&t"), this);
+  cutAct = new QAction(QIcon(":/editcut.png"), tr("Cu&t"), this);
   cutAct->setShortcut(tr("Ctrl+X"));
   cutAct->setStatusTip(tr("Cut the current selection's contents to the "
       "clipboard"));
   connect(cutAct, SIGNAL(triggered()), textView, SLOT(cut()));
 
-  copyAct = new QAction(QIcon(":/editcopy.xpm"), tr("&Copy"), this);
+  copyAct = new QAction(QIcon(":/editcopy.png"), tr("&Copy"), this);
   copyAct->setShortcut(tr("Ctrl+C"));
   copyAct->setStatusTip(tr("Copy the current selection's contents to the "
       "clipboard"));
   connect(copyAct, SIGNAL(triggered()), textView, SLOT(copy()));
 
-  pasteAct = new QAction(QIcon(":/editpaste.xpm"), tr("&Paste"), this);
+  pasteAct = new QAction(QIcon(":/editpaste.png"), tr("&Paste"), this);
   pasteAct->setShortcut(tr("Ctrl+V"));
   pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
       "selection"));
   connect(pasteAct, SIGNAL(triggered()), inputBar, SLOT(paste()));
 
-  objectAct = new QAction(tr("&Object Editor"), this);
+  alwaysOnTopAct = new QAction(tr("&Always on Top"), this);
+  alwaysOnTopAct->setCheckable(true);
+  alwaysOnTopAct->setStatusTip(tr("Toggle the window to always stay on the top"));
+  connect(alwaysOnTopAct, SIGNAL(triggered()), this, SLOT(alwaysOnTop()));
+
+  objectAct = new QAction(tr("&Object Editor..."), this);
   objectAct->setStatusTip(tr("Edit Powwow objects such as aliases and actions"));
   connect(objectAct, SIGNAL(triggered()), this, SLOT(editObjects()));
   
-  profileAct = new QAction(tr("Profile &Manager"), this);
+  profileAct = new QAction(QIcon(":/crystal/profile.png"), tr("Profile &Manager..."), this);
   profileAct->setStatusTip(tr("Manage mClient profile settings"));
   connect(profileAct, SIGNAL(triggered()), this, SLOT(manageProfiles()));
 
-  settingsAct = new QAction(tr("&Preferences"), this);
+  settingsAct = new QAction(QIcon(":/crystal/settings.png"), tr("&Preferences..."), this);
   settingsAct->setStatusTip(tr("Change mClient settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(changeConfiguration()) );
 
-  helpAct = new QAction(tr("&Help Contents"), this);
-  helpAct->setStatusTip(tr("View the mClient/Powwow help file"));
-  connect(helpAct, SIGNAL(triggered()), this, SLOT(help()));
+  mumeHelpAct = new QAction(tr("M&ume"), this);
+  mumeHelpAct->setStatusTip(tr("MUME Website"));
 
-  aboutmClientAct = new QAction(tr("&About mClient"), this);
-  aboutmClientAct->setStatusTip(tr("Show the application's About box"));
-  connect(aboutmClientAct, SIGNAL(triggered()), this, SLOT(aboutmClient()));
+  wikiAct = new QAction(tr("&Wiki"), this);
+  wikiAct->setStatusTip(tr("Visit the MUME Wiki"));
 
-  aboutQtAct = new QAction(tr("About &Qt"), this);
+  forumAct = new QAction(tr("&Forum"), this);
+  forumAct->setStatusTip(tr("Visit the MUME Forum"));
+
+  clientHelpAct = new QAction(QIcon(":/crystal/help.png"), tr("mClient &Help"), this);
+  clientHelpAct->setStatusTip(tr("View the mClient/Powwow help file"));
+  connect(clientHelpAct, SIGNAL(triggered()), this, SLOT(clientHelp()));
+
+  aboutAct = new QAction(QIcon(":/icons/m.png"), tr("About &mClient"), this);
+  aboutAct->setStatusTip(tr("Show the application's About box"));
+  connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+
+  aboutQtAct = new QAction(QIcon(":/crystal/qt.png"), tr("About &Qt"), this);
   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
   connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
@@ -262,18 +274,20 @@ void MainWindow::createActions()
 
 void MainWindow::createMenus()
 {
-  fileMenu = menuBar()->addMenu(tr("&File"));
-  fileMenu->addAction(newAct);
-  fileMenu->addAction(openAct);
-  fileMenu->addAction(saveAct);
-  fileMenu->addAction(saveAsAct);
-  fileMenu->addSeparator();
-  fileMenu->addAction(exitAct);
+  connectMenu = menuBar()->addMenu(tr("&Connection"));
+  connectMenu->addAction(connectAct);
+  connectMenu->addAction(disconnectAct);
+  connectMenu->addAction(reconnectAct);
+  connectMenu->addSeparator();
+  connectMenu->addAction(exitAct);
 
   editMenu = menuBar()->addMenu(tr("&Edit"));
   editMenu->addAction(cutAct);
   editMenu->addAction(copyAct);
   editMenu->addAction(pasteAct);
+
+  viewMenu = menuBar()->addMenu(tr("&View"));
+  viewMenu->addAction(alwaysOnTopAct);
 
   settingsMenu = menuBar()->addMenu(tr("&Settings"));
   settingsMenu->addAction(objectAct);
@@ -283,18 +297,24 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
-  helpMenu->addAction(helpAct);
+  helpMenu->addAction(mumeHelpAct);
+  helpMenu->addAction(forumAct);
+  helpMenu->addAction(wikiAct);
   helpMenu->addSeparator();
-  helpMenu->addAction(aboutmClientAct);
+  helpMenu->addAction(clientHelpAct);
+  helpMenu->addSeparator();
+  helpMenu->addAction(aboutAct);
   helpMenu->addAction(aboutQtAct);
 }
 
 void MainWindow::createToolBars()
 {
-  fileToolBar = addToolBar(tr("File"));
-  fileToolBar->addAction(newAct);
-  fileToolBar->addAction(openAct);
-  fileToolBar->addAction(saveAct);
+  /*
+  connectToolBar = addToolBar(tr("Connection"));
+  connectToolBar->addAction(connectAct);
+  connectToolBar->addAction(disconnectAct);
+  //connectToolBar->addAction(reconnectAct);
+  */
 
   editToolBar = addToolBar(tr("Edit"));
   editToolBar->addAction(cutAct);
@@ -311,16 +331,32 @@ void MainWindow::readSettings()
 {
   resize(Config().windowSize);
   move(Config().windowPosition);
+  alwaysOnTopAct->setChecked(Config().alwaysOnTop);
+  if (Config().alwaysOnTop) alwaysOnTop();
+  if (pos().x() < 0) pos().setX(0);
+  if (pos().y() < 0) pos().setY(0);
+  move(pos());
 }
 
 void MainWindow::writeSettings()
 {
   Config().setWindowPosition(pos() );
   Config().setWindowSize(size() );
+  Config().setAlwaysOnTop((bool)(windowFlags() & Qt::WindowStaysOnTopHint));
+}
+
+void MainWindow::alwaysOnTop()
+{
+  setWindowFlags(windowFlags() ^ Qt::WindowStaysOnTopHint);
+  if (pos().x() < 0) pos().setX(0);
+  if (pos().y() < 0) pos().setY(0);
+  move(pos());
+  show();
 }
 
 bool MainWindow::maybeSave()
 {
+  /*
   if (textView->document()->isModified()) {
     int ret = QMessageBox::warning(this, tr("mClient"),
                                    tr("The document has been modified.\n"
@@ -333,9 +369,11 @@ bool MainWindow::maybeSave()
     else if (ret == QMessageBox::Cancel)
       return false;
   }
+  */
   return true;
 }
 
+/*
 void MainWindow::loadFile(const QString &fileName)
 {
   QFile file(fileName);
@@ -378,6 +416,7 @@ bool MainWindow::saveFile(const QString &fileName)
   statusBar()->showMessage(tr("File saved"), 2000);
   return true;
 }
+*/
 
 void MainWindow::setCurrentProfile(const QString &profile)
 {
@@ -387,7 +426,7 @@ void MainWindow::setCurrentProfile(const QString &profile)
 
   QString shownName;
   if (currentProfile.isEmpty())
-    shownName = "Undefined";
+    shownName = "No connection";
   else
     shownName = strippedName(currentProfile);
 

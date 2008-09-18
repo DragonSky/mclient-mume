@@ -18,6 +18,7 @@
 #define WrapperProcess_H
 
 #include <QProcess>
+#include "defines.h"
 
 class Wrapper;
 
@@ -26,7 +27,7 @@ extern "C" void cmd_shell(char *arg);
 
 /* beam.c */
 extern "C" int wrapper_kill_process(int);
-extern "C" int wrapper_create_child(char *);
+extern "C" int wrapper_create_child(char *, editsess *);
 extern "C" void wrapper_generate_tmpfile(char *, uint, int, int);
 extern "C" void sig_chld_bottomhalf(); // replaced by something else
 

@@ -77,6 +77,7 @@ class Wrapper: public QObject
     QHash<int, WrapperSocket*> socketHash;
 
     /* beam.h, cmd.h */
+    int internalEditor(char *, editsess*);
     void killProcess(int);
     int createProcess(char *arg, bool displayStdout);
     void detectFinishedBeam(int pid);

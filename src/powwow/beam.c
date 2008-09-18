@@ -433,7 +433,7 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
     waitforeditor = 0;
     sprintf(command_str, "%s %s", editor, s->file);
     sprintf(buf, "TITLE=%s", locale_conv(s->descr));
-    childpid = wrapper_create_child(command_str);
+    childpid = wrapper_create_child(command_str, s);
 #endif
 
     s->pid = childpid;

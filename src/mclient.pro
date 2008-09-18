@@ -31,7 +31,8 @@ SOURCES += main.cpp \
            ./mainwindow/profileeditdialog.cpp \
            ./kmuddy/cprofilemanager.cpp \
            ./kmuddy/cprofilesettings.cpp \
- wrapper/wrapper_profile.cpp
+ wrapper/wrapper_profile.cpp \
+ mainwindow/internaleditor.cpp
 HEADERS += ./mainwindow/mainwindow.h \
            ./mainwindow/textview.h \
            ./wrapper/wrapper.h \
@@ -67,7 +68,8 @@ HEADERS += ./mainwindow/mainwindow.h \
            ./mainwindow/profileeditdialog.h \
            ./kmuddy/cprofilemanager.cpp \
            ./kmuddy/cprofilesettings.cpp \
- wrapper/wrapper_profile.h
+ wrapper/wrapper_profile.h \
+ mainwindow/internaleditor.h
 TEMPLATE = app
 FORMS += ./mainwindow/objecteditor.ui \
          ./configuration/generalpage.ui \
