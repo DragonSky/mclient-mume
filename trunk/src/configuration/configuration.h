@@ -39,10 +39,14 @@ class Configuration {
     bool firstRun;
     QPoint windowPosition;
     QSize windowSize;
+    bool alwaysOnTop;
     int scrollbackSize;
     void setFirstRun(bool value) { firstRun = value; change(); }
     void setWindowPosition(QPoint pos) {windowPosition = pos; change(); }
     void setWindowSize(QSize size) { windowSize = size; change(); }
+    void setAlwaysOnTop(bool b) { alwaysOnTop = b; change(); }
+    
+    bool useInternalEditor;
 
     QString profilePath;
     void setProfilePath(QString str) { profilePath = str; change(); }

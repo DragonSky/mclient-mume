@@ -1,13 +1,21 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-      <file>editcopy.xpm</file>
-      <file>editcut.xpm</file>
-      <file>filenew.xpm</file>
-      <file>fileopen.xpm</file>
-      <file>editpaste.xpm</file>
-      <file>filesave.xpm</file>
+      <file>editcopy.png</file>
+      <file>editcut.png</file>
+      <file>editpaste.png</file>
       <file>icons/page.png</file>
       <file>icons/m.png</file>
       <file>images/mclient.png</file>
+      <file>crystal/colors.png</file>
+      <file>crystal/connect.png</file>
+      <file>crystal/disconnect.png</file>
+      <file>crystal/display.png</file>
+      <file>crystal/exit.png</file>
+      <file>crystal/help.png</file>
+      <file>crystal/profile.png</file>
+      <file>crystal/reconnect.png</file>
+      <file>crystal/settings.png</file>
+      <file>crystal/qt.png</file>
+      <file>editor/bold.png</file>
 </qresource>
 </RCC>

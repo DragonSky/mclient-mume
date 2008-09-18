@@ -41,7 +41,8 @@ void Wrapper::loadProfile(QString &profile) {
 
   set_deffile(definitions.toAscii().data());
 
-  if (access(deffile,R_OK) == -1 || access(deffile,W_OK) == -1) {
+  QFile f (definitions);
+  if (!f.open(QIODevice::ReadWrite | QIODevice::Text)) {
     char portnum[INTLEN];
     tty_printf("#creating %s\n", deffile);
     limit_mem = 1048576;

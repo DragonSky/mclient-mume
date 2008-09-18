@@ -12,104 +12,71 @@
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef _INTERNALEDITOR_H
+#define _INTERNALEDITOR_H
 
-#ifndef MainWindow_H
-#define MainWindow_H
+#include <QtGui>
 
-#include <QMainWindow>
-#include <QCloseEvent>
+#include "defines.h"
 
 class QAction;
 class QMenu;
-class InputBar;
-class TextView;
-class Wrapper;
+class QMenuBar;
+class QTextEdit;
+class QCloseEvent;
 
-class ObjectEditor;
-class ConfigDialog;
-class ProfileDialog;
-class ProfileManagerDialog;
-
-class MainWindow:public QMainWindow
+class InternalEditor : public QDialog
 {
   Q_OBJECT
 
   public:
-    MainWindow(int argc, char **argv);
-    ~MainWindow();
+    InternalEditor(QString, editsess*, QWidget* parent);
+    virtual ~InternalEditor();
 
   protected:
     void closeEvent(QCloseEvent *event);
 
   private slots:
     void about();
-    void clientHelp();
-    void alwaysOnTop();
-
-    void selectProfile();
-    void editObjects();
-    void manageProfiles();
-    void changeConfiguration();
-
-    void sendUserInput();
-    void sendUserBind(const QString&);
-    void profileSelected();
-    void setCurrentProfile(const QString &profile);
+    void help();
 
   private:
     void createActions();
     void createMenus();
     void createToolBars();
     void createStatusBar();
-    void readSettings();
     void writeSettings();
     bool maybeSave();
     void loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);
-    QString strippedName(const QString &fullFileName);
+    bool save();
+    bool saveAs();
 
-
-    ProfileManagerDialog *profileManager;
-    ProfileDialog *profileDialog;
-    ObjectEditor *objectEditor;
-    Wrapper *wrapper;
-    TextView *textView;
-    InputBar *inputBar;
-    QString currentProfile;
-
-    QMenu *connectMenu;
-    QMenu *viewMenu;
+    QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *helpMenu;
-    QMenu *settingsMenu;
-    QToolBar *editToolBar;
-    QToolBar *connectToolBar;
     QAction *exitAct;
     QAction *cutAct;
     QAction *copyAct;
     QAction *pasteAct;
-    QAction *clientHelpAct;
-    QAction *mumeHelpAct;
-    QAction *wikiAct;
-    QAction *forumAct;
+    QAction *helpAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+    QToolBar *editToolBar;
+    QToolBar *fileToolBar;
 
-    QAction *profileAct;
-    QAction *objectAct;
-    QAction *settingsAct;
+    editsess* editSession;
+    QString fileName;
 
-    QAction *connectAct;
-    QAction *disconnectAct;
-    QAction *reconnectAct;
+    QPushButton *boldButton, *blinkButton, *underlineButton, *inverseButton;
 
-    QAction *alwaysOnTopAct;
+    QTextEdit *textEdit;
+    QDialogButtonBox *buttonBox;
+    QMenuBar *menuBar;
+    QStatusBar *statusBar;
 };
 
-#endif
+
+#endif /* _INTERNALEDITOR_H */

@@ -43,6 +43,8 @@ void Configuration::read()
   windowPosition = conf.value("Window Position", QPoint(200, 200)).toPoint();
   windowSize = conf.value("Window Size", QSize(400, 400)).toSize();
   scrollbackSize = conf.value("Scrollback Size", 20000).toInt();
+  alwaysOnTop = conf.value("Always On Top", FALSE).toBool();
+  useInternalEditor = conf.value("Use Internal Editor", TRUE).toBool();
   conf.endGroup();
 
   conf.beginGroup("Profiles");
@@ -91,6 +93,8 @@ void Configuration::write() const {
   conf.setValue("Window Position", windowPosition);
   conf.setValue("Window Size", windowSize);
   conf.setValue("Scrollback Size", scrollbackSize);
+  conf.setValue("Always On Top", alwaysOnTop);
+  conf.setValue("Use Internal Editor", useInternalEditor);
   conf.endGroup();
 
   conf.beginGroup("Profiles");

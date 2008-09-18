@@ -47,22 +47,6 @@ bool isAcceptableKey(QKeyEvent* ke) {
       };
       break;
 
-    case Qt::ControlModifier: if (ke->key() == Qt::Key_Control) break;
-    case Qt::AltModifier: if (ke->key() == Qt::Key_Alt) break;
-    case Qt::MetaModifier: if (ke->key() == Qt::Key_Meta) break;
-    case Qt::ControlModifier ^ Qt::KeypadModifier:
-    case Qt::AltModifier ^ Qt::KeypadModifier:
-    case Qt::MetaModifier ^ Qt::KeypadModifier:
-    case Qt::ControlModifier ^ Qt::MetaModifier:
-    case Qt::AltModifier ^ Qt::ControlModifier:
-    case Qt::MetaModifier ^ Qt::AltModifier:
-    case Qt::ControlModifier ^ Qt::MetaModifier ^ Qt::KeypadModifier:
-    case Qt::AltModifier ^ Qt::ControlModifier ^ Qt::KeypadModifier:
-    case Qt::MetaModifier ^ Qt::AltModifier ^ Qt::KeypadModifier:
-    case Qt::ControlModifier ^ Qt::AltModifier ^ Qt::MetaModifier:
-    case Qt::ControlModifier ^ Qt::AltModifier ^ Qt::MetaModifier ^ Qt::KeypadModifier:
-      return true;
-
     case Qt::KeypadModifier:
       switch (ke->key()) {
         case Qt::Key_Up:
@@ -85,6 +69,43 @@ bool isAcceptableKey(QKeyEvent* ke) {
           return true;
       };
       break;
+
+    case Qt::ControlModifier: if (ke->key() == Qt::Key_Control) break;
+    case Qt::AltModifier: if (ke->key() == Qt::Key_Alt) break;
+    case Qt::MetaModifier: if (ke->key() == Qt::Key_Meta) break;
+    case Qt::ShiftModifier: if (ke->key() == Qt::Key_Shift) break;
+
+    case Qt::ShiftModifier ^ Qt::KeypadModifier:
+    case Qt::ShiftModifier ^ Qt::ControlModifier:
+    case Qt::ShiftModifier ^ Qt::AltModifier:
+    case Qt::ShiftModifier ^ Qt::MetaModifier:
+    case Qt::ControlModifier ^ Qt::KeypadModifier:
+    case Qt::ControlModifier ^ Qt::MetaModifier:
+    case Qt::ControlModifier ^ Qt::AltModifier:
+    case Qt::MetaModifier ^ Qt::KeypadModifier:
+    case Qt::MetaModifier ^ Qt::AltModifier:
+    case Qt::AltModifier ^ Qt::KeypadModifier:
+
+    case Qt::ControlModifier ^ Qt::MetaModifier ^ Qt::KeypadModifier:
+    case Qt::ControlModifier ^ Qt::MetaModifier ^ Qt::AltModifier:
+    case Qt::ControlModifier ^ Qt::MetaModifier ^ Qt::ShiftModifier:
+    case Qt::ControlModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+    case Qt::AltModifier ^ Qt::ControlModifier ^ Qt::KeypadModifier:
+    case Qt::AltModifier ^ Qt::ControlModifier ^ Qt::ShiftModifier:
+    case Qt::AltModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+    case Qt::MetaModifier ^ Qt::AltModifier ^ Qt::KeypadModifier:
+    case Qt::MetaModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+    case Qt::MetaModifier ^ Qt::AltModifier ^ Qt::ShiftModifier:
+
+    case Qt::ControlModifier ^ Qt::AltModifier ^ Qt::MetaModifier ^ Qt::KeypadModifier:
+    case Qt::ControlModifier ^ Qt::MetaModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+    case Qt::AltModifier ^ Qt::ControlModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+    case Qt::MetaModifier ^ Qt::AltModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+    case Qt::ControlModifier ^ Qt::AltModifier ^ Qt::MetaModifier ^ Qt::ShiftModifier:
+
+    case Qt::ControlModifier ^ Qt::AltModifier ^ Qt::MetaModifier ^ Qt::KeypadModifier ^ Qt::ShiftModifier:
+      return true;
+
   };
   return false;
 }
@@ -105,6 +126,7 @@ QString generateKeyCodeSequence(QKeyEvent *ke) {
   if (modifiers & Qt::ControlModifier) seq[len++] = Qt::Key_Control;
   if (modifiers & Qt::AltModifier) seq[len++] = Qt::Key_Alt;
   if (modifiers & Qt::MetaModifier) seq[len++] = Qt::Key_Meta;
+  if (modifiers & Qt::ShiftModifier) seq[len++] = Qt::Key_Shift;
   if (modifiers & Qt::KeypadModifier) seq[len++] = Qt::Key_NumLock;
   seq[len++] = (char)key;
   seq[len] = '\0';

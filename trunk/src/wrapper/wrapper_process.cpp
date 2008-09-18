@@ -16,6 +16,9 @@
 
 #include <QDir>
 
+#include "configuration.h"
+#include "internaleditor.h"
+
 #include "wrapper.h"
 #include "wrapper_process.h"
 
@@ -26,11 +29,11 @@
 
 #include <cstdlib>
 
-/* cmd.c */
+/* beam.c */
 
 void cmd_shell(char *arg) { wrapper->createProcess(arg, true); }
 
-int Wrapper::createProcess(char *arg, bool displayStdout)
+int Wrapper::createProcess(char *arg, bool displayStdout = false)
 {
   QString program(arg);
   if (program.trimmed().isEmpty())
@@ -74,7 +77,13 @@ void Wrapper::killProcess(int pid)
 /* beam.c */
 
 int wrapper_kill_process(int pid) { wrapper->killProcess(pid); return pid; }
-int wrapper_create_child(char *args) { return wrapper->createProcess(args, true); }
+int wrapper_create_child(char *args, editsess* s) {
+  if (Config().useInternalEditor)
+    return wrapper->internalEditor(args, s);
+  else
+    return wrapper->createProcess(args);
+}
+
 void sig_chld_bottomhalf() {} // replaced
 
 void wrapper_generate_tmpfile(char *tmpname, uint key, int pid, int rand)
@@ -113,6 +122,20 @@ void Wrapper::detectFinishedBeam(int pid)
       tcp_fd = otcp_fd;
     }
   }
+}
+
+/* Internal Editor */
+int Wrapper::internalEditor(char *arg, editsess* s) {
+  qDebug("Running with internal editor");
+  QString program(arg);
+  if (program.trimmed().isEmpty())
+    return -1;
+
+  InternalEditor *editor = new InternalEditor(QString(arg), &(*s), (QWidget*)parent);
+  editor->show();
+  editor->activateWindow();
+
+  return -1;
 }
 
 /* Wrapper Process Object */
