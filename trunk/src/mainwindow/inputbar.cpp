@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <limits.h>
 #include "inputbar.h"
 
 #include <QKeyEvent>

@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <limits.h>
 #include "wrapper_cmd.h"
 #include "wrapper.h"
 
