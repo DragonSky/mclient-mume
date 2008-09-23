@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 #include <QFile>
+#include <cstdlib>
 
 #include "wrapper.h"
 #include "wrapper_profile.h"
