@@ -27,13 +27,16 @@ class QMenuBar;
 class QTextEdit;
 class QCloseEvent;
 
+class Wrapper;
+
 class InternalEditor : public QDialog
 {
   Q_OBJECT
 
   public:
-    InternalEditor(QString, editsess*, QWidget* parent);
-    virtual ~InternalEditor();
+    InternalEditor(editsess*, Wrapper*, QWidget* parent);
+    //virtual ~InternalEditor();
+    ~InternalEditor();
 
   protected:
     void closeEvent(QCloseEvent *event);
@@ -76,6 +79,8 @@ class InternalEditor : public QDialog
     QDialogButtonBox *buttonBox;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
+
+    Wrapper *wrapper;
 };
 
 

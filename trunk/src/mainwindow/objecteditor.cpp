@@ -40,7 +40,7 @@ ObjectEditor::ObjectEditor(Wrapper *wrapper, QWidget *parent)
 
   /* Standard Object Editor Signals */
   importButton = new QPushButton(tr("Import"));
-  importButton->setDefault(true);
+  //importButton->setDefault(true);
   buttonBox->addButton(importButton, QDialogButtonBox::ActionRole);
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
   connect(buttonBox, SIGNAL(helpRequested()), this, SLOT(helpClicked()) );
@@ -808,7 +808,9 @@ void ObjectEditor::aliasRemoveClicked() {
   //aliasHash.remove(item);
   //parent = item->parent();
   //parent->removeChild(item);
-  delete item;
+
+  //delete item;
+  item->~QTreeWidgetItem();
 
   aliasName->clear();
   aliasCommand->clear();
@@ -954,7 +956,9 @@ void ObjectEditor::actionRemoveClicked() {
   //actionHash.remove(item);
   //parent = item->parent();
   //parent->removeChild(item);
-  delete item;
+
+  //delete item;
+  item->~QTreeWidgetItem();
 
   actionLabel->clear();
   actionCommand->clear();
@@ -1200,7 +1204,8 @@ void ObjectEditor::variableRemoveClicked() {
   item = varTable->currentItem();
   deleteVariable(item);
 
-  delete item;
+  //delete item;
+  item->~QTreeWidgetItem();
 }
 
 void ObjectEditor::deleteVariable(QTreeWidgetItem* item) {
@@ -1517,7 +1522,9 @@ void ObjectEditor::markRemoveClicked() {
   //item->setHidden(true);  // HACK
   //parent = item->parent();
   //parent->removeChild(item);
-  delete item;
+
+  //delete item;
+  item->~QTreeWidgetItem();
 }
 
 

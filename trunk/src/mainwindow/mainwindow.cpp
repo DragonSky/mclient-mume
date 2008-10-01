@@ -58,7 +58,6 @@ MainWindow::MainWindow(int argc, char **argv)
 
   readSettings();
 
-
   objectEditor = NULL;
   profileDialog = NULL;
   profileManager = NULL;
@@ -88,6 +87,7 @@ MainWindow::MainWindow(int argc, char **argv)
   // Initialize Powwow
   wrapper->start(argc, argv);
 
+  // Display Main Window
   show();
 
   if (argc == 1)
@@ -332,10 +332,15 @@ void MainWindow::readSettings()
   resize(Config().windowSize);
   move(Config().windowPosition);
   alwaysOnTopAct->setChecked(Config().alwaysOnTop);
-  if (Config().alwaysOnTop) alwaysOnTop();
-  if (pos().x() < 0) pos().setX(0);
-  if (pos().y() < 0) pos().setY(0);
-  move(pos());
+  if (Config().alwaysOnTop) {
+    alwaysOnTop();
+  }
+  else
+  {
+    if (pos().x() < 0) pos().setX(0);
+    if (pos().y() < 0) pos().setY(0);
+    move(pos());
+  }
 }
 
 void MainWindow::writeSettings()

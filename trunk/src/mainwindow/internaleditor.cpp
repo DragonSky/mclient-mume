@@ -15,20 +15,21 @@
  ***************************************************************************/
 
 #include <QtGui>
-#include <QMenuBar>
+//#include <QMenuBar>
 //#include <QToolBar>
 
 #include "internaleditor.h"
+#include "wrapper.h"
 
-InternalEditor::InternalEditor(QString file, editsess* s, QWidget *parent) : QDialog(parent, Qt::Window)
+InternalEditor::InternalEditor(editsess* s, Wrapper* w, QWidget *parent) : QDialog(parent, Qt::Window)
 {
   editSession = s;
-  fileName = file;
-
-  qDebug("Internal Editor running, PID %d", s->pid);
+  fileName = s->file;
+  wrapper = w;
+  qDebug("Internal Editor running");
 
   resize(QSize(400, 400));
-  setWindowTitle("mClient Local Editor");
+  setWindowTitle(QString("%1 - mClient Editor").arg(s->descr));
 
   QVBoxLayout *vbox = new QVBoxLayout(this);
   vbox->setSpacing(0);
@@ -70,6 +71,8 @@ InternalEditor::InternalEditor(QString file, editsess* s, QWidget *parent) : QDi
 
   connect(buttonBox, SIGNAL(rejected() ), this, SLOT(close() ));
   connect(buttonBox, SIGNAL(accepted() ), this, SLOT(close() ));
+
+  loadFile(s->file);
 }
 
 InternalEditor::~InternalEditor() {}
@@ -172,7 +175,6 @@ bool InternalEditor::maybeSave()
   return false;
 }
 
-/*
 void InternalEditor::loadFile(const QString &fileName)
 {
   QFile file(fileName);
@@ -186,15 +188,12 @@ void InternalEditor::loadFile(const QString &fileName)
 
   QTextStream in(&file);
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  //textEdit->setText(in.readAll());
-  QString input = in.readAll();
-  textEdit->addText(input);
+  textEdit->setText(in.readAll());
   QApplication::restoreOverrideCursor();
 
- setCurrentProfile(fileName);
-  statusBar()->showMessage(tr("File loaded"), 2000);
+ //setCurrentProfile(fileName);
+ statusBar->showMessage(QString("File loaded - %1").arg(fileName), 2000);
 }
-*/
 
 bool InternalEditor::saveFile(const QString &fileName)
 {
@@ -225,6 +224,8 @@ void InternalEditor::closeEvent(QCloseEvent *event)
   } else {
     event->ignore();
   }
+  hide();
+  wrapper->finishedInternalEditor(editSession); // TODO
 }
 
 bool InternalEditor::save()
