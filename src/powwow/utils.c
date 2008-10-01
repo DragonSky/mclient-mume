@@ -851,8 +851,10 @@ void syserr __P1 (char *,msg)
     
 #ifndef MCLIENT
     tty_quit();
-#endif
     exit(1);
+#else
+    wrapper_quit();
+#endif
 }
 
 static void load_missing_stuff __P1 (int,n)

@@ -398,13 +398,13 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
 #endif
     }
 
+#ifndef MCLIENT
     if (editor[0] == '&') {
 	waitforeditor = 0;
 	editor++;
     } else
 	waitforeditor = 1;
     
-#ifndef MCLIENT
     if (waitforeditor) {
 	tty_quit();
 	/* ignore SIGINT since interrupting the child would interrupt us too,
@@ -428,23 +428,14 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
 	free(s);
 	return;
     }
-    
-#else
-    waitforeditor = 0;
-    sprintf(command_str, "%s %s", editor, s->file);
-    sprintf(buf, "TITLE=%s", locale_conv(s->descr));
-    childpid = wrapper_create_child(command_str, s);
-#endif
 
     s->pid = childpid;
     if (waitforeditor) {
 	while ((i = waitpid(childpid, (int*)NULL, 0)) == -1 && errno == EINTR)
 	    ;
 
-#ifndef MCLIENT
 	signal_start();		/* reset SIGINT and SIGCHLD handlers */
 	tty_start();
-#endif
 	
 	if (s->fd != -1) {
 	    tty_gotoxy(0, lines - 1);
@@ -467,8 +458,15 @@ void message_edit __P4 (char *,text, int,msglen, char,view, char,builtin)
 	free(s);
 	
     } else {
-	s->next = edit_sess;
-	edit_sess = s;
+#else
+    sprintf(command_str, "%s %s", editor, s->file);
+    childpid = wrapper_create_child(command_str, s);
+
+    s->pid = childpid;
+    {
+#endif
+        s->next = edit_sess;
+        edit_sess = s;
     }
 
 }

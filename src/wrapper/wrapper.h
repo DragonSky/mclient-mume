@@ -39,6 +39,7 @@ class InputBar;
 class Wrapper;
 class WrapperSocket;
 class WrapperProcess;
+class InternalEditor;
 
 /* This is the interacting parent object */
 class Wrapper: public QObject
@@ -74,14 +75,16 @@ class Wrapper: public QObject
     void createSocketContinued(WrapperSocket *socket, bool connected);
     int readFromSocket(int fd, char *buffer, int maxsize);
     int writeToSocket(int fd, char *data, int len);
-    QHash<int, WrapperSocket*> socketHash;
 
     /* beam.h, cmd.h */
-    int internalEditor(char *, editsess*);
+    int internalEditor(editsess*);
     void killProcess(int);
     int createProcess(char *arg, bool displayStdout);
     void detectFinishedBeam(int pid);
+    void finishBeamEdit(editsess **sp);
+    void finishedInternalEditor(editsess *s);
     QHash<int, WrapperProcess*> m_processes;
+    QHash<int, WrapperSocket*> socketHash;
 
     int getKeyBind(char *);
 
@@ -114,6 +117,8 @@ class Wrapper: public QObject
 
     TextView *textView;
     InputBar *inputBar;
+
+    QHash<editsess*, InternalEditor*> editorHash;
 
     QTimer *delayTimer;
     QObject *parent;         // MainWindow

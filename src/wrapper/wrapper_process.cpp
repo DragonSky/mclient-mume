@@ -79,9 +79,13 @@ void Wrapper::killProcess(int pid)
 int wrapper_kill_process(int pid) { wrapper->killProcess(pid); return pid; }
 int wrapper_create_child(char *args, editsess* s) {
   if (Config().useInternalEditor)
-    return wrapper->internalEditor(args, s);
+  {
+    return wrapper->internalEditor(s);
+  }
   else
+  {
     return wrapper->createProcess(args);
+  }
 }
 
 void sig_chld_bottomhalf() {} // replaced
@@ -91,66 +95,80 @@ void wrapper_generate_tmpfile(char *tmpname, uint key, int pid, int rand)
   QString path = QDir::tempPath();
   if (path.right(1) != QDir::separator())
     path += QDir::separator();
-  sprintf(tmpname, "%spowwow.%u.%d%d", (const char*)path.toAscii(), key, pid, rand);
+  sprintf(tmpname, "%spowwow.%u.%d%d", path.toAscii().constData(), key, pid, rand);
 }
 
 void Wrapper::detectFinishedBeam(int pid)
 {
-  int fd, ret;
-  editsess **sp, *p;
-  
+  editsess **sp;
+
   /* GH: check for WIFSTOPPED unnecessary since no */
   /* WUNTRACED to waitpid()                        */
   for (sp = &edit_sess; *sp && (*sp)->pid != pid; sp = &(*sp)->next);
 
   if (*sp) {
-    finish_edit(*sp);
-    p = *sp; *sp = p->next;
-    fd = p->fd;
-    free(p->descr);
-    free(p->file);
-    free(p);
-
-    /* GH: only send message if found matching session */
-
-    /* send the edit_end message if this is the last editor... */ 
-    if ((!edit_sess) && (*edit_end)) {
-      int otcp_fd = tcp_fd;  /* backup current socket fd */
-      tcp_fd = fd;
-      parse_instruction(edit_end, 0, 0, 1);
-      history_done = 0;
-      tcp_fd = otcp_fd;
-    }
+    finishBeamEdit(sp);
   }
 }
 
 /* Internal Editor */
-int Wrapper::internalEditor(char *arg, editsess* s) {
+int Wrapper::internalEditor(editsess* s) {
   qDebug("Running with internal editor");
-  QString program(arg);
-  if (program.trimmed().isEmpty())
-    return -1;
 
-  InternalEditor *editor = new InternalEditor(QString(arg), &(*s), (QWidget*)parent);
+  InternalEditor *editor = new InternalEditor(&(*s), this, (QWidget*)parent);
   editor->show();
   editor->activateWindow();
+  editorHash[s] = editor;
 
   return -1;
 }
 
+
+void Wrapper::finishedInternalEditor(editsess *s)
+{
+  qDebug("done with internal editor");
+  finishBeamEdit(&s);
+  if (editorHash[s]) editorHash[s]->~InternalEditor();
+  editorHash.remove(s);
+}
+
+void Wrapper::finishBeamEdit(editsess **sp)
+{
+  int fd, ret;
+  editsess *p;
+
+  finish_edit(*sp);
+  p = *sp; *sp = p->next;
+  fd = p->fd;
+  free(p->descr);
+  free(p->file);
+  free(p);
+
+  /* GH: only send message if found matching session */
+
+  /* send the edit_end message if this is the last editor... */ 
+  if ((!edit_sess) && (*edit_end)) {
+    int otcp_fd = tcp_fd;  /* backup current socket fd */
+    tcp_fd = fd;
+    parse_instruction(edit_end, 0, 0, 1);
+    history_done = 0;
+    tcp_fd = otcp_fd;
+  }
+}
+
 /* Wrapper Process Object */
- 
- void WrapperProcess::readyReadStandardOutput() {
+
+void WrapperProcess::readyReadStandardOutput() {
   wrapper->writeToStdout(QString(readAllStandardOutput()));
- }
+}
 
- void WrapperProcess::finishedProcess(int exitCode, QProcess::ExitStatus status) {
-   wrapper->killProcess(m_pid);
- }
+void WrapperProcess::finishedProcess(int exitCode, QProcess::ExitStatus status) {
+  wrapper->killProcess(m_pid);
+}
 
- WrapperProcess::WrapperProcess(Wrapper *parent)
- {
-   wrapper = parent;
- }
+WrapperProcess::WrapperProcess(Wrapper *parent)
+{
+  wrapper = parent;
+}
 
- WrapperProcess::~WrapperProcess() {}
+WrapperProcess::~WrapperProcess() {}
