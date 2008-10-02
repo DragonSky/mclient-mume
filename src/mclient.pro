@@ -71,6 +71,7 @@ HEADERS += ./mainwindow/mainwindow.h \
            ./wrapper/wrapper_profile.h \
            ./mainwindow/internaleditor.h
 TEMPLATE = app
+RC_FILE = ./resources/mclient.rc
 FORMS += ./objecteditor/objecteditor.ui \
          ./configuration/generalpage.ui \
          ./configuration/colorfontpage.ui \

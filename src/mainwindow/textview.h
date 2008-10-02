@@ -34,6 +34,7 @@ class TextView : public QTextEdit
     void moveCursor(int pos);
     void autoCopySelectedText(bool);
     //void resizeDocument(int);
+    void viewDimensionsChanged();
 
   private:
     QTextDocument* doc;

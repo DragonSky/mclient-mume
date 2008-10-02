@@ -68,13 +68,6 @@ void Wrapper::createSocket(char *addr, int port, char *initstr, int i) {
   tty_printf("#trying %s... ", addr);
 
   socket->connectToHost(QString(addr), port, QIODevice::ReadWrite);
-
-  connect(socket, SIGNAL(readyRead()), socket, SLOT(contentAvailable()) );
-  connect(socket, SIGNAL(disconnected()), socket, SLOT(socketDisconnected()) );
-
-  connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), socket,
-          SLOT(socketError(QAbstractSocket::SocketError)) );
-  connect(socket, SIGNAL(connected()), socket, SLOT(socketConnected()) );
 }
 
 void Wrapper::createSocketContinued(WrapperSocket *socket, bool connected)
@@ -131,6 +124,13 @@ WrapperSocket::WrapperSocket(char* _initstring, int _i, Wrapper *parent)
   i = _i;
   initstring = _initstring;
   wrapper = parent;
+
+  connect(this, SIGNAL(connected()), SLOT(socketConnected()) );
+  connect(this, SIGNAL(disconnected()), SLOT(socketDisconnected()) );
+  connect(this, SIGNAL(error(QAbstractSocket::SocketError)),
+          SLOT(socketError(QAbstractSocket::SocketError)) );
+
+  connect(this, SIGNAL(readyRead()), SLOT(contentAvailable()) );
 }
 
 WrapperSocket::~WrapperSocket() {

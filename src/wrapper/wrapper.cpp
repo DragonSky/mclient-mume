@@ -53,6 +53,7 @@ Wrapper::~Wrapper()
 /* Powwow Initialization Function */
 void Wrapper::start(int argc, char** argv) {
   startPowwow(this, argc, argv);
+  textView->viewDimensionsChanged();
   delayTimer->start(1000);
 }
 
@@ -135,12 +136,12 @@ void Wrapper::getUserInput(QString input) {
   int i, n = input.length();
   confirm = 0;
 
-    /* We have 4 possible line modes:
+  /* We have 4 possible line modes:
   * line mode, local echo: line editing functions in effect
   * line mode, no echo: sometimes used for passwords, no line editing
   * char mode, no echo: send a character directly, no local processing
   * char mode, local echo: extremely rare, do as above.
-    */
+  */
 
   if (linemode & LM_CHAR) {
     /* char mode. */
