@@ -105,7 +105,7 @@ class Wrapper: public QObject
     void setCurrentProfile(const QString&);
 
   private slots:
-    void delayTimerExpired(); // used for exec_delays
+    void delayTimerExpired() { mainLoop(); } // timer for delayed labels (exec_delays)
 
   public slots:
     void mergeInputWrapper(QString, int); // from InputBar

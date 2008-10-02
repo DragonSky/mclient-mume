@@ -35,7 +35,6 @@ class InternalEditor : public QDialog
 
   public:
     InternalEditor(editsess*, Wrapper*, QWidget* parent);
-    //virtual ~InternalEditor();
     ~InternalEditor();
 
   protected:

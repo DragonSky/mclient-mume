@@ -23,6 +23,7 @@
 #endif
 
 #ifndef MCLIENT
+/* Not needed because it is included in MingW */
 struct timeval {
     long tv_sec;        /* seconds */
     long tv_usec;  /* microseconds */

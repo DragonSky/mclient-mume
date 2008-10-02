@@ -361,20 +361,18 @@ void MainWindow::alwaysOnTop()
 
 bool MainWindow::maybeSave()
 {
-  /*
-  if (textView->document()->isModified()) {
+  if (Config().isChanged()) {
     int ret = QMessageBox::warning(this, tr("mClient"),
-                                   tr("The document has been modified.\n"
+                                   tr("Your client settings have been modified.\n"
                                        "Do you want to save your changes?"),
                                        QMessageBox::Yes | QMessageBox::Default,
                                        QMessageBox::No,
                                        QMessageBox::Cancel | QMessageBox::Escape);
     if (ret == QMessageBox::Yes)
-      return save();
+      Config().write();
     else if (ret == QMessageBox::Cancel)
       return false;
   }
-  */
   return true;
 }
 

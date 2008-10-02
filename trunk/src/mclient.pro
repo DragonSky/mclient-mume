@@ -19,18 +19,18 @@ SOURCES += ./main.cpp \
            ./powwow/utils.c \
            ./mainwindow/inputbar.cpp \
            ./wrapper/wrapper_cmd.cpp \
-           ./mainwindow/objecteditor.cpp \
+           ./objecteditor/objecteditor.cpp \
            ./configuration/configuration.cpp \
            ./configuration/configdialog.cpp \
            ./configuration/generalpage.cpp \
            ./configuration/ansicombo.cpp \
            ./configuration/colorfontpage.cpp \
            ./mainwindow/keybinder.cpp \
-           ./mainwindow/profiledialog.cpp \
-           ./mainwindow/profilemanagerdialog.cpp \
-           ./mainwindow/profileeditdialog.cpp \
-           ./kmuddy/cprofilemanager.cpp \
-           ./kmuddy/cprofilesettings.cpp \
+           ./profilemanager/profiledialog.cpp \
+           ./profilemanager/profilemanagerdialog.cpp \
+           ./profilemanager/profileeditdialog.cpp \
+           ./profilemanager/cprofilemanager.cpp \
+           ./profilemanager/cprofilesettings.cpp \
            ./wrapper/wrapper_profile.cpp \
            ./mainwindow/internaleditor.cpp
 HEADERS += ./mainwindow/mainwindow.h \
@@ -56,28 +56,28 @@ HEADERS += ./mainwindow/mainwindow.h \
            ./win32/timeval.h \
            ./mainwindow/inputbar.h \
            ./wrapper/wrapper_cmd.h \
-           ./mainwindow/objecteditor.h \
+           ./objecteditor/objecteditor.h \
            ./configuration/configuration.h \
            ./configuration/configdialog.h \
            ./configuration/generalpage.h \
            ./configuration/ansicombo.h \
            ./configuration/colorfontpage.h \
            ./mainwindow/keybinder.h \
-           ./mainwindow/profiledialog.h \
-           ./mainwindow/profilemanagerdialog.h \
-           ./mainwindow/profileeditdialog.h \
-           ./kmuddy/cprofilemanager.cpp \
-           ./kmuddy/cprofilesettings.cpp \
+           ./profilemanager/profiledialog.h \
+           ./profilemanager/profilemanagerdialog.h \
+           ./profilemanager/profileeditdialog.h \
+           ./profilemanager/cprofilemanager.cpp \
+           ./profilemanager/cprofilesettings.cpp \
            ./wrapper/wrapper_profile.h \
            ./mainwindow/internaleditor.h
 TEMPLATE = app
-FORMS += ./mainwindow/objecteditor.ui \
+FORMS += ./objecteditor/objecteditor.ui \
          ./configuration/generalpage.ui \
          ./configuration/colorfontpage.ui \
          ./mainwindow/keybinder.ui \
-         ./mainwindow/profiledialog.ui \
-         ./mainwindow/profilemanagerdialog.ui \
-         ./mainwindow/profileeditdialog.ui
+         ./profilemanager/profiledialog.ui \
+         ./profilemanager/profilemanagerdialog.ui \
+         ./profilemanager/profileeditdialog.ui
 QT += network gui
 CONFIG += warn_on \
           thread \
@@ -86,7 +86,7 @@ CONFIG += warn_on \
 CONFIG -= release
 CONFIG += debug
 TARGET = mclient
-INCLUDEPATH += . ./mainwindow ./powwow ./win32 ./wrapper ./configuration ./kmuddy
+INCLUDEPATH += . ./mainwindow ./powwow ./win32 ./wrapper ./configuration ./profilemanager ./objecteditor
 macx : LIBS += 
 win32 : LIBS += -llibgnurx
 unix : LIBS += -lm -W -Wall -O -pedantic
