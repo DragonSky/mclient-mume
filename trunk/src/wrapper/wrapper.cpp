@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QApplication>
 #include <QTimer>
 
 #include "textview.h"
@@ -34,26 +35,37 @@
 
 #include "edit.h" //insert_char
 
-Wrapper::Wrapper(InputBar *ib, TextView *tv, QObject *p): QObject(NULL)
-{
-  parent = p;
-  textView = tv;
-  inputBar = ib;
+Wrapper *Wrapper::_self = 0;
 
+Wrapper *Wrapper::self()
+{
+  if (!_self) {
+    _self = new Wrapper(qApp);
+  }
+  return _self;
+}
+
+Wrapper::Wrapper(QObject *parent) : QObject(parent) {
   qDebug("Wrapper Started");
 
+  /* Assign the wrapper struct for use in C functions */
+  wrapper = this;
+
   /* Create the Delayed Label Timer */
-  delayTimer = new QTimer(this);
+  delayTimer = new QTimer;
   connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
 }
 
 Wrapper::~Wrapper()
-{}
+{
+  _self = 0;
+}
 
 /* Powwow Initialization Function */
 void Wrapper::start(int argc, char** argv) {
-  startPowwow(this, argc, argv);
-  textView->viewDimensionsChanged();
+  startPowwow(argc, argv);
+  qDebug("Started Powwow!");
+  //textView->viewDimensionsChanged();
   delayTimer->start(1000);
 }
 

@@ -15,7 +15,8 @@ extern "C" {
 #endif
 
 /* global functions for mClient */
-int startPowwow(Wrapper *wrapper, int argc, char **argv);
+//int startPowwow(Wrapper *wrapper, int argc, char **argv);
+int startPowwow(int argc, char **argv);
 void exec_delays         __P ((void));
 void prompt_reset_iac    __P ((void));
 void get_remote_input    __P ((void));

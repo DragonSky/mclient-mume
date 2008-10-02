@@ -22,19 +22,12 @@
  */
 
 #ifdef __cplusplus
+
 #include <QObject>
 #include <QHash>
 #include <QTimer>
 
 #include "defines.h"
-//#include "list.h"
-
-#endif
-
-#ifdef __cplusplus
-
-class TextView;
-class InputBar;
 
 class Wrapper;
 class WrapperSocket;
@@ -42,12 +35,11 @@ class WrapperProcess;
 class InternalEditor;
 
 /* This is the interacting parent object */
-class Wrapper: public QObject
-{
+class Wrapper: public QObject {
   Q_OBJECT
 
   public:
-    Wrapper(InputBar* ib, TextView* tv, QObject *parent);
+    static Wrapper *self ();
     ~Wrapper();
 
     void start(int, char**); // from MainWindow
@@ -111,12 +103,15 @@ class Wrapper: public QObject
     void mergeInputWrapper(QString, int); // from InputBar
 
   private:
+    Wrapper(QObject *);
+    static Wrapper *_self;
+
     void mainLoop();
     void redrawEverything();
     int computeDelaySleeptime();
 
-    TextView *textView;
-    InputBar *inputBar;
+    //TextView *textView;
+    //InputBar *inputBar;
 
     QHash<editsess*, InternalEditor*> editorHash;
 
