@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
       */
       //mw->show();
       int ret = app.exec();
-      Config().write();
       return ret;
 }
 

@@ -34,23 +34,34 @@
 
 #include "edit.h" //insert_char
 
-/* Powwow C Functions */
+Wrapper::Wrapper(InputBar *ib, TextView *tv, QObject *p): QObject(NULL)
+{
+  parent = p;
+  textView = tv;
+  inputBar = ib;
+
+  qDebug("Wrapper Started");
+
+  /* Create the Delayed Label Timer */
+  delayTimer = new QTimer(this);
+  connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
+}
+
+Wrapper::~Wrapper()
+{}
+
+/* Powwow Initialization Function */
+void Wrapper::start(int argc, char** argv) {
+  startPowwow(this, argc, argv);
+  delayTimer->start(1000);
+}
+
 /* main.c */
-extern "C" void mainloop() {}
 
-/* utils.c */
-
-/* other */
-extern "C" void wrapper_debug(const char *format, ...);
-extern "C" void wrapper_toggle_echo() { wrapper->toggleEcho(); };
-
-/* utils.c */
-extern "C" void wrapper_quit() { wrapper->wrapperQuit(); };
-
-/* main.c
+/*
  * The select() mainloop has been replaced by QTimer and
- * Wrapper::signalStdin, ::getRemoteInput in order to aid portability
- * between systems.
+ * getUserInput/getUserBind, and getRemoteInput in order to
+ * allow portability between system types.
  */
 void Wrapper::mainLoop() {
   int sleeptime = computeDelaySleeptime();
@@ -65,6 +76,9 @@ void Wrapper::mainLoop() {
   delayTimer->start(sleeptime);
 }
 
+/*
+ * Calculate the Delayed Label Sleeptime
+ */
 int Wrapper::computeDelaySleeptime() {
   int sleeptime = 0;
 
@@ -82,6 +96,9 @@ int Wrapper::computeDelaySleeptime() {
   return sleeptime;
 }
 
+/*
+ * Redraw the Prompt if Necessary
+ */
 void Wrapper::redrawEverything() {
   if (prompt_status == 1 && line_status == 0)
     line_status = 1;
@@ -96,63 +113,23 @@ void Wrapper::redrawEverything() {
       //emit inputClear();
       //emit inputInsertText(edbuf);
       //edlen = 0;
-      line_status = 0;
+    line_status = 0;
   }
 }
 
-/* A socket has gotten input, signal the main loop */
+/*
+ * A socket has gotten input, signal the main loop
+ */
 void Wrapper::getRemoteInput(int fd) {
   tcp_fd = fd;
-  get_remote_input();
+  get_remote_input(); // call the Powwow C function
   mainLoop();
 }
 
-actionnode* Wrapper::getActions() { return actions; }
-
-QHash<QString, QString> Wrapper::getNUMVARs(int type) {
-  QHash<QString, QString> hash;
-  int i;
-  ptr p = (ptr)0;
-  if (type == 0) {
-    for (i = -NUMVAR; i < NUMPARAM; i++) {
-      if (*VAR[i].num)
-        hash[QString("%1").arg(i)] = QString("%1").arg(*VAR[i].num);
-    }
-  }
-  else
-  {
-    for (i = -NUMVAR; i < NUMPARAM; i++) {
-      if (*VAR[i].str && ptrlen(*VAR[i].str)) {
-        p = ptrescape(p, *VAR[i].str, 0);
-        if (p && ptrlen(p))
-          hash[QString("%1").arg(i)] = QString("%1").arg(ptrdata(p));
-      }
-    }
-  }
-  ptrdel(p);
-  return hash;
-}
-
-void Wrapper::getUserBind(QString input) {
-  keynode *p;
-
-  for (p = keydefs; (p && (p->seqlen < input.length() || 
-       memcmp(input.toAscii().constData(), p->sequence, input.length()))) ;
-       p = p->next);
-
-  if (!p) {
-    // GH: type the first character and keep processing the rest in the input buffer
-    last_edit_cmd = (function_any)0;
-    return;
-  }
-  else if (p->seqlen == input.length()){
-    p->funct(p->call_data);
-    last_edit_cmd = (function_any)p->funct; // GH: keep track of last command
-  }
-
-  mainLoop();
-}
-
+/*
+ * Rewritten from the Powwow Sources. Takes only a string now
+ * and doesn't handle key binds anymore.
+ */
 void Wrapper::getUserInput(QString input) {
   //qDebug("'%s' (%s)", input.toAscii().data(), edbuf);
   int i, n = input.length();
@@ -195,54 +172,78 @@ void Wrapper::getUserInput(QString input) {
   mainLoop();
 }
 
-/* Other */
+/*
+ * Separated from getUserInput. TODO: Pass in the function instead since
+ * we check if the keybind exists in InputBar?
+ */
+void Wrapper::getUserBind(QString input) {
+  keynode *p;
 
-/* Wrapper C++ Functions */
+  for (p = keydefs; (p && (p->seqlen < input.length() || 
+       memcmp(input.toAscii().constData(), p->sequence, input.length()))) ;
+       p = p->next);
 
-/* Wrapper Functions */
-
-/* Objects */
-
-void Wrapper::start(int argc, char** argv) {
-  /*
-  void Wrapper::start(QStringList args) {
-  // create "old" arguments
-  int argc = args.size();
-  char **argv = (char**) malloc(argc * sizeof(char*)); // TODO: free?
-  for (int i = 0; i < argc; ++i) {
-    argv[i] = (char*) malloc(args.at(i).length() * sizeof(char*));
-    strcpy(argv[i], args.at(i).toAscii().data());
+  if (!p) {
+    // GH: type the first character and keep processing the rest in the input buffer
+    last_edit_cmd = (function_any)0;
+    return;
   }
-  startPowwow(this, argc, argv);
-  if (argc > 2) {
-  tcp_open("main", (*initstr ? initstr : NULL), args.at(argc - 2).toAscii().data(), args.at(argc - 1).toInt());
-  */
-  startPowwow(this, argc, argv);
-  delayTimer->start(1000);
-}
-    /*
+  else if (p->seqlen == input.length()){
+    p->funct(p->call_data);
+    last_edit_cmd = (function_any)p->funct; // GH: keep track of last command
+  }
 
-void Wrapper::loadProfile(QString profile) {
-  if (argc > 2) {
-  tcp_open("main", (*initstr ? initstr : NULL), argv[argc - 2], atoi(argv[argc - 1]));
-}
-}
-    */
-
-Wrapper::Wrapper(InputBar *ib, TextView *tv, QObject *p): QObject(NULL)
-{
-  parent = p;
-  textView = tv;
-  inputBar = ib;
-
-  qDebug("Wrapper Started");
-
-  delayTimer = new QTimer(this);
-  connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
-}
-
-void Wrapper::delayTimerExpired() {
   mainLoop();
 }
 
-Wrapper::~Wrapper() {}
+
+/*
+ * Object Editor Helper Function
+ * TODO: Rewrite this in a more intelligent fashion/location?
+ * The Object Editor cannot access these variables due to scope
+ */
+actionnode* Wrapper::getActions() { return actions; }
+
+QHash<QString, QString> Wrapper::getNUMVARs(int type) {
+  QHash<QString, QString> hash;
+  int i;
+  ptr p = (ptr)0;
+  if (type == 0) {
+    for (i = -NUMVAR; i < NUMPARAM; i++) {
+      if (*VAR[i].num)
+        hash[QString("%1").arg(i)] = QString("%1").arg(*VAR[i].num);
+    }
+  }
+  else
+  {
+    for (i = -NUMVAR; i < NUMPARAM; i++) {
+      if (*VAR[i].str && ptrlen(*VAR[i].str)) {
+        p = ptrescape(p, *VAR[i].str, 0);
+        if (p && ptrlen(p))
+          hash[QString("%1").arg(i)] = QString("%1").arg(ptrdata(p));
+      }
+    }
+  }
+  ptrdel(p);
+  return hash;
+}
+
+/* Powwow C Functions */
+
+/* main.c */
+extern "C" void mainloop() {} // TODO: Change the powwow source instead?
+
+/* other */
+extern "C" void wrapper_debug(const char *format, ...);
+
+/* 
+ * C Wrapper Call to Toggle the Input Echo
+ */
+extern "C" void wrapper_toggle_echo() { wrapper->toggleEcho(); }
+
+/* utils.c */
+
+/*
+ * Called when Powwow Quits (#quit, syserr)
+ */
+extern "C" void wrapper_quit() { wrapper->wrapperQuit(); }

@@ -828,9 +828,8 @@ void ObjectEditor::deleteAlias(QTreeWidgetItem* item) {
   parse_alias(command.toAscii().data());
 }
 
- 
-   /*      ACTIONS START     */
 
+/*      ACTIONS START     */
 
 void ObjectEditor::loadActionTab()
 {
