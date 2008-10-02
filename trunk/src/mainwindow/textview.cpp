@@ -26,6 +26,9 @@
 #include <QKeyEvent>
 #include <QTextCursor>
 
+#include "main.h"
+#include "tcp.h"
+
 TextView::TextView(QLineEdit *lineEdit, QWidget *parent) : QTextEdit(parent)
 {
   qRegisterMetaType<QTextCursor>("QTextCursor");
@@ -61,6 +64,26 @@ TextView::TextView(QLineEdit *lineEdit, QWidget *parent) : QTextEdit(parent)
   qDebug("TextView created.");
 }
 
+/*
+ * Calculate Visible View Dimensions
+ * HACK: This doesn't work perfectly...
+ */
+void TextView::viewDimensionsChanged() {
+  /*
+  int fontWidth, fontHeight;
+  QFontMetrics fm(Config().serverOutputFont);
+  fontWidth = fm.width(" "); // How many pixels wide is this text?
+  fontHeight = fm.height();  // How many pixels tall is this font?
+  */
+  lines = maximumViewportSize().height();
+  cols_1 = cols = maximumViewportSize().width();
+
+  qDebug("Viewport: Lines: %d, Width: %d", lines, cols);
+
+  if (tcp_main_fd != -1)
+    tcp_write_tty_size();
+}
+
 void TextView::moveCursor(int diff) {
   int col = cursor.columnNumber();
   int pos = cursor.position();
@@ -82,7 +105,7 @@ void TextView::autoCopySelectedText(bool yes)
     copy();
 }
 
-void TextView::addText(QString& str)
+void TextView::addText(QString& str) // TODO: Make this a state machine
 {
   // ANSI codes are formatted as the following:
   // escape + [ + n1 (+ n2) + m

@@ -14,7 +14,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QtGui>
+//#include <QtGui>
+
+#include <QHeaderView>
+#include <QUrl>
+#include <QDesktopServices>
+#include <QFileDialog>
+#include <QTextStream>
+#include <QMessageBox>
 
 #include "objecteditor.h"
 #include "keybinder.h"
@@ -1149,16 +1156,16 @@ void ObjectEditor::loadVariableTab() {
     value = QString("%1").arg(v->num);
     item->setText(0, "@" + name);
     item->setText(1, value);
-    //numberedVariableHash[name] = value;
+    //item->setData(0, Qt::UserRole, qVariantFromValue((void *)v));
     v = v->snext;
   }
+  type = 0;
   QHashIterator<QString, QString> i(wrapper->getNUMVARs(type));
   while (i.hasNext()) {
     i.next();
     item = new QTreeWidgetItem(varTable);
     item->setText(0, "@" + i.key());
     item->setText(1, i.value());
-    //numberedVariableHash[i.key()] = i.value();
   }
 
   // named
@@ -1171,7 +1178,7 @@ void ObjectEditor::loadVariableTab() {
     value = QString("%1").arg(p ? ptrdata(p): "");
     item->setText(0, "$" + name);
     item->setText(1, value);
-    //namedVariableHash[name] = value;
+    //item->setData(0, Qt::UserRole, qVariantFromValue((void *)v));
     v = v->snext;
   }
   QHashIterator<QString, QString> j(wrapper->getNUMVARs(type));
@@ -1180,7 +1187,6 @@ void ObjectEditor::loadVariableTab() {
     item = new QTreeWidgetItem(varTable);
     item->setText(0, "$" + j.key());
     item->setText(1, j.value());
-    //namedVariableHash[j.key()] = j.value();
   }
 }
 
@@ -1211,16 +1217,8 @@ void ObjectEditor::deleteVariable(QTreeWidgetItem* item) {
   QString name, type, powwow_cmd;
   name = item->text(0);
 
-  if (name.contains("$")) {
-    name.remove("$");
-    type = "$";
-  } else {
-    name.remove("@");
-    type = "@";
-  }
-
   // Delete
-  QTextStream(&powwow_cmd) << type << name << "=";
+  QTextStream(&powwow_cmd) << name << "=";
   qDebug("#var %s", powwow_cmd.toAscii().data());
 
   wrapper_cmd_var(powwow_cmd.toAscii().data());
@@ -1282,17 +1280,13 @@ void ObjectEditor::updateVariableTable() {
         }
         qDebug("Variable Updater: Building item...");
   } else {
-    item = varTable->currentItem();
-    if (varTable->selectedItems().count() <= 0) {
+    if (varTable->selectedItems().count() == 0) {
       qDebug("Variable Updater: Unknown item selected.");
       return ;
     }
-    // Remove from table
-    varTable->setItemHidden(item, true);
-    //if (completeRebuild) deleteVariable(item);
   }
 
-  // Rebuild
+  // Generate Powwow command
   name = varName->text();
   value = varValue->text();
   type = varType->itemData(varType->currentIndex()).toString();
@@ -1303,9 +1297,6 @@ void ObjectEditor::updateVariableTable() {
   wrapper_cmd_var(powwow_cmd.toAscii().data());
 
   // "Add" new item
-  // TODO
-  loadVariableTab();
-
   if (addingNewVariable) {
     qDebug("Added new item.");
     addingNewVariable = false;
@@ -1313,15 +1304,17 @@ void ObjectEditor::updateVariableTable() {
     varAdd->setEnabled(true);
     varRemove->setEnabled(true);
   }
-
-  QList<QTreeWidgetItem *> list = varTable->findItems(name, Qt::MatchRecursive);
-  if (!list.isEmpty() && list.count() == 1) {
-    item = list.first();
-    varTable->setFocus();
-    varTable->setCurrentItem(item);
-    varTable->scrollToItem(item);
+  else
+  {
+    // Update existing item
+    item = varTable->currentItem();
+    item->setText(0, type + name);
+    item->setText(1, value);
   }
-  else qDebug("Unable to match");
+
+  varTable->setFocus();
+  varTable->setCurrentItem(item);
+  varTable->scrollToItem(item);
 }
 
 
