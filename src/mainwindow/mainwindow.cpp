@@ -41,7 +41,8 @@ MainWindow::MainWindow(int argc, char **argv)
 
   inputBar = new InputBar(this);
   textView = new TextView(inputBar, this);
-  wrapper = new Wrapper(inputBar, textView, this);
+  //wrapper = new Wrapper(inputBar, textView, this);
+  wrapper = Wrapper::self();
 
   vbox->addWidget(textView);
   vbox->addWidget(inputBar);
