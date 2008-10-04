@@ -104,8 +104,9 @@ MainWindow::MainWindow(int argc, char **argv)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+  writeSettings();
   if (maybeSave()) {
-    writeSettings();
+    Config().write();
     event->accept();
   } else {
     event->ignore();
@@ -354,7 +355,6 @@ void MainWindow::writeSettings()
   Config().setWindowPosition(pos() );
   Config().setWindowSize(size() );
   Config().setAlwaysOnTop((bool)(windowFlags() & Qt::WindowStaysOnTopHint));
-  Config().write();
 }
 
 void MainWindow::alwaysOnTop()
@@ -380,7 +380,6 @@ bool MainWindow::maybeSave()
     else if (ret == QMessageBox::Cancel)
       return false;
   }
-  return true;
 }
 
 /*
