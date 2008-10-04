@@ -47,7 +47,7 @@ void ProfileDialog::playClicked() {
   // Check if there is a loaded profile
   if (mgr->sessionAssigned(DEFAULT_SESSION)) {
     if (QMessageBox::warning (this, tr("Load profile"),
-        tr("The profile %1 is already loaded.\nAre you sure you want to continue?").arg(mgr->profileName(DEFAULT_SESSION)),
+        tr("The profile %1 is already loaded.\nAre you sure you want to continue?").arg(mgr->visibleProfileName(mgr->profileName(DEFAULT_SESSION))),
            QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
       return;
     else
