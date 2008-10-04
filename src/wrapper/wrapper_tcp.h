@@ -21,16 +21,23 @@
 
 class Wrapper;
 
-extern "C" void wrapper_tcp_connect(char *addr, int port, char *initstring, int i);
-extern "C" void wrapper_tcp_connect_slot(char *initstr, int port, int newtcp_fd, int i);
+/* Powwow C Functions */
+extern "C" {
+  // Creating a Socket:
+  void wrapper_tcp_connect(char *addr, int port, char *initstring, int i);
+  void wrapper_tcp_connect_slot(char *initstr, int port, int newtcp_fd, int i);
+  void wrapper_tcp_assign_id(int fd, char *id);
 
-extern "C" void tcp_spawn(char *id, char *cmd);
-//extern "C" int tcp_read(int fd, char *buffer, int maxsize);
-//extern "C" void tcp_write(int fd, char *data);
-extern "C" int wrapper_tcp_read(int fd, char *buffer, int maxsize);
-extern "C" int wrapper_tcp_write(int fd, char *data, int len);
-extern "C" void wrapper_tcp_assign_id(int fd, char *id);
-extern "C" void wrapper_tcp_close_socket(int fd);
+  // Closing a Socket:
+  void wrapper_tcp_close_socket(int fd);
+
+  // Reading/Writing to a Socket:
+  int wrapper_tcp_read(int fd, char *buffer, int maxsize);
+  int wrapper_tcp_write(int fd, char *data, int len);
+
+  // Deprecated:
+  void tcp_spawn(char *id, char *cmd);
+}
 
 class WrapperSocket: public QTcpSocket
 {

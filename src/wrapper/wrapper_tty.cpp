@@ -125,21 +125,21 @@ void tty_add_initial_binds()
 
 void tty_puts(const char *s) { 
   QString result = s;
-  if (!result.isEmpty()) wrapper->writeToStdout(result);
+  if (!result.isEmpty()) Wrapper::self()->writeToStdout(result);
 }
-void tty_putc(unsigned char c) { wrapper->writeToStdout(QString(c)); }
+void tty_putc(unsigned char c) { Wrapper::self()->writeToStdout(QString(c)); }
 void tty_gets(char* s, int size) { PRINTF("<-- tty_gets not implemented\n"); }
-int tty_read(char *buf, int cnt) { PRINTF("<-- tty_read not implemented\n"); }//return wrapper->wrapper_stdin.read(buf, cnt); }
+int tty_read(char *buf, int cnt) { PRINTF("<-- tty_read not implemented\n"); }//return Wrapper::self()->wrapper_stdin.read(buf, cnt); }
 
 void tty_gotoxy_opt(int fromcol, int fromline, int tocol, int toline) {
-  wrapper->emitMoveCursor(fromcol, fromline, tocol, toline);
+  Wrapper::self()->emitMoveCursor(fromcol, fromline, tocol, toline);
 }
 
 void tty_gotoxy(int col, int line) {
   qDebug("implement me?");
-  //wrapper->emitMoveCursor(-1, -1, col, line);
+  //Wrapper::self()->emitMoveCursor(-1, -1, col, line);
 }
-void wrapper_input_set(char *str) { wrapper->emitInputSet(str); }
+void wrapper_input_set(char *str) { Wrapper::self()->emitInputSet(str); }
 void Wrapper::emitInputSet(char *str) {
   emit inputClear();
   emit inputInsertText(str);
@@ -159,21 +159,21 @@ void Wrapper::mergeInputWrapper(QString inputBarText, int cursorPosition) {
 }
 
 void input_overtype_follow(char c) {
-  wrapper->emitInputInsertText(QString(c));
+  Wrapper::self()->emitInputInsertText(QString(c));
   pos++;
 }
 void input_delete_nofollow_chars(int n) {
   qDebug("deleting %d chars", n);
-  wrapper->emitInputDeleteChars(n);
+  Wrapper::self()->emitInputDeleteChars(n);
   pos -= n;
 }
 void input_moveto(int new_pos) {
   qDebug("moving cursor to %d", new_pos);
-  wrapper->emitInputMoveTo(new_pos);
+  Wrapper::self()->emitInputMoveTo(new_pos);
   pos = new_pos;
 }
 void input_insert_follow_chars(char *str, int n) {
-  wrapper->emitInputInsertText(QString(str).left(n));
+  Wrapper::self()->emitInputInsertText(QString(str).left(n));
   pos += n;
 } // input parsing & displaying
 

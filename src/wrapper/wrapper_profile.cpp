@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 #include <QFile>
+#include <QTextStream>
+#include <QDebug>
 #include <cstdlib>
 
 #include "wrapper.h"
@@ -27,8 +29,13 @@
 #include "main.h"
 #include "tcp.h"
 #include "utils.h"
+#include "cmd2.h" // parsing powwow commands
+#include "cmd.h" // wrapper_cmd_var
 
-void Wrapper::loadProfile(QString &profile) {
+// As of this moment only one profile can be loaded at once
+#define CURRENT_SESSION 0
+
+void Wrapper::loadProfile(const QString &profile) {
   cProfileManager *mgr = cProfileManager::self();
   cProfileSettings *sett = mgr->settings (profile);
   if (!sett) return;   // no profile selected
@@ -36,8 +43,8 @@ void Wrapper::loadProfile(QString &profile) {
   QString name = (mgr->visibleProfileName (profile));
   emit setCurrentProfile(name);
   QString definitions = sett->getString ("definitions");
-  QString server = sett->getString ("server");
-  int port = sett->getInt ("port");
+  QString hostname = sett->getString ("server");
+
   int read_file = 0;
 
   set_deffile(definitions.toAscii().data());
@@ -54,19 +61,105 @@ void Wrapper::loadProfile(QString &profile) {
     else
        read_file = 1;
 
-  if (!definitions.isEmpty() && port > 0) {
-    /* assume last two args are hostname and port number */
-    my_strncpy(hostname, server.toAscii().data(), BUFSIZE-1);
-    portnumber = port;
+  if (!definitions.isEmpty()) {
+    mgr->assignSession(CURRENT_SESSION, profile);
+    connectSession();
   }
-  
-  if (*hostname)
-    tcp_open("main", (*initstr ? initstr : NULL), hostname, portnumber);
 
-  if (read_file && !*hostname && *initstr) {
+  if (read_file && !hostname.isEmpty() && *initstr) {
     parse_instruction(initstr, 0, 0, 1);
     history_done = 0;
   }
 
   confirm = 0;
+}
+
+void Wrapper::connectSession() {
+  cProfileManager *mgr = cProfileManager::self();
+  cProfileSettings *sett = mgr->settings(mgr->profileName(CURRENT_SESSION));
+
+  if (!sett) return;   // no profile selected
+
+  QString hostname = sett->getString ("server");
+  int port = sett->getInt ("port");
+
+  if (port > 0 && !hostname.isEmpty())
+    tcp_open("main", (*initstr ? initstr : NULL), hostname.toAscii().data(), port);
+}
+
+void Wrapper::clearPowwowMemory() {
+  QString command;
+  int i, type;
+  ptr p = (ptr)0;
+
+  // Delete All Aliases
+  aliasnode *alias;
+  for (alias = sortedaliases; alias; alias = alias->snext) {
+    QTextStream(&command) << alias->name << "=";
+    //qDebug("#alias %s", command.toAscii().data() );
+    parse_alias(command.toAscii().data());
+    command.clear();
+  }
+
+  // Delete All Actions
+  actionnode *action;
+  for (action = actions; action; action = action->next) {
+    QTextStream(&command) << "<" << action->label;
+    qDebug() << "#action " << command;
+    parse_action(command.toAscii().data(), 0);
+    command.clear();
+  }
+
+  // Delete All Variables
+  varnode *v;
+  for (type = 0; type <= 1; type++) {
+    v = sortednamed_vars[type];
+    while (v) {
+      QTextStream(&command) << (type ? "$" : "@") << v->name << "=";
+      //qDebug() << "#var " << command;
+      wrapper_cmd_var(command.toAscii().data());
+      command.clear();
+      v = v->snext;
+    }
+  }
+  for (i = -NUMVAR; i < NUMPARAM; i++) {
+    if (*VAR[i].num) {
+      QTextStream(&command) << "@" << i << "=";
+      //qDebug() << "#var " << command;
+      wrapper_cmd_var(command.toAscii().data());
+      command.clear();
+    }
+  }
+  for (i = -NUMVAR; i < NUMPARAM; i++) {
+    if (*VAR[i].str && ptrlen(*VAR[i].str)) {
+      p = ptrescape(p, *VAR[i].str, 0);
+      if (p && ptrlen(p)) {
+        QTextStream(&command) << "$" << i << "=";
+        //qDebug() << "#var " << command;
+        wrapper_cmd_var(command.toAscii().data());
+        command.clear();
+      }
+    }
+  }
+
+  return; // HACK, following code segfaults for some reason
+
+  // Delete All Marks
+  marknode *mark;
+  for (mark = markers; mark; mark = mark->next) {
+    QTextStream(&command) << (mark->mbeg ? "^" : "") << mark->pattern << "=";
+    qDebug() << "#mark " << command;
+    parse_mark(command.toAscii().data());
+    command.clear();
+  }
+
+  // Delete All Binds
+  keynode *bind;
+  for (bind = keydefs; bind; bind = bind->next) {
+    QTextStream(&command) << bind->name << "=";
+    qDebug() << "#bind " << command;
+    parse_bind(command.toAscii().data());
+    command.clear();
+  }
+
 }

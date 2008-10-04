@@ -82,7 +82,7 @@ class Wrapper: public QObject {
 
     /* other */
     void wrapperQuit() { emit close(); }
-    void loadProfile(QString &profile);
+    void loadProfile(const QString &profile);
 
 
   signals:
@@ -98,9 +98,13 @@ class Wrapper: public QObject {
 
   private slots:
     void delayTimerExpired() { mainLoop(); } // timer for delayed labels (exec_delays)
+    //void reconnectProfile(QString &profile);
 
   public slots:
     void mergeInputWrapper(QString, int); // from InputBar
+    void connectSession();
+    void disconnectSession();
+    void clearPowwowMemory();
 
   private:
     Wrapper(QObject *);
@@ -125,14 +129,6 @@ class Wrapper: public QObject {
    typedef
        struct Wrapper
        Wrapper;
-#endif
-
-/* C++ callable C functions */
-#ifdef __cplusplus
-   extern "C" Wrapper* wrapper;
-   extern "C" void hidePassword();
-#else
-   Wrapper* wrapper;
 #endif
 
 #endif /* _WRAPPER_H_ */

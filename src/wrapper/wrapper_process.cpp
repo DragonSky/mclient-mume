@@ -31,7 +31,7 @@
 
 /* beam.c */
 
-void cmd_shell(char *arg) { wrapper->createProcess(arg, true); }
+void cmd_shell(char *arg) { Wrapper::self()->createProcess(arg, true); }
 
 int Wrapper::createProcess(char *arg, bool displayStdout = false)
 {
@@ -76,15 +76,15 @@ void Wrapper::killProcess(int pid)
 
 /* beam.c */
 
-int wrapper_kill_process(int pid) { wrapper->killProcess(pid); return pid; }
+int wrapper_kill_process(int pid) { Wrapper::self()->killProcess(pid); return pid; }
 int wrapper_create_child(char *args, editsess* s) {
   if (Config().useInternalEditor)
   {
-    return wrapper->internalEditor(s);
+    return Wrapper::self()->internalEditor(s);
   }
   else
   {
-    return wrapper->createProcess(args);
+    return Wrapper::self()->createProcess(args);
   }
 }
 
@@ -159,11 +159,11 @@ void Wrapper::finishBeamEdit(editsess **sp)
 /* Wrapper Process Object */
 
 void WrapperProcess::readyReadStandardOutput() {
-  wrapper->writeToStdout(QString(readAllStandardOutput()));
+  Wrapper::self()->writeToStdout(QString(readAllStandardOutput()));
 }
 
 void WrapperProcess::finishedProcess(int exitCode, QProcess::ExitStatus status) {
-  wrapper->killProcess(m_pid);
+  Wrapper::self()->killProcess(m_pid);
 }
 
 WrapperProcess::WrapperProcess(Wrapper *parent)

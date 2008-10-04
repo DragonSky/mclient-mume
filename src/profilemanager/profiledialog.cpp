@@ -20,10 +20,15 @@
 //
 //
 
+#include <QMessageBox>
+
 #include "profiledialog.h"
 #include "profilemanagerdialog.h"
 #include "cprofilemanager.h"
 #include "cprofilesettings.h"
+
+// Currently mClient only allows one session
+#define DEFAULT_SESSION 0
 
 QString ProfileDialog::selectedProfile ()
 {
@@ -39,12 +44,18 @@ void ProfileDialog::playClicked() {
   cProfileSettings *sett = mgr->settings (profile);
   if (!sett) return;   // no profile selected
 
-  /*
-  QString name = (mgr->visibleProfileName (profile));
-  mdlg->setServer (sett->getString ("server"));
-  mdlg->setPort (sett->getInt ("port"));
-  mdlg->setDefinitions (sett->getString ("definitions"));
-  */
+  // Check if there is a loaded profile
+  if (mgr->sessionAssigned(DEFAULT_SESSION)) {
+    if (QMessageBox::warning (this, tr("Load profile"),
+        tr("The profile %1 is already loaded.\nAre you sure you want to continue?").arg(mgr->profileName(DEFAULT_SESSION)),
+           QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+      return;
+    else
+    {
+      emit clearPowwowMemory();
+    }
+  }
+
   qDebug("running with settings...");
   hide();
   emit profileSelected();
@@ -55,7 +66,7 @@ void ProfileDialog::relayLoadProfile(const QString& profile)
   //hide the dialog, so that it doesn't look like we've crashed
   dialog->hide();
   //click play!
-  playButton->click();
+  playClicked();
 }
 
 void ProfileDialog::profileClicked() {

@@ -48,9 +48,6 @@ Wrapper *Wrapper::self()
 Wrapper::Wrapper(QObject *parent) : QObject(parent) {
   qDebug("Wrapper Started");
 
-  /* Assign the wrapper struct for use in C functions */
-  wrapper = this;
-
   /* Create the Delayed Label Timer */
   delayTimer = new QTimer;
   connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
@@ -243,20 +240,22 @@ QHash<QString, QString> Wrapper::getNUMVARs(int type) {
 
 /* Powwow C Functions */
 
-/* main.c */
-extern "C" void mainloop() {} // TODO: Change the powwow source instead?
+extern "C" {
+  /* main.c */
+  void mainloop() {} // TODO: Change the powwow source instead?
 
-/* other */
-extern "C" void wrapper_debug(const char *format, ...);
+  /* other */
+  void wrapper_debug(const char *format, ...);
 
-/* 
- * C Wrapper Call to Toggle the Input Echo
- */
-extern "C" void wrapper_toggle_echo() { wrapper->toggleEcho(); }
+  /* 
+  * C Wrapper Call to Toggle the Input Echo
+  */
+  void wrapper_toggle_echo() { Wrapper::self()->toggleEcho(); }
 
-/* utils.c */
+  /* utils.c */
 
-/*
- * Called when Powwow Quits (#quit, syserr)
- */
-extern "C" void wrapper_quit() { wrapper->wrapperQuit(); }
+  /*
+  * Called when Powwow Quits (#quit, syserr)
+  */
+  void wrapper_quit() { Wrapper::self()->wrapperQuit(); }
+}

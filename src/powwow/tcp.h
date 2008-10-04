@@ -6,10 +6,6 @@
 #ifdef MCLIENT
 #include "defines.h"
 
-#  ifdef __cplusplus
-   extern "C" {
-#  endif
-
    /* from telnet.h */
 #  define TELOPT_TTYPE    24      /* terminal type */
 #  define TELOPT_ECHO     1       /* echo */
@@ -22,6 +18,10 @@
 #  define WONT    252             /* I won't use option */
 #  define WILL    251             /* I will use option */
 #  define GA      249             /* you may reverse the line */
+
+#  ifdef __cplusplus
+   extern "C" {
+#  endif
 
 #endif
 
