@@ -199,11 +199,11 @@ void MainWindow::createActions()
 
   disconnectAct = new QAction(QIcon(":/crystal/disconnect.png"), tr("&Disconnect"), this);
   disconnectAct->setStatusTip(tr("Disconnect from the current session"));
-  //connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+  connect(disconnectAct, SIGNAL(triggered()), wrapper, SLOT(disconnectSession()));
 
   reconnectAct = new QAction(QIcon(":/crystal/reconnect.png"), tr("&Reconnect"), this);
   reconnectAct->setStatusTip(tr("Reconnect to the current session's remote host"));
-  //connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+  connect(reconnectAct, SIGNAL(triggered()), wrapper, SLOT(connectSession()) );
 
   exitAct = new QAction(QIcon(":/crystal/exit.png"), tr("E&xit"), this);
   exitAct->setStatusTip(tr("Exit the application"));
@@ -434,7 +434,7 @@ void MainWindow::setCurrentProfile(const QString &profile)
   else
     shownName = strippedName(currentProfile);
 
-  setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("mClient")));
+  setWindowTitle(tr("%1 - mClient").arg(shownName));
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)
@@ -476,6 +476,7 @@ void MainWindow::selectProfile() {
   profileDialog->activateWindow();
   */
   connect (profileDialog, SIGNAL(profileSelected() ), this, SLOT(profileSelected() ));
+  connect (profileDialog, SIGNAL(clearPowwowMemory() ), wrapper, SLOT(clearPowwowMemory() ));
 
   profileDialog->exec();
 

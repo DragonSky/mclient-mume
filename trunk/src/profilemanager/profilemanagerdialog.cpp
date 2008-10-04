@@ -157,7 +157,7 @@ void ProfileManagerDialog::doModify ()
 void ProfileManagerDialog::selectionChanged (const QItemSelection &index)
 {
   //enable/disable Connect button
-  loadButton->setEnabled(index.indexes().empty() ? false : true);
+  loadButton->setEnabled(!index.indexes().empty());
 }
 
 void ProfileManagerDialog::doubleClicked (const QModelIndex &index)
@@ -176,26 +176,29 @@ void ProfileManagerDialog::loadClicked()
 ProfileManagerDialog::ProfileManagerDialog(QItemSelectionModel *sel, QWidget*parent) : QDialog(parent)
 {
   setupUi(this);
-  
-  profileView->setModel (cProfileManager::self()->model());
-  profileView->setUniformRowHeights (true);
-  profileView->setRootIsDecorated (false);
-  profileView->setItemsExpandable (false);
+
+  profileView->setModel(cProfileManager::self()->model());
+  profileView->setUniformRowHeights(true);
+  profileView->setRootIsDecorated(false);
+  profileView->setItemsExpandable(false);
   profileView->setWhatsThis(tr("This list shows currently defined profiles.<p><b>Profiles</b> "
                                "allow you to speed up connecting to your MUD, as well as the loading of"
                                "more advanced features like <i>aliases</i> or <i>triggers</i>.")
                            );
 
-  // Synchronize Selection Models if it was called from ProfileDialog
-  if (sel) {
-    profileView->setSelectionModel(sel);
-    //profileView->selectionModel()->clear();
-  }
-
   loadButton = new QPushButton(tr("Load Profile"));
   loadButton->setDefault(true);
   buttonBox->addButton(loadButton, QDialogButtonBox::AcceptRole);
-  selectionChanged(profileView->selectionModel()->selection());
+
+  // Synchronize Selection Models if it was called from ProfileDialog
+  if (sel) {
+    profileView->setSelectionModel(sel);
+    selectionChanged(profileView->selectionModel()->selection());
+  }
+  else
+  {
+    loadButton->hide();
+  }
 
   connect (addButton, SIGNAL(clicked()), this, SLOT(addClicked()));
   connect (modifyButton, SIGNAL(clicked()), this, SLOT(modifyClicked()));

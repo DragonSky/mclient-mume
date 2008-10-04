@@ -920,7 +920,9 @@ void tcp_close __P1 (char *,id)
 #ifndef MCLIENT
     shutdown(sfd, 2);
     close(sfd);
-#endif MCLIENT
+#else
+    wrapper_tcp_close_socket(sfd);
+#endif
 
     abort_edit_fd(sfd);
     
@@ -955,8 +957,6 @@ void tcp_close __P1 (char *,id)
     
 #ifndef MCLIENT
     FD_CLR(sfd, &fdset);
-#else
-    wrapper_tcp_close_socket(sfd);
 #endif
 
     if (CONN_LIST(sfd).flags & SPAWN)

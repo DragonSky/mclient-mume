@@ -25,16 +25,66 @@
 #include "main.h"
 #include "tcp.h"
 
-int wrapper_tcp_read(int fd, char *buffer, int maxsize) { return wrapper->readFromSocket(fd, buffer, maxsize); }
-int wrapper_tcp_write(int fd, char *data, int len) { return wrapper->writeToSocket(fd, data, len); }
-void wrapper_tcp_assign_id(int fd, char *id) {  wrapper->socketHash[fd]->id = id; }
-void wrapper_tcp_connect(char *host, int port, char *initstring, int i) { wrapper->createSocket(host, port, initstring, i); };
-void tcp_spawn(char *id, char *cmd) { wrapper->writeToStdout(QString("todo")); } // TODO
-
-void wrapper_tcp_close_socket(int fd)
+/*
+ * WrapperSocket contains various variables that are necessary to allow
+ * a connecting socket to attempt to connect without blocking.
+ */
+WrapperSocket::WrapperSocket(char* initstring, int i, Wrapper *wrapper)
+  : QTcpSocket(), initstring(initstring), i(i), wrapper(wrapper)
 {
-  wrapper->socketHash[fd]->deleteLater();
-  wrapper->socketHash.remove(fd);
+
+  connect(this, SIGNAL(connected()), SLOT(socketConnected()) );
+  connect(this, SIGNAL(disconnected()), SLOT(socketDisconnected()) );
+  connect(this, SIGNAL(error(QAbstractSocket::SocketError)),
+          SLOT(socketError(QAbstractSocket::SocketError)) );
+
+  connect(this, SIGNAL(readyRead()), SLOT(contentAvailable()) );
+}
+
+WrapperSocket::~WrapperSocket() {
+  delete initstring;
+}
+
+void WrapperSocket::socketError(QAbstractSocket::SocketError socketError)
+{
+  if (state() == QAbstractSocket::UnconnectedState) { // Only provide messages during #connect
+    switch (socketError) {
+      case QAbstractSocket::RemoteHostClosedError:
+        tty_printf("remote host closed the connection!\n");
+        break;
+      case QAbstractSocket::HostNotFoundError:
+        tty_printf("unknown host!\n");
+        break;
+      case QAbstractSocket::ConnectionRefusedError:
+        tty_printf("connection was refused by the host!\n");
+        break;
+      default:
+        tty_printf("error: %s\n", errorString().toAscii().data());
+    }
+    Wrapper::self()->createSocketContinued(this, FALSE);
+  }
+  qDebug("socket error: %s", errorString().toAscii().data());
+}
+
+void WrapperSocket::socketConnected() {
+  tty_printf("connected!\n");
+  Wrapper::self()->createSocketContinued(this, TRUE);
+}
+
+void WrapperSocket::contentAvailable() {
+  Wrapper::self()->getRemoteInput(socketDescriptor());
+}
+
+void WrapperSocket::socketDisconnected() {
+  tcp_close(id);
+}
+
+/*
+ *
+ */
+void Wrapper::disconnectSession() {
+  socketHash[tcp_fd]->socketDisconnected();
+  emit setCurrentProfile(QString());
 }
 
 int Wrapper::readFromSocket(int fd, char *buffer, int maxsize)
@@ -51,14 +101,7 @@ int Wrapper::readFromSocket(int fd, char *buffer, int maxsize)
 
 int Wrapper::writeToSocket(int fd, char *data, int len)
 {
-  int write;
-  WrapperSocket *socket = socketHash[fd];
-  write = socket->write(data, len);
-  /*if (!socket->waitForBytesWritten())
-    qDebug("Unable to write %d %s (len %d)", write, data, len);
-  */
-  //qDebug("Wrote %d %s (len %d)", write, data, len);
-  return write;
+  return socketHash[fd]->write(data, len);
 }
 
 void Wrapper::createSocket(char *addr, int port, char *initstr, int i) {
@@ -83,56 +126,19 @@ void Wrapper::createSocketContinued(WrapperSocket *socket, bool connected)
   wrapper_tcp_connect_slot(socket->initstring, socket->peerPort(), socket->i, newtcp_fd);
 }
 
-/* Helper Object */
+/*
+ * C Functions from Powwow
+ */
+int wrapper_tcp_read(int fd, char *buffer, int maxsize) { return Wrapper::self()->readFromSocket(fd, buffer, maxsize); }
+int wrapper_tcp_write(int fd, char *data, int len) { return Wrapper::self()->writeToSocket(fd, data, len); }
+void wrapper_tcp_assign_id(int fd, char *id) {  Wrapper::self()->socketHash[fd]->id = id; }
+void wrapper_tcp_connect(char *host, int port, char *initstring, int i) { Wrapper::self()->createSocket(host, port, initstring, i); }
+void tcp_spawn(char *id, char *cmd) { Wrapper::self()->writeToStdout(QString("todo")); } // TODO
 
-void WrapperSocket::socketError(QAbstractSocket::SocketError socketError)
+void wrapper_tcp_close_socket(int fd)
 {
-  if (state() == QAbstractSocket::UnconnectedState) { // Only provide messages during #connect
-    switch (socketError) {
-      case QAbstractSocket::RemoteHostClosedError:
-        tty_printf("remote host closed the connection!\n");
-      break;
-      case QAbstractSocket::HostNotFoundError:
-        tty_printf("unknown host!\n");
-      break;
-      case QAbstractSocket::ConnectionRefusedError:
-        tty_printf("connection was refused by the host!\n");
-      break;
-      default:
-        tty_printf("error: %s\n", errorString().toAscii().data());
-    }
-    wrapper->createSocketContinued(this, FALSE);
-  }
-  qDebug("socket error: %s", errorString().toAscii().data());
+  Wrapper::self()->socketHash[fd]->deleteLater();
+  Wrapper::self()->socketHash.remove(fd);
 }
 
-void WrapperSocket::socketConnected() {
-  tty_printf("connected!\n");
-  wrapper->createSocketContinued(this, TRUE);
-}
 
-void WrapperSocket::contentAvailable() {
-  wrapper->getRemoteInput(socketDescriptor());
-}
-
-void WrapperSocket::socketDisconnected() {
-  tcp_close(id);
-}
-
-WrapperSocket::WrapperSocket(char* _initstring, int _i, Wrapper *parent)
-{
-  i = _i;
-  initstring = _initstring;
-  wrapper = parent;
-
-  connect(this, SIGNAL(connected()), SLOT(socketConnected()) );
-  connect(this, SIGNAL(disconnected()), SLOT(socketDisconnected()) );
-  connect(this, SIGNAL(error(QAbstractSocket::SocketError)),
-          SLOT(socketError(QAbstractSocket::SocketError)) );
-
-  connect(this, SIGNAL(readyRead()), SLOT(contentAvailable()) );
-}
-
-WrapperSocket::~WrapperSocket() {
-  delete initstring;
-}
