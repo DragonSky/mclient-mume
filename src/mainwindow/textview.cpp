@@ -58,6 +58,9 @@ TextView::TextView(QLineEdit *lineEdit, QWidget *parent) : QTextEdit(parent)
   defaultFormat = format;
   cursor.setCharFormat(format);
 
+  QFontMetrics fm(Config().serverOutputFont);
+  setTabStopWidth(fm.width(" ") * 8); // A tab is 8 spaces wide
+
   connect(this, SIGNAL(copyAvailable(bool)), this, SLOT(autoCopySelectedText(bool)));
 
   previous = 0;

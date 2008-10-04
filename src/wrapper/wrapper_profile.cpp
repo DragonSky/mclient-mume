@@ -88,6 +88,8 @@ void Wrapper::connectSession() {
 }
 
 void Wrapper::clearPowwowMemory() {
+  parse_instruction("#reset all", 0, 0, 0);
+  /*
   QString command;
   int i, type;
   ptr p = (ptr)0;
@@ -163,5 +165,6 @@ void Wrapper::clearPowwowMemory() {
     parse_bind(command.toAscii().data());
     command.clear();
   }
+  */
 
 }

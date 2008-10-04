@@ -28,8 +28,13 @@
 #include "wrapper.h"
 #include "objecteditor.h"
 #include "configdialog.h"
+
+#include "cprofilemanager.h"
 #include "profiledialog.h"
 #include "profilemanagerdialog.h"
+
+// Currently mClient only allows one session
+#define DEFAULT_SESSION 0
 
 MainWindow::MainWindow(int argc, char **argv)
 {
@@ -477,7 +482,6 @@ void MainWindow::selectProfile() {
   profileDialog->activateWindow();
   */
   connect (profileDialog, SIGNAL(profileSelected() ), this, SLOT(profileSelected() ));
-  connect (profileDialog, SIGNAL(clearPowwowMemory() ), wrapper, SLOT(clearPowwowMemory() ));
 
   profileDialog->exec();
 
@@ -488,7 +492,15 @@ void MainWindow::selectProfile() {
 void MainWindow::profileSelected() {
   QString name = profileDialog->selectedProfile();
   qDebug("Got signal to start new session %s", name.toAscii().constData());
+  cProfileManager *mgr = cProfileManager::self();
+
   //create cSession object and related stuff
   //int s = cSessionManager::self()->addSession (true);   //TODO
+  
+  // Check if there is a loaded profile
+  if (mgr->sessionAssigned(DEFAULT_SESSION)) {
+    Wrapper::self()->disconnectSession();
+    Wrapper::self()->clearPowwowMemory();
+  }
   wrapper->loadProfile(name);
 }

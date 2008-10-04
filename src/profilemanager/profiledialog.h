@@ -40,7 +40,6 @@ class ProfileDialog : public QDialog, public Ui::ProfileDialog
 
   signals:
     void profileSelected();
-    void clearPowwowMemory();
 
   private slots:
     void playClicked();
