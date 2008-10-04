@@ -349,6 +349,7 @@ void MainWindow::writeSettings()
   Config().setWindowPosition(pos() );
   Config().setWindowSize(size() );
   Config().setAlwaysOnTop((bool)(windowFlags() & Qt::WindowStaysOnTopHint));
+  Config().write();
 }
 
 void MainWindow::alwaysOnTop()
@@ -370,7 +371,7 @@ bool MainWindow::maybeSave()
                                        QMessageBox::No,
                                        QMessageBox::Cancel | QMessageBox::Escape);
     if (ret == QMessageBox::Yes)
-      Config().write();
+      return true;
     else if (ret == QMessageBox::Cancel)
       return false;
   }

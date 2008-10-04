@@ -154,14 +154,12 @@ void Wrapper::clearPowwowMemory() {
     command.clear();
   }
 
-  return ; // HACK: Fix the keybinds loop, it segfaults!
-
   // Delete All Binds
   keynode *bind = keydefs;
   while (bind) {
     QTextStream(&command) << bind->name << "=";
     qDebug() << "#bind " << command;
-    bind->next;
+    bind = bind->next;
     parse_bind(command.toAscii().data());
     command.clear();
   }
