@@ -50,10 +50,6 @@ void ProfileDialog::playClicked() {
         tr("The profile %1 is already loaded.\nAre you sure you want to continue?").arg(mgr->visibleProfileName(mgr->profileName(DEFAULT_SESSION))),
            QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
       return;
-    else
-    {
-      emit clearPowwowMemory();
-    }
   }
 
   qDebug("running with settings...");

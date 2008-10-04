@@ -78,7 +78,7 @@ void Wrapper::killProcess(int pid)
 
 int wrapper_kill_process(int pid) { Wrapper::self()->killProcess(pid); return pid; }
 int wrapper_create_child(char *args, editsess* s) {
-  if (Config().useInternalEditor)
+  if (false && Config().useInternalEditor) // HACK: ignore internal editor for now
   {
     return Wrapper::self()->internalEditor(s);
   }
