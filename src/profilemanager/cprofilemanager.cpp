@@ -258,7 +258,7 @@ QString cProfileManager::newProfile (const QString &name)
   if (!found) return QString();
 
   // notify the model
-  d->model->addRow (d->profiles.size() - 1);
+  d->model->addRow (d->profiles.size());
   
   // create the directory
   mainDir.mkdir (dirname);
