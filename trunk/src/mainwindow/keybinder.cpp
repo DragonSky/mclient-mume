@@ -43,6 +43,9 @@ bool isAcceptableKey(QKeyEvent* ke) {
         case Qt::Key_F3:
         case Qt::Key_F2:
         case Qt::Key_F1:
+        case Qt::Key_Delete:
+        case Qt::Key_Home:
+        case Qt::Key_Insert:
           return true;
       };
       break;
