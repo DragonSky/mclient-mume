@@ -106,7 +106,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
   writeSettings();
   if (maybeSave()) {
-    Config().write();
     event->accept();
   } else {
     event->ignore();
@@ -376,10 +375,11 @@ bool MainWindow::maybeSave()
                                        QMessageBox::No,
                                        QMessageBox::Cancel | QMessageBox::Escape);
     if (ret == QMessageBox::Yes)
-      return true;
+      Config().write();
     else if (ret == QMessageBox::Cancel)
       return false;
   }
+  return true;
 }
 
 /*
