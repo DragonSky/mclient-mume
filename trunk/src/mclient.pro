@@ -79,11 +79,12 @@ FORMS += ./objecteditor/objecteditor.ui \
          ./profilemanager/profiledialog.ui \
          ./profilemanager/profilemanagerdialog.ui \
          ./profilemanager/profileeditdialog.ui
-QT += network gui
+QT += network gui xml
 CONFIG += warn_on \
           thread \
           qt \
-          network
+          network \
+          xml
 CONFIG -= release
 CONFIG += debug
 TARGET = mclient

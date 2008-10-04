@@ -93,19 +93,21 @@ void Wrapper::clearPowwowMemory() {
   ptr p = (ptr)0;
 
   // Delete All Aliases
-  aliasnode *alias;
-  for (alias = sortedaliases; alias; alias = alias->snext) {
+  aliasnode *alias = sortedaliases;
+  while (alias) {
     QTextStream(&command) << alias->name << "=";
     //qDebug("#alias %s", command.toAscii().data() );
+    alias = alias->snext;
     parse_alias(command.toAscii().data());
     command.clear();
   }
 
   // Delete All Actions
-  actionnode *action;
-  for (action = actions; action; action = action->next) {
+  actionnode *action = actions;
+  while (action) {
     QTextStream(&command) << "<" << action->label;
-    qDebug() << "#action " << command;
+    //qDebug() << "#action " << command;
+    action = action->next;
     parse_action(command.toAscii().data(), 0);
     command.clear();
   }
@@ -117,9 +119,9 @@ void Wrapper::clearPowwowMemory() {
     while (v) {
       QTextStream(&command) << (type ? "$" : "@") << v->name << "=";
       //qDebug() << "#var " << command;
+      v = v->snext;
       wrapper_cmd_var(command.toAscii().data());
       command.clear();
-      v = v->snext;
     }
   }
   for (i = -NUMVAR; i < NUMPARAM; i++) {
@@ -142,22 +144,24 @@ void Wrapper::clearPowwowMemory() {
     }
   }
 
-  return; // HACK, following code segfaults for some reason
-
   // Delete All Marks
-  marknode *mark;
-  for (mark = markers; mark; mark = mark->next) {
+  marknode *mark = markers;
+  while (mark) {
     QTextStream(&command) << (mark->mbeg ? "^" : "") << mark->pattern << "=";
     qDebug() << "#mark " << command;
+    mark = mark->next;
     parse_mark(command.toAscii().data());
     command.clear();
   }
 
+  return ; // HACK: Fix the keybinds loop, it segfaults!
+
   // Delete All Binds
-  keynode *bind;
-  for (bind = keydefs; bind; bind = bind->next) {
+  keynode *bind = keydefs;
+  while (bind) {
     QTextStream(&command) << bind->name << "=";
     qDebug() << "#bind " << command;
+    bind->next;
     parse_bind(command.toAscii().data());
     command.clear();
   }
