@@ -105,7 +105,6 @@ void Wrapper::clearPowwowMemory() {
   // Delete All Actions
   actionnode *action = actions;
   while (action) {
-    qDebug() << "piss on me";
     QTextStream(&command) << "<" << action->label;
     //qDebug() << "#action " << command;
     action = action->next;
