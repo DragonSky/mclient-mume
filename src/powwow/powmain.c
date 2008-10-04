@@ -880,7 +880,11 @@ static void process_singleline __P2 (char **,pbuf, int *,psize)
  * different packets, as long as no #prompts execute #isprompt
  * on an incomplete prompt (as stated in the docs).
  */
+#ifndef MCLIENT
 static int process_first_fragment __P2 (char *,buf, int,got)
+#else
+int process_first_fragment __P2 (char *,buf, int,got)
+#endif
 {
     int processed = 0;
     
@@ -1002,11 +1006,7 @@ static void common_clear __P1 (int,newline)
 /*
  * get data from the socket and process/display it.
  */
-#ifdef MCLIENT
-void get_remote_input __P0 (void)
-#else
 static void get_remote_input __P0 (void)
-#endif
 {
     char buffer[BUFSIZE + 2];        /* allow for a terminating \0 later */
     char *buf = buffer, *newline;

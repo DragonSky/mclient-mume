@@ -14,10 +14,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QApplication>
 #include <QTimer>
 
 #include "textview.h"
+#include "telnetfilter.h"
+#include "mumexmlparser.h"
+#include "mainwindow.h"
+#include "CGroup.h"
+#include "mmapper2pathmachine.h"
+#include "prespammedpath.h"
 
 #include "wrapper.h"
 #include "wrapper_tcp.h"
@@ -40,17 +45,24 @@ Wrapper *Wrapper::_self = 0;
 Wrapper *Wrapper::self()
 {
   if (!_self) {
-    _self = new Wrapper(qApp);
+    if (mainWindow = 0)
+      qDebug("no main window");
+    _self = new Wrapper(mainWindow);
   }
   return _self;
 }
 
 Wrapper::Wrapper(QObject *parent) : QObject(parent) {
-  qDebug("Wrapper Started");
-
   /* Create the Delayed Label Timer */
   delayTimer = new QTimer;
   connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
+
+  /* Create the Telnet Filter */
+  filter = new TelnetFilter(this);
+  connect(this, SIGNAL(analyzeUserStream( const char*, int )), filter, SLOT(analyzeUserStream( const char*, int )));
+  connect(this, SIGNAL(analyzeMudStream( const char*, int )), filter, SLOT(analyzeMudStream( const char*, int )));
+  connect(filter, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
+  connect(filter, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
 }
 
 Wrapper::~Wrapper()
@@ -60,6 +72,25 @@ Wrapper::~Wrapper()
 
 /* Powwow Initialization Function */
 void Wrapper::start(int argc, char** argv) {
+  parserXml = new MumeXmlParser(mainWindow->getMapData(), this);
+  qDebug("Created XML Parser");
+
+  connect(filter, SIGNAL(parseNewMudInputXml(IncomingData&)), parserXml, SLOT(parseNewMudInput(IncomingData&)));
+  connect(filter, SIGNAL(parseNewUserInputXml(IncomingData&)), parserXml, SLOT(parseNewUserInput(IncomingData&)));
+
+  connect(parserXml, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
+  connect(parserXml, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
+  connect(parserXml, SIGNAL(setNormalMode()), filter, SLOT(setNormalMode()));
+
+  connect(parserXml, SIGNAL(event(ParseEvent* )), mainWindow->getPathMachine(), SLOT(event(ParseEvent* )), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(releaseAllPaths()), mainWindow->getPathMachine(), SLOT(releaseAllPaths()), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(showPath(CommandQueue, bool)),mainWindow->getPrespammedPath(), SLOT(setPath(CommandQueue, bool)), Qt::QueuedConnection);
+
+  //Group Manager Support
+  connect(parserXml, SIGNAL(sendScoreLineEvent(QByteArray)), mainWindow->getGroupManager(), SLOT(parseScoreInformation(QByteArray)), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(sendPromptLineEvent(QByteArray)), mainWindow->getGroupManager(), SLOT(parsePromptInformation(QByteArray)), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(sendGroupTellEvent(QByteArray)), mainWindow->getGroupManager(), SLOT(sendGTell(QByteArray)), Qt::QueuedConnection);
+
   startPowwow(argc, argv);
   qDebug("Started Powwow!");
   //textView->viewDimensionsChanged();
@@ -131,9 +162,67 @@ void Wrapper::redrawEverything() {
  * A socket has gotten input, signal the main loop
  */
 void Wrapper::getRemoteInput(int fd) {
+  // Set the current connection
   tcp_fd = fd;
-  get_remote_input(); // call the Powwow C function
+
+  char buffer[BUFSIZE + 2];        /* allow for a terminating \0 later */
+  char *buf = buffer, *newline;
+  int got, otcp_fd, i;
+
+  if (CONN_LIST(tcp_fd).fragment) {
+    if ((i = strlen(CONN_LIST(tcp_fd).fragment)) >= BUFSIZE-1) {
+      i = 0;
+      //common_clear(promptlen && !opt_compact);
+      tty_printf("#error: ##%s : line too long, discarded\n", CONN_LIST(tcp_fd).id);
+    } else {
+      buf += i;
+      memcpy(buffer, CONN_LIST(tcp_fd).fragment, i);
+    }
+    free(CONN_LIST(tcp_fd).fragment);
+    CONN_LIST(tcp_fd).fragment = 0;
+  }
+  else i = 0;
+
+  got = tcp_read(tcp_fd, buf, BUFSIZE - i);
+  if (!got)
+    return;
+
+  buf[got]='\0';  /* Safe, there is space. Do it now not to forget it later */
+  received += got;
+
+  if (!(CONN_LIST(tcp_fd).flags & ACTIVE))
+    return; /* process only active connections */
+
+  got += (buf - buffer);
+  buf = buffer;
+
+  emit analyzeMudStream(buf, got);
+
   mainLoop();
+}
+
+void Wrapper::sendToUser(const QByteArray& ba) {
+  if (linemode & LM_CHAR) {
+    /* char-by-char mode: just display output, no fuss */
+    clear_input_line(0);
+    tty_puts(ba.data());
+    return;
+  }
+
+  /* line-at-a-time mode: process input in a number of ways */
+  if (tcp_fd == tcp_main_fd && promptlen) {
+    process_first_fragment((char*)ba.data(), ba.size());
+  } else {
+      //common_clear(promptlen && !opt_compact);
+  }
+
+  if (ba.size() > 0)
+    process_remote_input((char*)ba.data(), ba.size());
+
+}
+
+void Wrapper::sendToMud(const QByteArray& ba) {
+  writeToSocket(tcp_main_fd, ba.data(), ba.size());
 }
 
 /*

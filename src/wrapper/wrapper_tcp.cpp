@@ -83,7 +83,8 @@ void WrapperSocket::socketDisconnected() {
  *
  */
 void Wrapper::disconnectSession() {
-  socketHash[tcp_fd]->socketDisconnected();
+  if (socketHash[tcp_fd])
+    socketHash[tcp_fd]->socketDisconnected();
   emit setCurrentProfile(QString());
 }
 
@@ -99,7 +100,7 @@ int Wrapper::readFromSocket(int fd, char *buffer, int maxsize)
   return read;
 }
 
-int Wrapper::writeToSocket(int fd, char *data, int len)
+int Wrapper::writeToSocket(int fd, const char *data, int len)
 {
   return socketHash[fd]->write(data, len);
 }

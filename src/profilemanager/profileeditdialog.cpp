@@ -39,6 +39,11 @@ QString ProfileEditDialog::definitions ()
   return profileDefinitions->text ();
 }
 
+QString ProfileEditDialog::map ()
+{
+  return profileMap->text ();
+}
+
 void ProfileEditDialog::setName (QString name)
 {
   profileName->setText (name);
@@ -57,6 +62,11 @@ void ProfileEditDialog::setPort (int port)
 void ProfileEditDialog::setDefinitions (QString path)
 {
   profileDefinitions->setText (path);
+}
+
+void ProfileEditDialog::setMap (QString path)
+{
+  profileMap->setText (path);
 }
 
 void ProfileEditDialog::slotOk ()
@@ -83,11 +93,19 @@ void ProfileEditDialog::slotOk ()
   }
 }
 
-void ProfileEditDialog::slotBrowse ()
+void ProfileEditDialog::definitionsBrowse ()
 {
   QString fileName = QFileDialog::getOpenFileName(this);
   if (!fileName.isEmpty()) {
     profileDefinitions->setText(fileName);
+  }
+}
+
+void ProfileEditDialog::mapBrowse ()
+{
+  QString fileName = QFileDialog::getOpenFileName(this);
+  if (!fileName.isEmpty()) {
+    profileMap->setText(fileName);
   }
 }
 
@@ -97,7 +115,8 @@ ProfileEditDialog::ProfileEditDialog(QWidget*parent) : QDialog(parent)
 {
   setupUi(this);
 
-  connect(browseButton, SIGNAL(clicked() ), this, SLOT(slotBrowse() ));
+  connect(definitionsButton, SIGNAL(clicked() ), this, SLOT(definitionsBrowse() ));
+  connect(mapButton, SIGNAL(clicked() ), this, SLOT(mapBrowse() ));
   connect(buttonBox, SIGNAL(rejected() ), this, SLOT(close() ));
   connect(buttonBox, SIGNAL(accepted() ), this, SLOT(slotOk() ));
 }

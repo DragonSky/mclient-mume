@@ -33,6 +33,8 @@ class Wrapper;
 class WrapperSocket;
 class WrapperProcess;
 class InternalEditor;
+class TelnetFilter;
+class MumeXmlParser;
 
 /* This is the interacting parent object */
 class Wrapper: public QObject {
@@ -66,7 +68,7 @@ class Wrapper: public QObject {
     void createSocket(char *addr, int port, char *initstr, int i);
     void createSocketContinued(WrapperSocket *socket, bool connected);
     int readFromSocket(int fd, char *buffer, int maxsize);
-    int writeToSocket(int fd, char *data, int len);
+    int writeToSocket(int fd, const char *data, int len);
 
     /* beam.h, cmd.h */
     int internalEditor(editsess*);
@@ -95,6 +97,10 @@ class Wrapper: public QObject {
     void inputClear();
     void close();            // to MainWindow
     void setCurrentProfile(const QString&);
+    
+    // to TelnetFilter
+    void analyzeUserStream( const char*, int );
+    void analyzeMudStream( const char*, int );
 
   private slots:
     void delayTimerExpired() { mainLoop(); } // timer for delayed labels (exec_delays)
@@ -105,6 +111,8 @@ class Wrapper: public QObject {
     void connectSession();
     void disconnectSession();
     void clearPowwowMemory();
+    void sendToMud(const QByteArray&);
+    void sendToUser(const QByteArray&);
 
   private:
     Wrapper(QObject *);
@@ -119,6 +127,8 @@ class Wrapper: public QObject {
 
     QHash<editsess*, InternalEditor*> editorHash;
 
+    TelnetFilter *filter;
+    MumeXmlParser *parserXml;
     QTimer *delayTimer;
     QObject *parent;         // MainWindow
 };
