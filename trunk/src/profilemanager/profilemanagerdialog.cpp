@@ -66,6 +66,7 @@ void ProfileManagerDialog::modifyClicked ()
   mdlg->setServer (sett->getString ("server"));
   mdlg->setPort (sett->getInt ("port"));
   mdlg->setDefinitions (sett->getString ("definitions"));
+  mdlg->setMap (sett->getString ("map"));
 
   //dialog is ready - show it!
   mdlg->exec ();
@@ -81,6 +82,7 @@ void ProfileManagerDialog::updateProfileFromDialog (const QString &profile)
   sett->setString ("server", mdlg->server());
   sett->setInt ("port", mdlg->port());
   sett->setString("definitions", mdlg->definitions());
+  sett->setString("map", mdlg->map());
   sett->save();
 
   mgr->profileInfoChanged (profile);

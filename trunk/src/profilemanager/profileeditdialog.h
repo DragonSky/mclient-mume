@@ -34,19 +34,22 @@ class ProfileEditDialog : public QDialog, public Ui::ProfileEditDialog
     QString server();
     int port();
     QString definitions();
+    QString map();
 
     /** set new values! */
     void setName(QString name);
     void setServer(QString server);
     void setPort(int port);
     void setDefinitions(QString path);
+    void setMap(QString path);
 
   signals:
     void loadClicked();
 
   private slots:
     void slotOk();
-    void slotBrowse();
+    void definitionsBrowse();
+    void mapBrowse();
 };
 
 #endif /* _PROFILEEDITDIALOG_H */

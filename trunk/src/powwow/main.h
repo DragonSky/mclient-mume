@@ -19,7 +19,7 @@ extern "C" {
 int startPowwow(int argc, char **argv);
 void exec_delays         __P ((void));
 void prompt_reset_iac    __P ((void));
-void get_remote_input    __P ((void));
+int process_first_fragment __P ((char *buf, int got));
 #endif
 
 /* shared functions from main.c */

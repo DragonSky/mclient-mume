@@ -99,6 +99,7 @@ void ProfileDialog::createDefaultProfile()
   sett->setString ("server", "mume.org");
   sett->setInt ("port", 4242);
   sett->setString ("definitions", "default.pow");
+  sett->setString ("map", "arda.mm2");
   sett->save();
 }
 
@@ -119,6 +120,7 @@ ProfileDialog::ProfileDialog(QWidget*parent) : QDialog(parent)
   profileView->hideColumn(1);
   profileView->hideColumn(2);
   profileView->hideColumn(3);
+  profileView->hideColumn(4);
   profileView->setUniformRowHeights (true);
   profileView->setRootIsDecorated (false);
   profileView->setItemsExpandable (false);
@@ -133,7 +135,8 @@ ProfileDialog::ProfileDialog(QWidget*parent) : QDialog(parent)
   }
 
   // Automatically select the last profile   TODO
-  QModelIndex topLeft = profileView->model()->index(0, 0), bottomRight = profileView->model()->index(0, 3);
+  QModelIndex topLeft = profileView->model()->index(0, 0);
+  QModelIndex bottomRight = profileView->model()->index(0, profileView->model()->columnCount()-1);
   QItemSelection selection(topLeft, bottomRight);
   profileView->selectionModel()->select(selection, QItemSelectionModel::Select);
   selectionChanged(profileView->selectionModel()->selection());

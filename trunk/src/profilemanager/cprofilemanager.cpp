@@ -40,7 +40,7 @@ class cProfileModel : public QAbstractTableModel {
   virtual int columnCount (const QModelIndex &parent = QModelIndex()) const
   {
     if (parent.isValid()) return 0;  // because Qt docs say so
-    return 4;  // we have 4 columns
+    return 5;  // we have 5 columns
   }
 
   virtual int rowCount (const QModelIndex &parent = QModelIndex()) const
@@ -58,6 +58,7 @@ class cProfileModel : public QAbstractTableModel {
       case 1: return QVariant("Server");
       case 2: return QVariant("Port");
       case 3: return QVariant("Definitions File");
+      case 4: return QVariant("Map File");
       default: return QVariant();
     }
   }
@@ -70,7 +71,8 @@ class cProfileModel : public QAbstractTableModel {
     if (index.parent().isValid()) return QVariant();
     int row = index.row();
     int col = index.column();
-    if ((col < 0) || (col > 3)) return QVariant();
+    // Return something else if we're out of bounds
+    if ((col < 0) || (col > columnCount())) return QVariant();
 
     if ((row < 0) || (row > mgr->profileList().size())) return QVariant();
     QString profile = mgr->profileList()[row];
@@ -82,6 +84,7 @@ class cProfileModel : public QAbstractTableModel {
       case 1: return sett->getString ("server");
       case 2: return sett->getInt ("port");
       case 3: return sett->getString ("definitions");
+      case 4: return sett->getString ("map");
       default: return QVariant();
     };
   }

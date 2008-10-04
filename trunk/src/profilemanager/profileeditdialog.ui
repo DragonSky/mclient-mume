@@ -6,11 +6,11 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>194</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>mClient Profile Editor</string>
+   <string>Profile Editor - mClient</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" >
    <item row="0" column="0" >
@@ -59,7 +59,7 @@ File:</string>
     </widget>
    </item>
    <item row="3" column="2" >
-    <widget class="QPushButton" name="browseButton" >
+    <widget class="QPushButton" name="definitionsButton" >
      <property name="text" >
       <string>Browse</string>
      </property>
@@ -72,10 +72,27 @@ File:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="3" >
+   <item row="5" column="0" colspan="3" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="standardButtons" >
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="label_5" >
+     <property name="text" >
+      <string>Map File:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QLineEdit" name="profileMap" />
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="mapButton" >
+     <property name="text" >
+      <string>Browse</string>
      </property>
     </widget>
    </item>
