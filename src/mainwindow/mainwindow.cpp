@@ -104,7 +104,7 @@ MainWindow::MainWindow()
   /*connect(textView->document(), SIGNAL(contentsChanged()),
           this, SLOT(documentWasModified()));*/
 
-  connect(wrapper, SIGNAL(addText(QString&)), textView, SLOT(addText(QString&)) );
+  connect(wrapper, SIGNAL(addText(const QString&)), textView, SLOT(addText(const QString&)) );
   connect(wrapper, SIGNAL(moveCursor(int)), textView, SLOT(moveCursor(int)) );
   connect(wrapper, SIGNAL(toggleEchoMode()), inputBar, SLOT(toggleEchoMode()) );
   connect(wrapper, SIGNAL(close()), this, SLOT(close()) );
@@ -1273,17 +1273,17 @@ void MainWindow::groupManagerTypeChanged(int type)
   if (type == CGroupCommunicator::Server)
   {
     groupServerAct->setChecked(true);
-    m_groupManager->show();
+    //m_groupManager->show();
   }
   if (type == CGroupCommunicator::Client)
   {
     groupClientAct->setChecked(true);
-    m_groupManager->show();
+    //m_groupManager->show();
   }
   if (type == CGroupCommunicator::Off)
   {
     groupOffAct->setChecked(true);
-    m_groupManager->hide();
+    //m_groupManager->hide();
   }
 }
 
