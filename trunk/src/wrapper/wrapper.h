@@ -47,18 +47,19 @@ class Wrapper: public QObject {
     void start(int, char**); // from MainWindow
 
     // for Object Editor
-    actionnode* getActions();
-    QHash<QString, QString> getNUMVARs(int);
+    const actionnode* getActions() const;
+    QHash<QString, QString> getNUMVARs(const int&);
 
     /* main.h */
-    void getUserInput(QString input);
-    void getUserBind(QString input);
+    void getUserInput(const QString& input);
+    void getUserBind(const QString& input);
 
     /* tty.h */
-    void getRemoteInput(int fd);
-    void writeToStdout(QString str) { emit addText(str); } // to TextView
-    void toggleEcho() { emit toggleEchoMode(); }
-    void emitMoveCursor(int fromcol, int fromline, int tocol, int toline);
+    void getRemoteInput(const int& fd);
+    void writeToStdout(const QString& str) const;
+    void toggleEcho() const;
+    void emitMoveCursor(const int fromcol, const int fromline, 
+        const int tocol, const int toline) const;
     void emitInputInsertText(QString str) { emit inputInsertText(str); }
     void emitInputMoveTo(int new_pos) { emit inputMoveTo(new_pos); }
     void emitInputDeleteChars(int n) { emit inputDeleteChars(n); }
@@ -67,7 +68,8 @@ class Wrapper: public QObject {
     /* tcp.h */
     void createSocket(char *addr, int port, char *initstr, int i);
     void createSocketContinued(WrapperSocket *socket, bool connected);
-    int readFromSocket(int fd, char *buffer, int maxsize);
+    const int readFromSocket(const int& fd, char* const buffer, 
+            const int& maxsize) const;
     int writeToSocket(int fd, const char *data, int len);
 
     /* beam.h, cmd.h */
@@ -88,15 +90,15 @@ class Wrapper: public QObject {
 
 
   signals:
-    void addText(QString&);  // to TextView
-    void moveCursor(int);
-    void toggleEchoMode();   // To InputBar
+    void addText(const QString&) const;  // to TextView
+    void moveCursor(const int&) const;
+    void toggleEchoMode() const;   // To InputBar
     void inputInsertText(QString);
     void inputMoveTo(int);
     void inputDeleteChars(int);
     void inputClear();
     void close();            // to MainWindow
-    void setCurrentProfile(const QString&);
+    void setCurrentProfile(const QString&) const;
     
     // to TelnetFilter
     void analyzeUserStream( const char*, int );
@@ -107,12 +109,12 @@ class Wrapper: public QObject {
     //void reconnectProfile(QString &profile);
 
   public slots:
-    void mergeInputWrapper(QString, int); // from InputBar
+    void mergeInputWrapper(const QString&, const int&); // from InputBar
     void connectSession();
-    void disconnectSession();
+    void disconnectSession() const;
     void clearPowwowMemory();
-    void sendToMud(const QByteArray&);
-    void sendToUser(const QByteArray&);
+    void sendToMud(const QByteArray&) ;
+    void sendToUser(const QByteArray&) const;
 
   private:
     Wrapper(QObject *);

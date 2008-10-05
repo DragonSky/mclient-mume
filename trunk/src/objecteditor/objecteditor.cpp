@@ -417,9 +417,9 @@ void ObjectEditor::groupCheckBoxClicked() { // TODO
       p -> active = active;
     }
   }
-  for( a = wrapper->getActions(); a; a = a -> next ) {
-    if( a -> group && strcmp( a -> group, group ) == 0 ) {
-      a -> active = active;
+  for( a = const_cast<actionnode*>(wrapper->getActions()); a; a = a->next ) {
+    if( a->group && strcmp(a->group, group) == 0 ) {
+      a->active = active;
     }
   }
   //tabWidget->setFocus();
@@ -855,13 +855,15 @@ void ObjectEditor::loadActionTab()
   groupHash[group.toString()] = true;
   actionGroup->addItem("default", group );
 
-  actionnode *p;
-  for (p = wrapper->getActions(); p; p = p->next) addActionNode(p);
+  const actionnode* p;
+  for(p = const_cast<actionnode*>(wrapper->getActions()); p; p = p->next) {
+      addActionNode(p);
+  }
 
   actionGroup->model()->sort(0, Qt::AscendingOrder);
 }
 
-QTreeWidgetItem* ObjectEditor::addActionNode(actionnode* p)
+QTreeWidgetItem* ObjectEditor::addActionNode(const actionnode* p)
 {
   QTreeWidgetItem *item, *currentGroup = NULL;
 
