@@ -39,26 +39,4 @@ extern "C" {
   void tcp_spawn(char *id, char *cmd);
 }
 
-class WrapperSocket: public QTcpSocket
-{
-  Q_OBJECT
-
-  public:
-    WrapperSocket(char*, int, Wrapper *parent);
-    ~WrapperSocket();
-
-    int i;
-    char *id;
-    char *initstring;
-
-  public slots:
-    void contentAvailable();
-    void socketConnected();
-    void socketDisconnected();
-    void socketError(QAbstractSocket::SocketError socketError);
-
-  private:
-    Wrapper *wrapper;
-};
-
 #endif /* _WRAPPER_TCP_H_ */

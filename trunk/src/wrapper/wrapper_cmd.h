@@ -17,8 +17,6 @@
 #ifndef _WRAPPER_CMD_H
 #define _WRAPPER_CMD_H
 
-#include <QDialog>
-
 extern "C" int wrapper_get_keybind(char *seq);
 
 class Wrapper;

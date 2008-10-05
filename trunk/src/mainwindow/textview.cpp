@@ -15,19 +15,22 @@
  ***************************************************************************/
 
 #include "textview.h"
+
+// mmapper2 includes
 #include "configuration.h"
 
-#include <QTextFrame>
-#include <QTextCharFormat>
-#include <QFont>
-#include <QBrush>
-
-#include <QEvent>
-#include <QKeyEvent>
-#include <QTextCursor>
-
+// powwow includes
 #include "main.h"
 #include "tcp.h"
+
+#include <QBrush>
+#include <QEvent>
+#include <QFont>
+#include <QKeyEvent>
+#include <QTextCharFormat>
+#include <QTextCursor>
+#include <QTextFrame>
+
 
 TextView::TextView(QLineEdit *lineEdit, QWidget *parent) : QTextEdit(parent)
 {

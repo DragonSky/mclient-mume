@@ -14,10 +14,11 @@
  *                                                                         *
  ***************************************************************************/
 
-
-#include <QApplication>
 #include "mainwindow.h"
 #include "configuration.h"
+
+#include <QApplication>
+
 
 int main(int argc, char *argv[])
 {

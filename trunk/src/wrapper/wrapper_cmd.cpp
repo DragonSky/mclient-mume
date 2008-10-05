@@ -14,15 +14,21 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <limits.h>
 #include "wrapper_cmd.h"
-#include "wrapper.h"
 
+#include "wrapper.h"
 #include "keybinder.h"
 
-void suspend_powwow() {}
 
-int wrapper_get_keybind(char *seq) { return Wrapper::self()->getKeyBind(seq); }
+void suspend_powwow() {
+
+}
+
+
+int wrapper_get_keybind(char *seq) { 
+    return Wrapper::self()->getKeyBind(seq); 
+}
+
 
 int Wrapper::getKeyBind(char *seq) {
   QString label("Blank"), sequence;
@@ -33,4 +39,3 @@ int Wrapper::getKeyBind(char *seq) {
   delete dlg;
   return strlen(seq);
 }
-

@@ -5,6 +5,7 @@ SOURCES += ./main.cpp \
            ./wrapper/wrapper_tcp.cpp \
            ./wrapper/wrapper_process.cpp \
            ./wrapper/wrapper_tty.cpp \
+           ./wrapper/WrapperSocket.cpp \
            ./powwow/beam.c \
            ./powwow/cmd2.c \
            ./powwow/cmd.c \
@@ -97,6 +98,7 @@ HEADERS += ./mainwindow/mainwindow.h \
            ./wrapper/wrapper_tty.h \
            ./wrapper/wrapper_tcp.h \
            ./wrapper/wrapper_process.h \
+           ./wrapper/WrapperSocket.h \
            ./powwow/beam.h \
            ./powwow/cmd2.h \
            ./powwow/cmd.h \

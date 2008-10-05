@@ -14,12 +14,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "internaleditor.h"
+
+#include "wrapper.h"
+
 #include <QtGui>
 //#include <QMenuBar>
 //#include <QToolBar>
 
-#include "internaleditor.h"
-#include "wrapper.h"
 
 InternalEditor::InternalEditor(editsess* s, Wrapper* w, QWidget *parent) : QDialog(parent, Qt::Window)
 {
