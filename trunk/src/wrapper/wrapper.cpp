@@ -346,6 +346,7 @@ void Wrapper::writeToStdout(const QString& str) const {
 void Wrapper::toggleEcho() const { 
     emit toggleEchoMode(); 
 }
+// --------------------------------------------------------------------------
 
 
 /* Powwow C Functions */
@@ -369,7 +370,8 @@ extern "C" {
   */
   void wrapper_quit() { Wrapper::self()->wrapperQuit(); }
 }
-    
+// --------------------------------------------------------------------------
+
 
 // From wrapper_tcp.cpp    
 void Wrapper::disconnectSession() const {
@@ -390,3 +392,59 @@ const int Wrapper::readFromSocket(const int& fd, char* const buffer,
   }
   return read;
 }
+
+const int Wrapper::writeToSocket(const int& fd, const char* data, 
+        const int& len) const {
+  return socketHash[fd]->write(data, len);
+}
+
+
+// This socket needs to be managed, so it doesn't leak!  
+// How about a vector of them?
+void Wrapper::createSocket(char *addr, int port, char *initstr, int i) {
+  WrapperSocket *socket = new WrapperSocket(initstr, i, this);
+
+  status(1);
+  tty_printf("#trying %s... ", addr);
+
+  socket->connectToHost(QString(addr), port, QIODevice::ReadWrite);
+}
+
+
+void Wrapper::createSocketContinued(WrapperSocket *socket, bool connected) {
+
+  int newtcp_fd;
+  if (connected) {
+    newtcp_fd = socket->socketDescriptor();
+    socketHash[newtcp_fd] = socket;
+  } else {
+    newtcp_fd = -1;
+  }
+  //send_command(newtcp_fd, C_DUMB, 1, 0);   // necessary?
+  wrapper_tcp_connect_slot(socket->initstring, socket->peerPort(), 
+          socket->i, newtcp_fd);
+}
+// --------------------------------------------------------------------------
+
+
+// From wrapper_tty.cpp
+void Wrapper::emitInputSet(char *str) {
+  emit inputClear();
+  emit inputInsertText(str);
+}
+
+void Wrapper::emitMoveCursor(const int fromcol, const int fromline, 
+        const int tocol, const int toline) const {
+  int diff = tocol - fromcol;
+  qDebug("External: (%d, %d), (%d, %d), Diff %d", fromcol, fromline, tocol, toline, diff);
+  emit moveCursor(diff);
+}
+
+void Wrapper::mergeInputWrapper(const QString& inputBarText, 
+        const int& cursorPosition) {
+  strcpy(edbuf, inputBarText.toAscii().data());
+  edlen = inputBarText.length();
+  edbuf[edlen] = '\0';
+  pos = cursorPosition;
+}
+

@@ -140,25 +140,6 @@ void tty_gotoxy(int col, int line) {
   //Wrapper::self()->emitMoveCursor(-1, -1, col, line);
 }
 void wrapper_input_set(char *str) { Wrapper::self()->emitInputSet(str); }
-void Wrapper::emitInputSet(char *str) {
-  emit inputClear();
-  emit inputInsertText(str);
-}
-
-void Wrapper::emitMoveCursor(const int fromcol, const int fromline, 
-        const int tocol, const int toline) const {
-  int diff = tocol - fromcol;
-  qDebug("External: (%d, %d), (%d, %d), Diff %d", fromcol, fromline, tocol, toline, diff);
-  emit moveCursor(diff);
-}
-
-void Wrapper::mergeInputWrapper(const QString& inputBarText, 
-        const int& cursorPosition) {
-  strcpy(edbuf, inputBarText.toAscii().data());
-  edlen = inputBarText.length();
-  edbuf[edlen] = '\0';
-  pos = cursorPosition;
-}
 
 void input_overtype_follow(char c) {
   Wrapper::self()->emitInputInsertText(QString(c));
