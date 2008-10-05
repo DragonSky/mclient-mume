@@ -278,16 +278,19 @@ void Wrapper::getUserInput(QString input) {
 void Wrapper::getUserBind(QString input) {
   keynode *p;
 
-  for (p = keydefs; (p && (p->seqlen < input.length() || 
-       memcmp(input.toAscii().constData(), p->sequence, input.length()))) ;
-       p = p->next);
+  p = keydefs; 
+  while(p && (p->seqlen < input.length() || 
+       memcmp(input.toAscii().constData(), p->sequence, input.length()))) {
+      p = p->next;
+  }
 
   if (!p) {
-    // GH: type the first character and keep processing the rest in the input buffer
-    last_edit_cmd = (function_any)0;
+    // GH: type the first character and keep processing the rest in the 
+    // input buffer
+    last_edit_cmd = static_cast<function_any>(0);
     return;
   }
-  else if (p->seqlen == input.length()){
+  else if (p->seqlen == input.length()) {
     p->funct(p->call_data);
     last_edit_cmd = (function_any)p->funct; // GH: keep track of last command
   }
@@ -301,12 +304,15 @@ void Wrapper::getUserBind(QString input) {
  * TODO: Rewrite this in a more intelligent fashion/location?
  * The Object Editor cannot access these variables due to scope
  */
-actionnode* Wrapper::getActions() { return actions; }
+actionnode* Wrapper::getActions() { 
+    return actions; 
+}
+
 
 QHash<QString, QString> Wrapper::getNUMVARs(int type) {
   QHash<QString, QString> hash;
   int i;
-  ptr p = (ptr)0;
+  ptr p = static_cast<ptr>(0);
   if (type == 0) {
     for (i = -NUMVAR; i < NUMPARAM; i++) {
       if (*VAR[i].num)

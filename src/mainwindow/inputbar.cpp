@@ -47,7 +47,8 @@ bool InputBar::emitFakeKey(QKeyEvent *ke) {
 
   for (p = keydefs; (p && (p->seqlen < input.length() || 
        memcmp(input.toAscii().constData(), p->sequence, input.length()))) ;
-       p = p->next);
+       p = p->next) { 
+  }
 
   if (!p) {
     // GH: type the first character and keep processing the rest in the input buffer
