@@ -17,8 +17,6 @@
 #ifndef _WRAPPER_TCP_H_
 #define _WRAPPER_TCP_H_
 
-#include <QTcpSocket>
-
 class Wrapper;
 
 /* Powwow C Functions */
