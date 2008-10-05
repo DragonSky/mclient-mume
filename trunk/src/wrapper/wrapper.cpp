@@ -14,7 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QTimer>
+#include "wrapper.h"
 
 #include "textview.h"
 #include "telnetfilter.h"
@@ -24,13 +24,15 @@
 #include "mmapper2pathmachine.h"
 #include "prespammedpath.h"
 
-#include "wrapper.h"
-#include "wrapper_tcp.h"
+#include "keybinder.h"
+#include "wrapper_cmd.h"
 #include "wrapper_process.h"
 #include "wrapper_profile.h"
+#include "wrapper_tcp.h"
 #include "wrapper_tty.h"
-#include "wrapper_cmd.h"
 #include "WrapperSocket.h"
+
+#include <QTimer>
 
 #include "main.h"
 #include "tty.h"
@@ -428,7 +430,7 @@ void Wrapper::createSocketContinued(WrapperSocket *socket, bool connected) {
 
 
 // From wrapper_tty.cpp
-void Wrapper::emitInputSet(char *str) {
+void Wrapper::emitInputSet(const char* const str) {
   emit inputClear();
   emit inputInsertText(str);
 }
@@ -447,4 +449,16 @@ void Wrapper::mergeInputWrapper(const QString& inputBarText,
   edbuf[edlen] = '\0';
   pos = cursorPosition;
 }
+// --------------------------------------------------------------------------
 
+
+// From wrapper_cmd.cpp
+const int Wrapper::getKeyBind(char* const seq) const {
+  QString label("Blank"), sequence;
+  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)parent);
+  if (dlg->exec()) {
+    strcpy(seq, sequence.toAscii().constData());
+  }
+  delete dlg;
+  return strlen(seq);
+}

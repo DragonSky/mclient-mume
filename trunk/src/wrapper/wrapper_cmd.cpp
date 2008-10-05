@@ -17,7 +17,6 @@
 #include "wrapper_cmd.h"
 
 #include "wrapper.h"
-#include "keybinder.h"
 
 
 void suspend_powwow() {
@@ -30,12 +29,3 @@ int wrapper_get_keybind(char *seq) {
 }
 
 
-int Wrapper::getKeyBind(char *seq) {
-  QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)parent);
-  if (dlg->exec()) {
-    strcpy(seq, sequence.toAscii().constData());
-  }
-  delete dlg;
-  return strlen(seq);
-}

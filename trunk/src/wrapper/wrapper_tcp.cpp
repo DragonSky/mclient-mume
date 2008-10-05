@@ -37,7 +37,7 @@ void wrapper_tcp_assign_id(int fd, char *id) {  Wrapper::self()->socketHash[fd]-
 void wrapper_tcp_connect(char *host, int port, char *initstring, int i) { Wrapper::self()->createSocket(host, port, initstring, i); }
 void tcp_spawn(char *id, char *cmd) { Wrapper::self()->writeToStdout(QString("todo")); } // TODO
 
-void wrapper_tcp_close_socket(const int& fd) {
+void wrapper_tcp_close_socket(const int fd) {
   Wrapper::self()->socketHash[fd]->deleteLater();
   Wrapper::self()->socketHash.remove(fd);
 }
