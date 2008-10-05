@@ -29,7 +29,6 @@
 
 #include "defines.h"
 
-class Wrapper;
 class WrapperSocket;
 class WrapperProcess;
 class InternalEditor;
@@ -60,10 +59,10 @@ class Wrapper: public QObject {
     void toggleEcho() const;
     void emitMoveCursor(const int fromcol, const int fromline, 
         const int tocol, const int toline) const;
-    void emitInputInsertText(QString str) { emit inputInsertText(str); }
-    void emitInputMoveTo(int new_pos) { emit inputMoveTo(new_pos); }
-    void emitInputDeleteChars(int n) { emit inputDeleteChars(n); }
-    void emitInputSet(char *str);
+    void emitInputInsertText(const QString& str) { emit inputInsertText(str); }
+    void emitInputMoveTo(const int& new_pos) { emit inputMoveTo(new_pos); }
+    void emitInputDeleteChars(const int& n)  { emit inputDeleteChars(n); }
+    void emitInputSet(const char* const str);
 
     /* tcp.h */
     void createSocket(char *addr, int port, char *initstr, int i);
@@ -83,7 +82,7 @@ class Wrapper: public QObject {
     QHash<int, WrapperProcess*> m_processes;
     QHash<int, WrapperSocket*> socketHash;
 
-    int getKeyBind(char *);
+    const int getKeyBind(char* const) const;
 
     /* other */
     void wrapperQuit() { emit close(); }
@@ -94,10 +93,10 @@ class Wrapper: public QObject {
     void addText(const QString&) const;  // to TextView
     void moveCursor(const int&) const;
     void toggleEchoMode() const;   // To InputBar
-    void inputInsertText(QString);
+    void inputInsertText(const QString&);
     void inputMoveTo(int);
     void inputDeleteChars(int);
-    void inputClear();
+    void inputClear() const;
     void close();            // to MainWindow
     void setCurrentProfile(const QString&) const;
     

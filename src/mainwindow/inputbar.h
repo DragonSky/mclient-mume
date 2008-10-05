@@ -39,9 +39,9 @@ class InputBar : public QLineEdit
 
   public slots:
     void toggleEchoMode();
-    void inputInsertText(QString);
-    void inputMoveTo(int new_pos);
-    void inputDeleteChars(int num);
+    void inputInsertText(const QString&);
+    void inputMoveTo(const int& new_pos);
+    void inputDeleteChars(const int& num);
     void inputClear();
 };
 

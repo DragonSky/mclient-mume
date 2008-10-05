@@ -73,17 +73,17 @@ bool InputBar::event(QEvent *event)
   return QWidget::event(event);
 }
 
-void InputBar::inputMoveTo(int new_pos) {
+void InputBar::inputMoveTo(const int& new_pos) {
   //setSelection(new_pos, cursorPosition() - new_pos);
   setCursorPosition(new_pos);
 }
 
-void InputBar::inputInsertText(QString input) {
+void InputBar::inputInsertText(const QString& input){
   setSelection(cursorPosition(), input.length());
   insert(input);
 }
 
-void InputBar::inputDeleteChars(int num) {
+void InputBar::inputDeleteChars(const int& num) {
   setSelection(cursorPosition(), num);
   del();
 }

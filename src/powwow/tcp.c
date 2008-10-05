@@ -40,6 +40,7 @@
 
 #ifdef MCLIENT
 # include "wrapper.h"
+#include "wrapper_tcp.h"
 #endif
 
 #include "defines.h"
