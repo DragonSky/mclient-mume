@@ -39,6 +39,9 @@ class CGroup;
 class CGroupCommunicator;
 #endif
 
+#include <tr1/memory>
+using std::tr1::shared_ptr;
+
 class QAction;
 class QMenu;
 class InputBar;
@@ -55,7 +58,7 @@ class MainWindow:public QMainWindow
   Q_OBJECT
 
   public:
-    MainWindow();
+    static MainWindow& Instance();
     ~MainWindow();
 
     void start(int argc, char **argv);
@@ -70,6 +73,7 @@ class MainWindow:public QMainWindow
 
   protected:
     void closeEvent(QCloseEvent *event);
+    MainWindow();
 
   public slots:
     void log(const QString&, const QString&);
@@ -146,6 +150,7 @@ class MainWindow:public QMainWindow
     void loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
+    void initWrapper();
 
     void startMapper();
 
@@ -191,6 +196,8 @@ class MainWindow:public QMainWindow
     QAction *reconnectAct;
 
     QAction *alwaysOnTopAct;
+
+    static shared_ptr<MainWindow> pinstance;
 
 #ifdef MMAPPER
     QDockWidget *dockDialogMapper;
@@ -279,6 +286,6 @@ class MainWindow:public QMainWindow
 #endif
 };
 
-extern class MainWindow *mainWindow;
+//extern class MainWindow *mainWindow;
 
 #endif

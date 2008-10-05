@@ -55,7 +55,21 @@
 #include "CGroup.h"
 #endif
 
-class MainWindow *mainWindow;
+#include <tr1/memory>
+using std::tr1::shared_ptr;
+
+
+shared_ptr<MainWindow> MainWindow::pinstance 
+    = shared_ptr<MainWindow>(static_cast<MainWindow*>(0));
+
+MainWindow& MainWindow::Instance() {
+    if(pinstance.get() == 0) {
+        pinstance = shared_ptr<MainWindow>(new MainWindow());
+        qDebug() << "rar";
+    }
+    return *pinstance.get();
+}
+
 
 MainWindow::MainWindow()
 {
@@ -68,7 +82,7 @@ MainWindow::MainWindow()
   inputBar = new InputBar(this);
   textView = new TextView(inputBar, this);
   //wrapper = new Wrapper(inputBar, textView, this);
-  wrapper = Wrapper::self();
+  
 
   vbox->addWidget(textView);
   vbox->addWidget(inputBar);
@@ -88,9 +102,14 @@ MainWindow::MainWindow()
   logWindow->setObjectName("LogWindow");
   dockDialogLog->setWidget(logWindow);
 
+  qDebug("MainWindow created.");
+}
+
+void MainWindow::initWrapper() {
+  wrapper = Wrapper::self();
   startMapper();
 
-  createActions();
+  createActions(); // requires wrapper
   createMenus();
   createToolBars();
   createStatusBar();
@@ -100,9 +119,13 @@ MainWindow::MainWindow()
   objectEditor = NULL;
   profileDialog = NULL;
   profileManager = NULL;
+  
+  setCurrentProfile("");
 
   /*connect(textView->document(), SIGNAL(contentsChanged()),
           this, SLOT(documentWasModified()));*/
+
+  //connect(inputBar, SIGNAL(textEdited(const QString &)), this, SLOT(signalStdin(const QString &)));
 
   connect(wrapper, SIGNAL(addText(const QString&)), textView, SLOT(addText(const QString&)) );
   connect(wrapper, SIGNAL(moveCursor(int)), textView, SLOT(moveCursor(int)) );
@@ -117,14 +140,11 @@ MainWindow::MainWindow()
   connect(inputBar, SIGNAL(returnPressed()), this, SLOT(sendUserInput()) );
   connect(inputBar, SIGNAL(keyPressed(const QString&)), this, SLOT(sendUserBind(const QString&)) );
   connect(inputBar, SIGNAL(mergeInputWrapper(QString, int)), wrapper, SLOT(mergeInputWrapper(QString, int)) );
-
-  //connect(inputBar, SIGNAL(textEdited(const QString &)), this, SLOT(signalStdin(const QString &)));
-
- setCurrentProfile("");
-  qDebug("MainWindow created.");
+ 
 }
 
 void MainWindow::start(int argc, char **argv) {
+    initWrapper();
   if (Config().m_mapMode == 0)
   {
     playModeAct->setChecked(true);
