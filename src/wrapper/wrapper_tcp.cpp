@@ -27,24 +27,6 @@
 #include "tcp.h"
 
 
-void Wrapper::disconnectSession() {
-  if (socketHash[tcp_fd])
-    socketHash[tcp_fd]->socketDisconnected();
-  emit setCurrentProfile(QString());
-}
-
-
-int Wrapper::readFromSocket(int fd, char *buffer, int maxsize)
-{
-  WrapperSocket *socket = socketHash[fd];
-  int read;
-  while(socket->bytesAvailable()) {
-    read = socket->read(buffer, maxsize);
-    if (read != -1)
-      buffer[read] = 0;
-  }
-  return read;
-}
 
 int Wrapper::writeToSocket(int fd, const char *data, int len)
 {

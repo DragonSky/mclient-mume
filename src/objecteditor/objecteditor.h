@@ -59,7 +59,7 @@ class ObjectEditor : public QDialog, public Ui::ObjectEditor
     void updateAliasTableEdit();
     void deleteAlias(QTreeWidgetItem*);
 
-    QTreeWidgetItem* addActionNode(actionnode*);
+    QTreeWidgetItem* addActionNode(const actionnode*);
     bool isCurrentAction(const char*);
     void updateActionTable();
     void deleteAction(QTreeWidgetItem*);

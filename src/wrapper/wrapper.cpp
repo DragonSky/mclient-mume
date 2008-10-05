@@ -30,6 +30,7 @@
 #include "wrapper_profile.h"
 #include "wrapper_tty.h"
 #include "wrapper_cmd.h"
+#include "WrapperSocket.h"
 
 #include "main.h"
 #include "tty.h"
@@ -45,7 +46,7 @@ Wrapper *Wrapper::_self = 0;
 Wrapper *Wrapper::self()
 {
   if (!_self) {
-    if (mainWindow = 0)
+    if (mainWindow == 0)
       qDebug("no main window");
     _self = new Wrapper(mainWindow);
   }
@@ -161,7 +162,7 @@ void Wrapper::redrawEverything() {
 /*
  * A socket has gotten input, signal the main loop
  */
-void Wrapper::getRemoteInput(int fd) {
+void Wrapper::getRemoteInput(const int& fd) {
   // Set the current connection
   tcp_fd = fd;
 
@@ -201,7 +202,7 @@ void Wrapper::getRemoteInput(int fd) {
   mainLoop();
 }
 
-void Wrapper::sendToUser(const QByteArray& ba) {
+void Wrapper::sendToUser(const QByteArray& ba) const {
   if (linemode & LM_CHAR) {
     /* char-by-char mode: just display output, no fuss */
     clear_input_line(0);
@@ -229,7 +230,7 @@ void Wrapper::sendToMud(const QByteArray& ba) {
  * Rewritten from the Powwow Sources. Takes only a string now
  * and doesn't handle key binds anymore.
  */
-void Wrapper::getUserInput(QString input) {
+void Wrapper::getUserInput(const QString& input) {
   //qDebug("'%s' (%s)", input.toAscii().data(), edbuf);
   int i, n = input.length();
   confirm = 0;
@@ -275,7 +276,7 @@ void Wrapper::getUserInput(QString input) {
  * Separated from getUserInput. TODO: Pass in the function instead since
  * we check if the keybind exists in InputBar?
  */
-void Wrapper::getUserBind(QString input) {
+void Wrapper::getUserBind(const QString& input) {
   keynode *p;
 
   p = keydefs; 
@@ -304,12 +305,12 @@ void Wrapper::getUserBind(QString input) {
  * TODO: Rewrite this in a more intelligent fashion/location?
  * The Object Editor cannot access these variables due to scope
  */
-actionnode* Wrapper::getActions() { 
+const  actionnode* Wrapper::getActions() const { 
     return actions; 
 }
 
 
-QHash<QString, QString> Wrapper::getNUMVARs(int type) {
+QHash<QString, QString> Wrapper::getNUMVARs(const int& type) {
   QHash<QString, QString> hash;
   int i;
   ptr p = static_cast<ptr>(0);
@@ -333,6 +334,17 @@ QHash<QString, QString> Wrapper::getNUMVARs(int type) {
   return hash;
 }
 
+
+void Wrapper::writeToStdout(const QString& str) const { 
+    emit addText(str); // to TextView
+} 
+
+
+void Wrapper::toggleEcho() const { 
+    emit toggleEchoMode(); 
+}
+
+
 /* Powwow C Functions */
 
 extern "C" {
@@ -353,4 +365,25 @@ extern "C" {
   * Called when Powwow Quits (#quit, syserr)
   */
   void wrapper_quit() { Wrapper::self()->wrapperQuit(); }
+}
+    
+
+// From wrapper_tcp.cpp    
+void Wrapper::disconnectSession() const {
+  if (socketHash[tcp_fd])
+    socketHash[tcp_fd]->socketDisconnected();
+  emit setCurrentProfile(QString());
+}
+
+
+const int Wrapper::readFromSocket(const int& fd, char* const buffer, 
+        const int& maxsize) const {
+  WrapperSocket* socket = socketHash[fd];
+  int read;
+  while(socket->bytesAvailable()) {
+    read = socket->read(buffer, maxsize);
+    if (read != -1)
+      buffer[read] = 0;
+  }
+  return read;
 }

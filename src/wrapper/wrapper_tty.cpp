@@ -145,13 +145,15 @@ void Wrapper::emitInputSet(char *str) {
   emit inputInsertText(str);
 }
 
-void Wrapper::emitMoveCursor(int fromcol, int fromline, int tocol, int toline) {
+void Wrapper::emitMoveCursor(const int fromcol, const int fromline, 
+        const int tocol, const int toline) const {
   int diff = tocol - fromcol;
   qDebug("External: (%d, %d), (%d, %d), Diff %d", fromcol, fromline, tocol, toline, diff);
   emit moveCursor(diff);
 }
 
-void Wrapper::mergeInputWrapper(QString inputBarText, int cursorPosition) {
+void Wrapper::mergeInputWrapper(const QString& inputBarText, 
+        const int& cursorPosition) {
   strcpy(edbuf, inputBarText.toAscii().data());
   edlen = inputBarText.length();
   edbuf[edlen] = '\0';
