@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
       Q_INIT_RESOURCE(application);
       QApplication app(argc, argv);
       Config().read();
-      mainWindow = new MainWindow;
-      mainWindow->start(argc, argv);
+      MainWindow& _mainWindow = MainWindow::Instance();
+      _mainWindow.start(argc, argv);
       /*
       if (Config().m_autoLoadWorld && Config().m_autoLoadFileName!="")
       {
