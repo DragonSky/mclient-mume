@@ -18,9 +18,7 @@
 #define _WRAPPER_TCP_H_
 
 /* Powwow C Functions */
-#ifdef __cplusplus
 extern "C" {
-#endif
   // Creating a Socket:
   void wrapper_tcp_connect(char *addr, int port, char *initstring, int i);
   void wrapper_tcp_connect_slot(char *initstr, int port, int newtcp_fd, int i);
@@ -35,8 +33,6 @@ extern "C" {
 
   // Deprecated:
   void tcp_spawn(char *id, char *cmd);
-#ifdef __cplusplus
 }
-#endif
 
 #endif /* _WRAPPER_TCP_H_ */
