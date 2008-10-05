@@ -456,7 +456,7 @@ void Wrapper::mergeInputWrapper(const QString& inputBarText,
 // From wrapper_cmd.cpp
 const int Wrapper::getKeyBind(char* const seq) const {
   QString label("Blank"), sequence;
-  KeyBinder *dlg = new KeyBinder(label, sequence, (QWidget*)parent);
+  KeyBinder *dlg = new KeyBinder(label, sequence, 0);
   if (dlg->exec()) {
     strcpy(seq, sequence.toAscii().constData());
   }

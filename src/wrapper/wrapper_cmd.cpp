@@ -24,7 +24,7 @@ void suspend_powwow() {
 }
 
 
-int wrapper_get_keybind(char *seq) { 
+int wrapper_get_keybind(char *seq) {
     return Wrapper::self()->getKeyBind(seq); 
 }
 
