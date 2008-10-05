@@ -25,11 +25,7 @@ WrapperSocket::WrapperSocket(char* initstring, int i, Wrapper *wrapper)
   connect(this, SIGNAL(readyRead()), SLOT(contentAvailable()) );
 }
 
-
-WrapperSocket::~WrapperSocket() {
-  delete initstring;
-}
-
+WrapperSocket::~WrapperSocket() {}
 
 void WrapperSocket::socketError(QAbstractSocket::SocketError socketError) {
   if (state() == QAbstractSocket::UnconnectedState) { // Only provide messages during #connect
