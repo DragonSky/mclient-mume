@@ -60,14 +60,17 @@ Wrapper::Wrapper(QObject *parent) : QObject(parent) {
 
   /* Create the Telnet Filter */
   filter = new TelnetFilter(this);
-  connect(this, SIGNAL(analyzeUserStream( const char*, int )), filter, SLOT(analyzeUserStream( const char*, int )));
-  connect(this, SIGNAL(analyzeMudStream( const char*, int )), filter, SLOT(analyzeMudStream( const char*, int )));
-  connect(filter, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
-  connect(filter, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
+  connect(this, SIGNAL(analyzeUserStream( const char*, const int& )), 
+          filter, SLOT(analyzeUserStream( const char*, int )));
+  connect(this, SIGNAL(analyzeMudStream( const char*, const int& )), 
+          filter, SLOT(analyzeMudStream( const char*, int )));
+  connect(filter, SIGNAL(sendToMud(const QByteArray&)), 
+          this, SLOT(sendToMud(const QByteArray&)));
+  connect(filter, SIGNAL(sendToUser(const QByteArray&)), 
+          this, SLOT(sendToUser(const QByteArray&)));
 }
 
-Wrapper::~Wrapper()
-{
+Wrapper::~Wrapper() {
   _self = 0;
 }
 
@@ -105,7 +108,7 @@ void Wrapper::start(int argc, char** argv) {
  * getUserInput/getUserBind, and getRemoteInput in order to
  * allow portability between system types.
  */
-void Wrapper::mainLoop() {
+void Wrapper::mainLoop() const {
   int sleeptime = computeDelaySleeptime();
 
   now_updated = 0;
@@ -121,7 +124,7 @@ void Wrapper::mainLoop() {
 /*
  * Calculate the Delayed Label Sleeptime
  */
-int Wrapper::computeDelaySleeptime() {
+const int Wrapper::computeDelaySleeptime() const {
   int sleeptime = 0;
 
   if (delays) {
@@ -141,7 +144,7 @@ int Wrapper::computeDelaySleeptime() {
 /*
  * Redraw the Prompt if Necessary
  */
-void Wrapper::redrawEverything() {
+void Wrapper::redrawEverything() const {
   if (prompt_status == 1 && line_status == 0)
     line_status = 1;
   if (prompt_status == 1)
@@ -222,7 +225,7 @@ void Wrapper::sendToUser(const QByteArray& ba) const {
 
 }
 
-void Wrapper::sendToMud(const QByteArray& ba) {
+void Wrapper::sendToMud(const QByteArray& ba) const {
   writeToSocket(tcp_main_fd, ba.data(), ba.size());
 }
 
