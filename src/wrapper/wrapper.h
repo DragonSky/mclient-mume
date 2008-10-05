@@ -41,7 +41,7 @@ class Wrapper: public QObject {
   Q_OBJECT
 
   public:
-    static Wrapper *self ();
+    static Wrapper *self();
     ~Wrapper();
 
     void start(int, char**); // from MainWindow
@@ -70,7 +70,8 @@ class Wrapper: public QObject {
     void createSocketContinued(WrapperSocket *socket, bool connected);
     const int readFromSocket(const int& fd, char* const buffer, 
             const int& maxsize) const;
-    int writeToSocket(int fd, const char *data, int len);
+    const int writeToSocket(const int& fd, const char* data, 
+            const int& len) const;
 
     /* beam.h, cmd.h */
     int internalEditor(editsess*);
@@ -101,8 +102,8 @@ class Wrapper: public QObject {
     void setCurrentProfile(const QString&) const;
     
     // to TelnetFilter
-    void analyzeUserStream( const char*, int );
-    void analyzeMudStream( const char*, int );
+    void analyzeUserStream( const char*, const int& ) const;
+    void analyzeMudStream( const char*, const int& ) const;
 
   private slots:
     void delayTimerExpired() { mainLoop(); } // timer for delayed labels (exec_delays)
@@ -113,16 +114,16 @@ class Wrapper: public QObject {
     void connectSession();
     void disconnectSession() const;
     void clearPowwowMemory();
-    void sendToMud(const QByteArray&) ;
+    void sendToMud(const QByteArray&) const;
     void sendToUser(const QByteArray&) const;
 
   private:
     Wrapper(QObject *);
     static Wrapper *_self;
 
-    void mainLoop();
-    void redrawEverything();
-    int computeDelaySleeptime();
+    void mainLoop() const;
+    void redrawEverything() const;
+    const int computeDelaySleeptime() const;
 
     //TextView *textView;
     //InputBar *inputBar;

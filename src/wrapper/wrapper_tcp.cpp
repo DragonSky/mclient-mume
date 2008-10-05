@@ -27,9 +27,8 @@
 #include "tcp.h"
 
 
-
-int Wrapper::writeToSocket(int fd, const char *data, int len)
-{
+const int Wrapper::writeToSocket(const int& fd, const char* data, 
+        const int& len) const {
   return socketHash[fd]->write(data, len);
 }
 
