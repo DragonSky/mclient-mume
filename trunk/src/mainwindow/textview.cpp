@@ -111,7 +111,7 @@ void TextView::autoCopySelectedText(bool yes)
     copy();
 }
 
-void TextView::addText(QString& str) // TODO: Make this a state machine
+void TextView::addText(const QString& str) // TODO: Make this a state machine
 {
   // ANSI codes are formatted as the following:
   // escape + [ + n1 (+ n2) + m

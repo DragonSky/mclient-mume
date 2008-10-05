@@ -30,7 +30,7 @@ class TextView : public QTextEdit
     TextView(QLineEdit *lineEdit, QWidget *parent);
 
   public slots:
-    void addText(QString& str);
+    void addText(const QString& str);
     void moveCursor(int pos);
     void autoCopySelectedText(bool);
     //void resizeDocument(int);

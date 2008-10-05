@@ -19,7 +19,7 @@ CGroup::CGroup(QByteArray name, MapData* md, QWidget *parent) : QTreeWidget(pare
   setAlternatingRowColors(true);
   setSelectionMode(QAbstractItemView::NoSelection);
   clear();
-  hide();
+  show();
 
   CGroupChar *ch = new CGroupChar(m_mapData, this);
   ch->setName(name);
