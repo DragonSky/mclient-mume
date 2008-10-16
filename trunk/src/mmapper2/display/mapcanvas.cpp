@@ -38,6 +38,8 @@
 #include "configuration.h"
 #include "abstractparser.h"
 #include <assert.h>
+
+#include "groupmanager.h"
 #include "CGroup.h"
 #include "CGroupChar.h"
 
@@ -84,7 +86,7 @@ GLubyte halftone[] = {
     0x88, 0x88, 0x88, 0x88, 0x22, 0x22, 0x22, 0x22};
 
 
-    MapCanvas::MapCanvas( MapData *mapData, PrespammedPath* prespammedPath, CGroup* groupManager, const QGLFormat & fmt, QWidget * parent )
+    MapCanvas::MapCanvas( MapData *mapData, PrespammedPath* prespammedPath, const QGLFormat & fmt, QWidget * parent )
   : QGLWidget(fmt, parent)
   {
     m_scrollX = 0;
@@ -124,7 +126,6 @@ GLubyte halftone[] = {
 
     m_data = mapData;
     m_prespammedPath = prespammedPath;
-    m_groupManager = groupManager;
 
     m_infoMarksEditDlg = new InfoMarksEditDlg(mapData, this);
     connect(m_infoMarksEditDlg, SIGNAL(mapChanged()), this, SLOT(update()));
@@ -951,6 +952,7 @@ GLubyte halftone[] = {
   {
     QVector<CGroupChar *> chars;
 
+    CGroup *m_groupManager = GroupManager::self()->getGroup();
     chars = m_groupManager->getChars();
     if (chars.isEmpty())
       return;

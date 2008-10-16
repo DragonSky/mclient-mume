@@ -26,7 +26,7 @@
 #include "mapwindow.h"
 #include "mapcanvas.h"
 
-MapWindow::MapWindow(MapData *mapData, PrespammedPath* pp, CGroup* gm,  QWidget * parent)
+MapWindow::MapWindow(MapData *mapData, PrespammedPath* pp, QWidget * parent)
     : QWidget(parent)
 {
 	m_verticalScrollStep = 0;
@@ -56,7 +56,7 @@ MapWindow::MapWindow(MapData *mapData, PrespammedPath* pp, CGroup* gm,  QWidget 
   fmt.setDirectRendering( TRUE );
   fmt.setRgba( TRUE );
   fmt.setDepth( TRUE );
-  m_canvas = new MapCanvas(mapData, pp, gm, fmt, NULL);
+  m_canvas = new MapCanvas(mapData, pp, fmt, NULL);
 
   m_gridLayout->addWidget(m_canvas, 0, 0, 1, 1);
 

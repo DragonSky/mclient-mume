@@ -91,7 +91,11 @@ SOURCES += ./main.cpp \
           ./mmapper2/pandoragroup/CGroupCommunicator.cpp \
           ./mmapper2/pandoragroup/CGroupServer.cpp \
           ./mmapper2/pandoragroup/CGroupStatus.cpp \
-          ./mmapper2/preferences/groupmanagerpage.cpp
+          ./mmapper2/preferences/groupmanagerpage.cpp \
+ mainwindow/clientmanager.cpp \
+ mainwindow/mappermanager.cpp \
+ mainwindow/groupmanager.cpp \
+ mainwindow/actionmanager.cpp
 HEADERS += ./mainwindow/mainwindow.h \
            ./mainwindow/textview.h \
            ./wrapper/wrapper.h \
@@ -197,7 +201,11 @@ HEADERS += ./mainwindow/mainwindow.h \
           ./mmapper2/pandoragroup/CGroupCommunicator.h \
           ./mmapper2/pandoragroup/CGroupServer.h \
           ./mmapper2/pandoragroup/CGroupStatus.h \
-          ./mmapper2/preferences/groupmanagerpage.h
+          ./mmapper2/preferences/groupmanagerpage.h \
+ mainwindow/clientmanager.h \
+ mainwindow/mappermanager.h \
+ mainwindow/groupmanager.h \
+ mainwindow/actionmanager.h
 TEMPLATE = app
 RC_FILE = ./resources/mclient.rc
 FORMS += ./objecteditor/objecteditor.ui \

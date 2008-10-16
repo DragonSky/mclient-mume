@@ -14,19 +14,36 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "mainwindow.h"
-#include "configuration.h"
+#ifndef _GROUPMANAGER_H_
+#define _GROUPMANAGER_H_
 
-#include <QApplication>
+#include <QObject>
 
+class CGroup;
+class CGroupCommunicator;
+class MainWindow;
 
-int main(int argc, char *argv[])
-{
-      Q_INIT_RESOURCE(application);
-      QApplication app(argc, argv);
-      Config().read();
-      MainWindow *_mainWindow = new MainWindow();
-      _mainWindow->start(argc, argv);
-      return app.exec();
-}
+class GroupManager: public QObject {
+  Q_OBJECT
 
+  public:
+    static GroupManager *self (MainWindow *parent = 0);
+    ~GroupManager ();
+
+    CGroup *getGroup() { return _groupManager; }
+    CGroupCommunicator *getCommunicator();
+
+  public slots:
+    void groupOff(bool);
+    void groupClient(bool);
+    void groupServer(bool);
+
+  private:
+    GroupManager (MainWindow *);
+    static GroupManager *_self;
+
+    CGroup *_groupManager;
+    MainWindow *_mainWindow;
+};
+
+#endif /* _GROUPMANAGER_H_ */

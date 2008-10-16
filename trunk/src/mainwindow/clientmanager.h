@@ -14,19 +14,39 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "mainwindow.h"
-#include "configuration.h"
+#ifndef _CLIENTMANAGER_H_
+#define _CLIENTMANAGER_H_
 
-#include <QApplication>
+#include <QObject>
 
+class MainWindow;
+class TextView;
+class InputBar;
+class Wrapper;
 
-int main(int argc, char *argv[])
-{
-      Q_INIT_RESOURCE(application);
-      QApplication app(argc, argv);
-      Config().read();
-      MainWindow *_mainWindow = new MainWindow();
-      _mainWindow->start(argc, argv);
-      return app.exec();
-}
+class ClientManager: public QObject {
+  Q_OBJECT
 
+  public:
+    static ClientManager *self (MainWindow *parent = 0);
+    ~ClientManager ();
+
+    Wrapper *getWrapper() { return _wrapper; }
+    TextView *getTextView() { return _textView; }
+    InputBar *getInputBar() { return _inputBar; }
+
+  private slots:
+    void sendUserInput();
+    void sendUserBind(const QString& input);
+
+  private:
+    ClientManager (MainWindow *);
+    static ClientManager *_self;
+
+    Wrapper *_wrapper;
+    TextView *_textView;
+    InputBar *_inputBar;
+    MainWindow *_mainWindow;
+};
+
+#endif /* _CLIENTMANAGER_H_ */
