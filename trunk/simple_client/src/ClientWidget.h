@@ -19,8 +19,7 @@ class ClientWidget : public QWidget {
 
 
     public slots:
-        void connected();
-        void readSocket();
+        void sendUserInput();
 
 
     protected:
@@ -32,7 +31,6 @@ class ClientWidget : public QWidget {
 
     signals:
         void receivedInput();
-        void dataReceived(const QString& data);
 
 };
 

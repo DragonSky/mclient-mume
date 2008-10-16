@@ -7,7 +7,8 @@ INCLUDES = -I@top_builddir@/ui #-I$(QTGUI_INC)
 noinst_LTLIBRARIES = libmoc.la
 
 libmoc_la_SOURCES = moc_ClientWidget.cpp moc_ClientLineEdit.cpp \
-					moc_ClientTextEdit.cpp 
+					moc_ClientTextEdit.cpp moc_PowwowWrapper.cpp \
+					moc_ClientSocket.cpp
 
 libmoc_la_CXXFLAGS = $(QT_CXXFLAGS) $(AM_CXXFLAGS)
 libmoc_la_CPPFLAGS = $(QT_CPPFLAGS) $(AM_CPPFLAGS)

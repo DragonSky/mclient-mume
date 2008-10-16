@@ -11,7 +11,7 @@ INCLUDES = $(ROOTINC) -I@top_builddir@/ui -I$(QTGUI_INC)
 LDADD = @top_builddir@/moc/libmoc.la $(LIBS)
 
 simple_SOURCES = main.cpp ClientWidget.cpp ClientLineEdit.cpp \
-				 ClientTextEdit.cpp
+				 ClientTextEdit.cpp PowwowWrapper.cpp ClientSocket.cpp
 
 simple_CXXFLAGS = $(QT_CXXFLAGS) $(AM_CXXFLAGS)
 simple_CPPFLAGS = $(QT_CPPFLAGS) $(AM_CPPFLAGS)
