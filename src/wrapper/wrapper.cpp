@@ -43,13 +43,17 @@
 
 #include "edit.h" //insert_char
 
+#include "mappermanager.h"
+#include "clientmanager.h"
+#include "mapdata.h"
+
 Wrapper *Wrapper::_self = 0;
 
 Wrapper *Wrapper::self()
 {
   if (_self == 0) {
-    _self = new Wrapper(&MainWindow::Instance());
-    qDebug() << "pow!";
+    _self = new Wrapper(0); //MainWindow::self());
+    qDebug() << "PowwowWrapper created.";
   }
   return _self;
 }
@@ -77,9 +81,7 @@ Wrapper::~Wrapper() {
 
 /* Powwow Initialization Function */
 void Wrapper::start(int argc, char** argv) {
-  MainWindow& _mainWindow = MainWindow::Instance();
-  
-  parserXml = new MumeXmlParser(_mainWindow.getMapData(), this);
+  parserXml = new MumeXmlParser(MapperManager::self()->getMapData(), this);
   qDebug("Created XML Parser");
 
   connect(filter, SIGNAL(parseNewMudInputXml(IncomingData&)), parserXml, SLOT(parseNewMudInput(IncomingData&)));
@@ -89,14 +91,16 @@ void Wrapper::start(int argc, char** argv) {
   connect(parserXml, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
   connect(parserXml, SIGNAL(setNormalMode()), filter, SLOT(setNormalMode()));
 
-  connect(parserXml, SIGNAL(event(ParseEvent* )), _mainWindow.getPathMachine(), SLOT(event(ParseEvent* )), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(releaseAllPaths()), _mainWindow.getPathMachine(), SLOT(releaseAllPaths()), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(showPath(CommandQueue, bool)),_mainWindow.getPrespammedPath(), SLOT(setPath(CommandQueue, bool)), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(event(ParseEvent* )), MapperManager::self()->getPathMachine(), SLOT(event(ParseEvent* )), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(releaseAllPaths()), MapperManager::self()->getPathMachine(), SLOT(releaseAllPaths()), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(showPath(CommandQueue, bool)), MapperManager::self()->getPrespammedPath(), SLOT(setPath(CommandQueue, bool)), Qt::QueuedConnection);
 
   //Group Manager Support
-  connect(parserXml, SIGNAL(sendScoreLineEvent(QByteArray)), _mainWindow.getGroupManager(), SLOT(parseScoreInformation(QByteArray)), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(sendPromptLineEvent(QByteArray)), _mainWindow.getGroupManager(), SLOT(parsePromptInformation(QByteArray)), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(sendGroupTellEvent(QByteArray)), _mainWindow.getGroupManager(), SLOT(sendGTell(QByteArray)), Qt::QueuedConnection);
+  /*
+  connect(parserXml, SIGNAL(sendScoreLineEvent(QByteArray)), MainWindow::self()->getGroupManager(), SLOT(parseScoreInformation(QByteArray)), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(sendPromptLineEvent(QByteArray)), MainWindow::self()->getGroupManager(), SLOT(parsePromptInformation(QByteArray)), Qt::QueuedConnection);
+  connect(parserXml, SIGNAL(sendGroupTellEvent(QByteArray)), MainWindow::self()->getGroupManager(), SLOT(sendGTell(QByteArray)), Qt::QueuedConnection);
+  */
 
   startPowwow(argc, argv);
   qDebug("Started Powwow!");

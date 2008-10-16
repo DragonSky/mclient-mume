@@ -54,7 +54,7 @@ class MapCanvas : public QGLWidget//, public RoomRecipient
   Q_OBJECT
 
   public:
-    MapCanvas( MapData *mapData, PrespammedPath* prespammedPath, CGroup* groupManager, const QGLFormat & fmt, QWidget * parent = 0 );
+    MapCanvas( MapData *mapData, PrespammedPath* prespammedPath, const QGLFormat & fmt, QWidget * parent = 0 );
     ~MapCanvas();
 
     QSize minimumSizeHint() const;
@@ -189,7 +189,6 @@ class MapCanvas : public QGLWidget//, public RoomRecipient
 
     MapData *m_data;
     PrespammedPath *m_prespammedPath;
-    CGroup* m_groupManager;
 
     qint16 m_currentLayer;
 
