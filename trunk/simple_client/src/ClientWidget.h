@@ -7,9 +7,6 @@ class ClientLineEdit;
 class ClientTextEdit;
 
 class QTcpSocket;
-class QTextCursor;
-class QTextDocument;
-class QTextEdit;
 class QVBoxLayout;
 
 class ClientWidget : public QWidget {
@@ -18,7 +15,7 @@ class ClientWidget : public QWidget {
     public:
         ClientWidget(QWidget* parent=0);
         ~ClientWidget();
-        void connectToHost() const;
+        void connectToHost(const QString& host, const qint64& port) const;
 
 
     public slots:
@@ -29,7 +26,6 @@ class ClientWidget : public QWidget {
     protected:
         ClientTextEdit* _textEdit;
         ClientLineEdit* _lineEdit;
-        QTextCursor* _cursor;
         QTcpSocket* _socket;
         QVBoxLayout* _layout;
 

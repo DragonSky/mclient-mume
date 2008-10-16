@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     QMainWindow mw;
 
     ClientWidget* cw = new ClientWidget();
-    cw->connectToHost();
+    cw->connectToHost("mume.org", 4242);
     mw.setCentralWidget(cw);
     mw.show();
 
