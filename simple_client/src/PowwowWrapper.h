@@ -23,8 +23,8 @@ class PowwowWrapper : public QObject {
         void readSocket();
 
     protected:
-        PowwowWrapper(QObject* parent=0);
         ClientSocket* _socket;
+        PowwowWrapper(QObject* parent=0);
         
         static PowwowWrapper* _pinstance;
 

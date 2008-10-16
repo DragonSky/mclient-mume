@@ -70,3 +70,20 @@ void PowwowWrapper::connectToHost(const QString& host,
         const qint64& port) const {
     _socket->connectToHost(host, port);
 }
+
+
+#include <boost/python.hpp>
+using namespace boost::python;
+
+//BOOST_PYTHON_MODULE(powwow) 
+//{
+    //class_<QObject>("QObject", no_init);
+    //class_<PowwowWrapper, bases<QObject> >("PowwowWrapper", no_init);
+    /*
+        .def("connectToHost", &PowwowWrapper::connectToHost)
+        .def("getUserInput", &PowwowWrapper::getUserInput)
+    ;
+    */
+    //def("Instance", &PowwowWrapper::Instance);,
+   //         return_value_policy<manage_new_object>());
+//}
