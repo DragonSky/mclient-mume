@@ -1,6 +1,7 @@
 //#include "mainwindow.h"
 
 #include "ClientWidget.h"
+#include "PowwowWrapper.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -15,5 +16,7 @@ int main(int argc, char** argv) {
     mw.setCentralWidget(cw);
     mw.show();
 
-    return app.exec();
+    int retval = app.exec();
+    PowwowWrapper::Instance()->Delete();
+    return retval;
 }

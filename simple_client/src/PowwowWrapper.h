@@ -12,7 +12,8 @@ class PowwowWrapper : public QObject {
     Q_OBJECT
 
     public:
-        static PowwowWrapper& Instance();
+        static PowwowWrapper* Instance();
+        static void Delete();
         ~PowwowWrapper();
         void getUserInput(const QString& str) const;
         void connectToHost(const QString& host, const qint64& port) const;
@@ -24,6 +25,8 @@ class PowwowWrapper : public QObject {
     protected:
         PowwowWrapper(QObject* parent=0);
         ClientSocket* _socket;
+        
+        static PowwowWrapper* _pinstance;
 
     signals:
         void dataReceived(const QString& data);
