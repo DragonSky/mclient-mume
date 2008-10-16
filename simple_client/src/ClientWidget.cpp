@@ -2,6 +2,7 @@
 
 #include "ClientLineEdit.h"
 #include "ClientTextEdit.h"
+#include "PowwowWrapper.h"
 
 #include <QDebug>
 #include <QString>
@@ -18,35 +19,32 @@ ClientWidget::ClientWidget(QWidget* parent) : QWidget(parent) {
     
     _lineEdit = new ClientLineEdit(this);
     _layout->addWidget(_lineEdit);
-    
-    _socket = new QTcpSocket(this);
-
-    connect(_socket, SIGNAL(connected()), this, SLOT(connected()));
-    connect(_socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
-    connect(this, SIGNAL(dataReceived(const QString&)), _textEdit, 
+   
+    PowwowWrapper& wrapper = PowwowWrapper::Instance();
+    connect(&wrapper, SIGNAL(dataReceived(const QString&)), _textEdit, 
             SLOT(displayText(const QString&)));
-
+    connect(_lineEdit, SIGNAL(returnPressed()), this, 
+            SLOT(sendUserInput()));
+    
     setMinimumSize(640, 480);
 }
 
 
 void ClientWidget::connectToHost(const QString& host, 
         const qint64& port) const {
-    _socket->connectToHost(host, port);
+    PowwowWrapper& wrapper = PowwowWrapper::Instance();
+    wrapper.connectToHost(host, port);
 }
 
 
-void ClientWidget::connected() { 
-    qDebug() << "We're connected now!";
-}
-
-
-void ClientWidget::readSocket() {
-    QString data = _socket->read(1024);    
-    emit dataReceived(data);
-}
 
 
 ClientWidget::~ClientWidget() {
-    _socket->disconnect(); 
 }
+
+
+void ClientWidget::sendUserInput() {
+    _lineEdit->selectAll();
+    PowwowWrapper::Instance().getUserInput(_lineEdit->selectedText());
+}
+

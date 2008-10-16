@@ -2,6 +2,8 @@
 
 
 ClientLineEdit::ClientLineEdit(QWidget* parent) : QLineEdit(parent) {
+    setMaxLength(255); //BUFSIZE-1
+
 }
 
 
