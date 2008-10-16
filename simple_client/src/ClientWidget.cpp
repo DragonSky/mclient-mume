@@ -6,8 +6,6 @@
 #include <QDebug>
 #include <QString>
 #include <QTcpSocket>
-#include <QTextCursor>
-#include <QTextDocument>
 #include <QVBoxLayout>
 
 
@@ -32,19 +30,19 @@ ClientWidget::ClientWidget(QWidget* parent) : QWidget(parent) {
 }
 
 
-void ClientWidget::connectToHost() const {
-    _socket->connectToHost("mume.org", 4242);
+void ClientWidget::connectToHost(const QString& host, 
+        const qint64& port) const {
+    _socket->connectToHost(host, port);
 }
 
 
 void ClientWidget::connected() { 
-    qDebug() << "we're connected now";
+    qDebug() << "We're connected now!";
 }
 
 
 void ClientWidget::readSocket() {
-    QString data;
-    data = _socket->read(1024);    
+    QString data = _socket->read(1024);    
     emit dataReceived(data);
 }
 
@@ -52,5 +50,3 @@ void ClientWidget::readSocket() {
 ClientWidget::~ClientWidget() {
     _socket->disconnect(); 
 }
-
-
