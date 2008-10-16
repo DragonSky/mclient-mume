@@ -4,6 +4,7 @@
 #include <QWidget>
 
 class ClientLineEdit;
+class ClientTextEdit;
 
 class QTcpSocket;
 class QTextCursor;
@@ -21,15 +22,13 @@ class ClientWidget : public QWidget {
 
 
     public slots:
-        void displayText(const QString& str);
         void connected();
         void readSocket();
 
 
     protected:
-        QTextEdit* _textEdit;
+        ClientTextEdit* _textEdit;
         ClientLineEdit* _lineEdit;
-        QTextDocument* _doc;
         QTextCursor* _cursor;
         QTcpSocket* _socket;
         QVBoxLayout* _layout;
