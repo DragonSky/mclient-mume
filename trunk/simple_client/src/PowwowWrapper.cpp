@@ -6,9 +6,19 @@
 #include <QString>
 
 
-PowwowWrapper& PowwowWrapper::Instance() {
-    static PowwowWrapper pow;
-    return pow;
+PowwowWrapper* PowwowWrapper::_pinstance = 0;
+
+PowwowWrapper* PowwowWrapper::Instance() {
+    if(_pinstance == 0) {
+        _pinstance = new PowwowWrapper();
+        return _pinstance;
+    }
+}
+
+
+void PowwowWrapper::Delete() {
+    delete _pinstance;
+    _pinstance = 0;
 }
 
 
