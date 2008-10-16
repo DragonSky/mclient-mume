@@ -12,14 +12,17 @@ class ClientTextEdit : public QTextEdit {
     public:
         ClientTextEdit(QWidget* parent=0);
         ~ClientTextEdit();
+        void addText(const QString& str);
     
     public slots:
         void displayText(const QString& str);
+        void moveCursor(const int& diff);
 
 
     protected:
         QTextCursor* _cursor;
         QTextDocument* _doc;
+        QTextCharFormat _format;
 
 };
 
