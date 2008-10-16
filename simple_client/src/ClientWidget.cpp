@@ -21,8 +21,11 @@ ClientWidget::ClientWidget(QWidget* parent) : QWidget(parent) {
     _layout->addWidget(_lineEdit);
    
     PowwowWrapper& wrapper = PowwowWrapper::Instance();
+    // When the wrapper receives data, display it in the textedit
     connect(&wrapper, SIGNAL(dataReceived(const QString&)), _textEdit, 
             SLOT(displayText(const QString&)));
+    
+    // Send data when user presses return
     connect(_lineEdit, SIGNAL(returnPressed()), this, 
             SLOT(sendUserInput()));
     
@@ -35,8 +38,6 @@ void ClientWidget::connectToHost(const QString& host,
     PowwowWrapper& wrapper = PowwowWrapper::Instance();
     wrapper.connectToHost(host, port);
 }
-
-
 
 
 ClientWidget::~ClientWidget() {
