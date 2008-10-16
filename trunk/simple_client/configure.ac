@@ -15,6 +15,9 @@ AT_WITH_QT([xml network gui],[qt warn_off debug],
             UI_DIR = ./ui])
 #AT_REQUIRE_QT_VERSION(4.4.0)
 
+AX_BOOST_BASE([1.33.1])
+AX_BOOST_PYTHON
+
 AC_PREFIX_DEFAULT(`pwd`)
 
 AC_CONFIG_FILES([Makefile
