@@ -18,7 +18,7 @@
 #define _KEYBINDER_CMD_H
 
 #include <QDialog>
-#include "ui_keybinder.h"
+#include "ui_KeyBinder.h"
 
 bool isAcceptableKey(QKeyEvent* ke);
 QString generateKeyCodeSequence(QKeyEvent *ke);
