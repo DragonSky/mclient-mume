@@ -8,7 +8,7 @@
 
 #ifdef MCLIENT
 #include "defines.h"
-#include "wrapper.h"
+#include "PowwowWrapper.h"
 
 #ifdef __cplusplus
 extern "C" {
