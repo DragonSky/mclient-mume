@@ -18,7 +18,7 @@
 #define _PROFILEEDITDIALOG_H
 
 #include <QDialog>
-#include "ui_profileeditdialog.h"
+#include "ui_ProfileEditDialog.h"
 
 class ProfileEditDialog : public QDialog, public Ui::ProfileEditDialog
 {
