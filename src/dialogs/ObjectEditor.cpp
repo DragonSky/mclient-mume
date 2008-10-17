@@ -34,10 +34,11 @@
 #include "eval.h" // vars
 #include "edit.h" // keybinds
 
-ObjectEditor::ObjectEditor(PowwowWrapper *wrapper, QWidget *parent)
-  : QDialog(parent), wrapper(wrapper)
+ObjectEditor::ObjectEditor(QWidget *parent): QDialog(parent)
 {
   setupUi(this);
+
+  wrapper = PowwowWrapper::self();
 
   addingNewAlias = false;
   addingNewAction = false;

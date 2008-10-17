@@ -14,8 +14,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QDir>
-
 #include "configuration.h"
 
 #include "PowwowWrapper.h"

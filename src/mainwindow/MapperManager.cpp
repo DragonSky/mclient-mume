@@ -155,7 +155,7 @@ void MapperManager::merge()
     }
 
     //MERGE
-    progressDlg = new QProgressDialog(0);
+    progressDlg = new QProgressDialog(_mainWindow);
     QPushButton *cb = new QPushButton("Abort ...");
     cb->setEnabled(false);
     progressDlg->setCancelButton ( cb );
@@ -171,7 +171,7 @@ void MapperManager::merge()
 
     AbstractMapStorage *storage = (AbstractMapStorage*) new MapStorage(*_mapData , fileName, file);
     connect(storage, SIGNAL(onDataLoaded()), MapperManager::self()->getMapWindow()->getCanvas(), SLOT(dataLoaded()));
-    connect(storage, SIGNAL(onPercentageChanged(quint32)), _mainWindow, SLOT(percentageChanged(quint32)));
+    connect(storage, SIGNAL(onPercentageChanged(quint32)), this, SLOT(percentageChanged(quint32)));
     connect(storage, SIGNAL(log(const QString&, const QString&)), _mainWindow, SLOT(log(const QString&, const QString&)));
 
     ActionManager *actMgr = ActionManager::self();
@@ -298,7 +298,7 @@ void MapperManager::loadFile(const QString &fileName)
 
   AbstractMapStorage *storage = (AbstractMapStorage*) new MapStorage(*_mapData , fileName, file);
   connect(storage, SIGNAL(onDataLoaded()), MapperManager::self()->getMapWindow()->getCanvas(), SLOT(dataLoaded()));
-  connect(storage, SIGNAL(onPercentageChanged(quint32)), _mainWindow, SLOT(percentageChanged(quint32)));
+  connect(storage, SIGNAL(onPercentageChanged(quint32)), this, SLOT(percentageChanged(quint32)));
   connect(storage, SIGNAL(log(const QString&, const QString&)), _mainWindow, SLOT(log(const QString&, const QString&)));
 
   ActionManager *actMgr = ActionManager::self();
@@ -360,7 +360,7 @@ bool MapperManager::saveFile(const QString &fileName)
   progressDlg->show();
 
   AbstractMapStorage *storage = (AbstractMapStorage*) new MapStorage(*_mapData , fileName, file);
-  connect(storage, SIGNAL(onPercentageChanged(quint32)), _mainWindow, SLOT(percentageChanged(quint32)));
+  connect(storage, SIGNAL(onPercentageChanged(quint32)), this, SLOT(percentageChanged(quint32)));
   connect(storage, SIGNAL(log(const QString&, const QString&)), _mainWindow, SLOT(log(const QString&, const QString&)));
 
   ActionManager *actMgr = ActionManager::self();

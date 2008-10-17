@@ -17,10 +17,7 @@
 #ifndef _WRAPPER_PROCESS_H_
 #define _WRAPPER_PROCESS_H_
 
-#include <QProcess>
 #include "defines.h"
-
-class PowwowWrapper;
 
 /* cmd.c */
 extern "C" void cmd_shell(char *arg);

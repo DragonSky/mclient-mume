@@ -32,7 +32,7 @@ class ObjectEditor : public QDialog, public Ui::ObjectEditor
   Q_OBJECT
 
   public:
-    ObjectEditor(PowwowWrapper* wrapper, QWidget *parent = 0);
+    ObjectEditor(QWidget *parent = 0);
 
   private:
     void loadAliasTab();
