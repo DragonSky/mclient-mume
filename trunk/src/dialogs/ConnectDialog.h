@@ -14,18 +14,40 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "MainWindow.h"
-#include "configuration.h"
+#ifndef _PROFILEDIALOG_H
+#define _PROFILEDIALOG_H
 
-#include <QApplication>
+#include <QDialog>
+#include "ui_ConnectDialog.h"
 
-int main(int argc, char *argv[])
+class ProfileManagerDialog;
+
+class ConnectDialog : public QDialog, public Ui::ConnectDialog
 {
-      Q_INIT_RESOURCE(application);
-      QApplication app(argc, argv);
-      Config().read();
-      MainWindow *_mainWindow = new MainWindow();
-      _mainWindow->start(argc, argv);
-      return app.exec();
-}
+  Q_OBJECT
 
+  public:
+    ConnectDialog(QWidget* parent);
+    virtual ~ConnectDialog();
+
+    QString selectedProfile();
+
+  private:
+    ProfileManagerDialog *dialog;
+
+    /** Create the Default "Quick Connect" MUME Profile */
+    void createDefaultProfile();
+
+  signals:
+    void profileSelected();
+
+  private slots:
+    void playClicked();
+    void profileClicked();
+    void relayLoadProfile(const QString&);
+    void doubleClicked(const QModelIndex &index);
+    void selectionChanged(const QItemSelection &index);
+
+};
+
+#endif /* _PROFILEDIALOG_H */

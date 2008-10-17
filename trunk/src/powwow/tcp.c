@@ -39,7 +39,7 @@
 #endif
 
 #ifdef MCLIENT
-# include "wrapper.h"
+# include "PowwowWrapper.h"
 #endif
 
 #include "defines.h"

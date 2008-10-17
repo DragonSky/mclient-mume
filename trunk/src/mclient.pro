@@ -1,11 +1,27 @@
 SOURCES += ./main.cpp \
-           ./mainwindow/mainwindow.cpp \
-           ./mainwindow/textview.cpp \
-           ./wrapper/wrapper.cpp \
-           ./wrapper/wrapper_tcp.cpp \
-           ./wrapper/wrapper_process.cpp \
-           ./wrapper/wrapper_tty.cpp \
-           ./wrapper/WrapperSocket.cpp \
+           ./mainwindow/MainWindow.cpp \
+           ./mainwindow/ClientManager.cpp \
+           ./mainwindow/MapperManager.cpp \
+           ./mainwindow/GroupManager.cpp \
+           ./mainwindow/ActionManager.cpp \
+           ./client/ClientTextEdit.cpp \
+           ./client/ClientLineEdit.cpp \
+           ./client/PowwowWrapper.cpp \
+           ./client/ClientSocket.cpp \
+           ./client/ClientProcess.cpp \
+           ./client/wrapper_tcp.cpp \
+           ./client/wrapper_process.cpp \
+           ./client/wrapper_tty.cpp \
+           ./client/wrapper_cmd.cpp \
+           ./client/wrapper_profile.cpp \
+           ./dialogs/ObjectEditor.cpp \
+           ./dialogs/KeyBinder.cpp \
+           ./dialogs/InternalEditor.cpp \
+           ./dialogs/ConnectDialog.cpp \
+           ./dialogs/ProfileEditDialog.cpp \
+           ./dialogs/ProfileManagerDialog.cpp \
+           ./profile/cprofilemanager.cpp \
+           ./profile/cprofilesettings.cpp \
            ./powwow/beam.c \
            ./powwow/cmd2.c \
            ./powwow/cmd.c \
@@ -18,210 +34,196 @@ SOURCES += ./main.cpp \
            ./powwow/ptr.c \
            ./powwow/tcp.c \
            ./powwow/utils.c \
-           ./mainwindow/inputbar.cpp \
-           ./wrapper/wrapper_cmd.cpp \
-           ./objecteditor/objecteditor.cpp \
            ./configuration/configuration.cpp \
            ./configuration/configdialog.cpp \
            ./configuration/generalpage.cpp \
            ./configuration/ansicombo.cpp \
            ./configuration/colorfontpage.cpp \
-           ./mainwindow/keybinder.cpp \
-           ./profilemanager/profiledialog.cpp \
-           ./profilemanager/profilemanagerdialog.cpp \
-           ./profilemanager/profileeditdialog.cpp \
-           ./profilemanager/cprofilemanager.cpp \
-           ./profilemanager/cprofilesettings.cpp \
-           ./wrapper/wrapper_profile.cpp \
-           ./mainwindow/internaleditor.cpp \
-           ./proxy/telnetfilter.cpp \
-           ./parser/patterns.cpp \
-           ./mmapper2/mapdata/mapdata.cpp \
-          ./mmapper2/mapdata/mmapper2room.cpp \
-          ./mmapper2/mapdata/mmapper2exit.cpp \
-          ./mmapper2/mapdata/roomfactory.cpp \
-          ./mmapper2/mapdata/drawstream.cpp \
-          ./mmapper2/mapdata/roomselection.cpp \
-          ./mmapper2/mapdata/customaction.cpp \
-          ./mmapper2/mainwindow/roomeditattrdlg.cpp \
-          ./mmapper2/mainwindow/infomarkseditdlg.cpp \
-          ./mmapper2/mainwindow/findroomsdlg.cpp \
-          ./mmapper2/display/mapwindow.cpp \
-          ./mmapper2/display/mapcanvas.cpp \
-          ./mmapper2/display/connectionselection.cpp \
-          ./mmapper2/display/prespammedpath.cpp \
-          ./mmapper2/proxy/connectionlistener.cpp \
-          ./mmapper2/proxy/proxy.cpp \
-          ./mmapper2/parser/parser.cpp \
-          ./mmapper2/parser/mumexmlparser.cpp \
-          ./mmapper2/parser/abstractparser.cpp \
-          ./mmapper2/parser/roompropertysetter.cpp \
-          ./mmapper2/expandoracommon/component.cpp \
-          ./mmapper2/expandoracommon/coordinate.cpp \
-          ./mmapper2/expandoracommon/frustum.cpp \
-          ./mmapper2/expandoracommon/abstractroomfactory.cpp \
-          ./mmapper2/expandoracommon/init.cpp \
-          ./mmapper2/expandoracommon/property.cpp \
-          ./mmapper2/expandoracommon/mmapper2event.cpp \
-          ./mmapper2/expandoracommon/parseevent.cpp \
-          ./mmapper2/mapfrontend/intermediatenode.cpp \
-          ./mmapper2/mapfrontend/mmappermap.cpp \
-          ./mmapper2/mapfrontend/mapaction.cpp \
-          ./mmapper2/mapfrontend/mapfrontend.cpp \
-          ./mmapper2/mapfrontend/roomcollection.cpp \
-          ./mmapper2/mapfrontend/roomlocker.cpp \
-          ./mmapper2/mapfrontend/searchtreenode.cpp \
-          ./mmapper2/pathmachine/approved.cpp \
-          ./mmapper2/pathmachine/experimenting.cpp \
-          ./mmapper2/pathmachine/pathmachine.cpp \
-          ./mmapper2/pathmachine/mmapper2pathmachine.cpp \
-          ./mmapper2/pathmachine/roomsignalhandler.cpp \
-          ./mmapper2/pathmachine/path.cpp \
-          ./mmapper2/pathmachine/pathparameters.cpp \
-          ./mmapper2/pathmachine/syncing.cpp \
-          ./mmapper2/pathmachine/onebyone.cpp \
-          ./mmapper2/pathmachine/crossover.cpp \
-          ./mmapper2/mapstorage/roomsaver.cpp \
-          ./mmapper2/mapstorage/abstractmapstorage.cpp \
-          ./mmapper2/mapstorage/mapstorage.cpp \
-          ./mmapper2/mapstorage/oldconnection.cpp \
-          ./mmapper2/pandoragroup/CGroup.cpp \
-          ./mmapper2/pandoragroup/CGroupChar.cpp \
-          ./mmapper2/pandoragroup/CGroupClient.cpp \
-          ./mmapper2/pandoragroup/CGroupCommunicator.cpp \
-          ./mmapper2/pandoragroup/CGroupServer.cpp \
-          ./mmapper2/pandoragroup/CGroupStatus.cpp \
-          ./mmapper2/preferences/groupmanagerpage.cpp \
- mainwindow/clientmanager.cpp \
- mainwindow/mappermanager.cpp \
- mainwindow/groupmanager.cpp \
- mainwindow/actionmanager.cpp
-HEADERS += ./mainwindow/mainwindow.h \
-           ./mainwindow/textview.h \
-           ./wrapper/wrapper.h \
-           ./wrapper/wrapper_tty.h \
-           ./wrapper/wrapper_tcp.h \
-           ./wrapper/wrapper_process.h \
-           ./wrapper/WrapperSocket.h \
+           ./mapper/proxy/telnetfilter.cpp \
+           ./mapper/parser/patterns.cpp \
+           ./mapper/mapdata/mapdata.cpp \
+          ./mapper/mapdata/mmapper2room.cpp \
+          ./mapper/mapdata/mmapper2exit.cpp \
+          ./mapper/mapdata/roomfactory.cpp \
+          ./mapper/mapdata/drawstream.cpp \
+          ./mapper/mapdata/roomselection.cpp \
+          ./mapper/mapdata/customaction.cpp \
+          ./mapper/mainwindow/roomeditattrdlg.cpp \
+          ./mapper/mainwindow/infomarkseditdlg.cpp \
+          ./mapper/mainwindow/findroomsdlg.cpp \
+          ./mapper/display/mapwindow.cpp \
+          ./mapper/display/mapcanvas.cpp \
+          ./mapper/display/connectionselection.cpp \
+          ./mapper/display/prespammedpath.cpp \
+          ./mapper/proxy/connectionlistener.cpp \
+          ./mapper/proxy/proxy.cpp \
+          ./mapper/parser/parser.cpp \
+          ./mapper/parser/mumexmlparser.cpp \
+          ./mapper/parser/abstractparser.cpp \
+          ./mapper/parser/roompropertysetter.cpp \
+          ./mapper/expandoracommon/component.cpp \
+          ./mapper/expandoracommon/coordinate.cpp \
+          ./mapper/expandoracommon/frustum.cpp \
+          ./mapper/expandoracommon/abstractroomfactory.cpp \
+          ./mapper/expandoracommon/init.cpp \
+          ./mapper/expandoracommon/property.cpp \
+          ./mapper/expandoracommon/mmapper2event.cpp \
+          ./mapper/expandoracommon/parseevent.cpp \
+          ./mapper/mapfrontend/intermediatenode.cpp \
+          ./mapper/mapfrontend/mmappermap.cpp \
+          ./mapper/mapfrontend/mapaction.cpp \
+          ./mapper/mapfrontend/mapfrontend.cpp \
+          ./mapper/mapfrontend/roomcollection.cpp \
+          ./mapper/mapfrontend/roomlocker.cpp \
+          ./mapper/mapfrontend/searchtreenode.cpp \
+          ./mapper/pathmachine/approved.cpp \
+          ./mapper/pathmachine/experimenting.cpp \
+          ./mapper/pathmachine/pathmachine.cpp \
+          ./mapper/pathmachine/mmapper2pathmachine.cpp \
+          ./mapper/pathmachine/roomsignalhandler.cpp \
+          ./mapper/pathmachine/path.cpp \
+          ./mapper/pathmachine/pathparameters.cpp \
+          ./mapper/pathmachine/syncing.cpp \
+          ./mapper/pathmachine/onebyone.cpp \
+          ./mapper/pathmachine/crossover.cpp \
+          ./mapper/mapstorage/roomsaver.cpp \
+          ./mapper/mapstorage/abstractmapstorage.cpp \
+          ./mapper/mapstorage/mapstorage.cpp \
+          ./mapper/mapstorage/oldconnection.cpp \
+          ./group/CGroup.cpp \
+          ./group/CGroupChar.cpp \
+          ./group/CGroupClient.cpp \
+          ./group/CGroupCommunicator.cpp \
+          ./group/CGroupServer.cpp \
+          ./group/CGroupStatus.cpp \
+          ./mapper/preferences/groupmanagerpage.cpp
+HEADERS += ./mainwindow/MainWindow.h \
+           ./mainwindow/ClientManager.h \
+           ./mainwindow/MapperManager.h \
+           ./mainwindow/GroupManager.h \
+           ./mainwindow/ActionManager.h \
+           ./client/ClientTextEdit.h \
+           ./client/ClientLineEdit.h \
+           ./client/PowwowWrapper.h \
+           ./client/ClientSocket.h \
+           ./client/ClientProcess.h \
+           ./client/wrapper_tcp.h \
+           ./client/wrapper_process.h \
+           ./client/wrapper_tty.h \
+           ./client/wrapper_cmd.h \
+           ./client/wrapper_profile.h \
+           ./dialogs/ObjectEditor.h \
+           ./dialogs/KeyBinder.h \
+           ./dialogs/InternalEditor.h \
+           ./dialogs/ConnectDialog.h \
+           ./dialogs/ProfileEditDialog.h \
+           ./dialogs/ProfileManagerDialog.h \
+           ./profile/cprofilemanager.h \
+           ./profile/cprofilesettings.h \
            ./powwow/beam.h \
            ./powwow/cmd2.h \
            ./powwow/cmd.h \
-           ./powwow/defines.h \
            ./powwow/edit.h \
            ./powwow/eval.h \
            ./powwow/list.h \
            ./powwow/log.h \
-           ./powwow/main.h \
            ./powwow/map.h \
            ./powwow/ptr.h \
            ./powwow/tcp.h \
-           ./powwow/tty.h \
            ./powwow/utils.h \
-           ./win32/timeval.h \
-           ./mainwindow/inputbar.h \
-           ./wrapper/wrapper_cmd.h \
-           ./objecteditor/objecteditor.h \
+           ./powwow/main.h \
            ./configuration/configuration.h \
            ./configuration/configdialog.h \
            ./configuration/generalpage.h \
            ./configuration/ansicombo.h \
            ./configuration/colorfontpage.h \
-           ./mainwindow/keybinder.h \
-           ./profilemanager/profiledialog.h \
-           ./profilemanager/profilemanagerdialog.h \
-           ./profilemanager/profileeditdialog.h \
-           ./profilemanager/cprofilemanager.cpp \
-           ./profilemanager/cprofilesettings.cpp \
-           ./wrapper/wrapper_profile.h \
-           ./mainwindow/internaleditor.h \
-           ./proxy/telnetfilter.h \
-           ./parser/patterns.h \
-           ./mmapper2/global/defs.h \
-          ./mmapper2/mapdata/roomselection.h \
-          ./mmapper2/mapdata/mapdata.h \
-          ./mmapper2/mapdata/mmapper2room.h \
-          ./mmapper2/mapdata/mmapper2exit.h \
-          ./mmapper2/mapdata/infomark.h \
-          ./mmapper2/mapdata/customaction.h \
-          ./mmapper2/mapdata/roomfactory.h \
-          ./mmapper2/mapdata/drawstream.h \
-          ./mmapper2/proxy/proxy.h \
-          ./mmapper2/proxy/connectionlistener.h \
-          ./mmapper2/mainwindow/roomeditattrdlg.h \
-          ./mmapper2/mainwindow/infomarkseditdlg.h \
-          ./mmapper2/mainwindow/findroomsdlg.h \
-          ./mmapper2/display/mapcanvas.h \
-          ./mmapper2/display/mapwindow.h \
-          ./mmapper2/display/connectionselection.h \
-          ./mmapper2/display/prespammedpath.h \
-          ./mmapper2/expandoracommon/room.h \
-          ./mmapper2/expandoracommon/frustum.h \
-          ./mmapper2/expandoracommon/component.h \
-          ./mmapper2/expandoracommon/coordinate.h \
-          ./mmapper2/expandoracommon/listcycler.h \
-          ./mmapper2/expandoracommon/abstractroomfactory.h \
-          ./mmapper2/expandoracommon/mmapper2event.h \
-          ./mmapper2/expandoracommon/parseevent.h \
-          ./mmapper2/expandoracommon/property.h \
-          ./mmapper2/expandoracommon/roomadmin.h \
-          ./mmapper2/expandoracommon/roomrecipient.h \
-          ./mmapper2/expandoracommon/exit.h \
-          ./mmapper2/pathmachine/approved.h \
-          ./mmapper2/pathmachine/experimenting.h \
-          ./mmapper2/pathmachine/pathmachine.h \
-          ./mmapper2/pathmachine/path.h \
-          ./mmapper2/pathmachine/pathparameters.h \
-          ./mmapper2/pathmachine/mmapper2pathmachine.h \
-          ./mmapper2/pathmachine/roomsignalhandler.h \
-          ./mmapper2/pathmachine/onebyone.h \
-          ./mmapper2/pathmachine/crossover.h \
-          ./mmapper2/pathmachine/syncing.h \
-          ./mmapper2/mapfrontend/intermediatenode.h \
-          ./mmapper2/mapfrontend/mmappermap.h \
-          ./mmapper2/mapfrontend/mapaction.h \
-          ./mmapper2/mapfrontend/mapfrontend.h \
-          ./mmapper2/mapfrontend/roomcollection.h \
-          ./mmapper2/mapfrontend/roomlocker.h \
-          ./mmapper2/mapfrontend/roomoutstream.h \
-          ./mmapper2/mapfrontend/searchtreenode.h \
-          ./mmapper2/mapstorage/abstractmapstorage.h \
-          ./mmapper2/mapstorage/mapstorage.h \
-          ./mmapper2/mapstorage/oldroom.h \
-          ./mmapper2/mapstorage/olddoor.h \
-          ./mmapper2/mapstorage/roomsaver.h \
-          ./mmapper2/mapstorage/oldconnection.h \
-          ./mmapper2/mapfrontend/tinylist.h \
-          ./mmapper2/parser/parser.h \
-          ./mmapper2/parser/mumexmlparser.h \
-          ./mmapper2/parser/abstractparser.h \
-          ./mmapper2/parser/roompropertysetter.h \
-          ./mmapper2/pandoragroup/CGroup.h \
-          ./mmapper2/pandoragroup/CGroupChar.h \
-          ./mmapper2/pandoragroup/CGroupClient.h \
-          ./mmapper2/pandoragroup/CGroupCommunicator.h \
-          ./mmapper2/pandoragroup/CGroupServer.h \
-          ./mmapper2/pandoragroup/CGroupStatus.h \
-          ./mmapper2/preferences/groupmanagerpage.h \
+           ./mapper/proxy/telnetfilter.h \
+           ./mapper/parser/patterns.h \
+           ./mapper/global/defs.h \
+          ./mapper/mapdata/roomselection.h \
+          ./mapper/mapdata/mapdata.h \
+          ./mapper/mapdata/mmapper2room.h \
+          ./mapper/mapdata/mmapper2exit.h \
+          ./mapper/mapdata/infomark.h \
+          ./mapper/mapdata/customaction.h \
+          ./mapper/mapdata/roomfactory.h \
+          ./mapper/mapdata/drawstream.h \
+          ./mapper/proxy/proxy.h \
+          ./mapper/proxy/connectionlistener.h \
+          ./mapper/mainwindow/roomeditattrdlg.h \
+          ./mapper/mainwindow/infomarkseditdlg.h \
+          ./mapper/mainwindow/findroomsdlg.h \
+          ./mapper/display/mapcanvas.h \
+          ./mapper/display/mapwindow.h \
+          ./mapper/display/connectionselection.h \
+          ./mapper/display/prespammedpath.h \
+          ./mapper/expandoracommon/room.h \
+          ./mapper/expandoracommon/frustum.h \
+          ./mapper/expandoracommon/component.h \
+          ./mapper/expandoracommon/coordinate.h \
+          ./mapper/expandoracommon/listcycler.h \
+          ./mapper/expandoracommon/abstractroomfactory.h \
+          ./mapper/expandoracommon/mmapper2event.h \
+          ./mapper/expandoracommon/parseevent.h \
+          ./mapper/expandoracommon/property.h \
+          ./mapper/expandoracommon/roomadmin.h \
+          ./mapper/expandoracommon/roomrecipient.h \
+          ./mapper/expandoracommon/exit.h \
+          ./mapper/pathmachine/approved.h \
+          ./mapper/pathmachine/experimenting.h \
+          ./mapper/pathmachine/pathmachine.h \
+          ./mapper/pathmachine/path.h \
+          ./mapper/pathmachine/pathparameters.h \
+          ./mapper/pathmachine/mmapper2pathmachine.h \
+          ./mapper/pathmachine/roomsignalhandler.h \
+          ./mapper/pathmachine/onebyone.h \
+          ./mapper/pathmachine/crossover.h \
+          ./mapper/pathmachine/syncing.h \
+          ./mapper/mapfrontend/intermediatenode.h \
+          ./mapper/mapfrontend/mmappermap.h \
+          ./mapper/mapfrontend/mapaction.h \
+          ./mapper/mapfrontend/mapfrontend.h \
+          ./mapper/mapfrontend/roomcollection.h \
+          ./mapper/mapfrontend/roomlocker.h \
+          ./mapper/mapfrontend/roomoutstream.h \
+          ./mapper/mapfrontend/searchtreenode.h \
+          ./mapper/mapstorage/abstractmapstorage.h \
+          ./mapper/mapstorage/mapstorage.h \
+          ./mapper/mapstorage/oldroom.h \
+          ./mapper/mapstorage/olddoor.h \
+          ./mapper/mapstorage/roomsaver.h \
+          ./mapper/mapstorage/oldconnection.h \
+          ./mapper/mapfrontend/tinylist.h \
+          ./mapper/parser/parser.h \
+          ./mapper/parser/mumexmlparser.h \
+          ./mapper/parser/abstractparser.h \
+          ./mapper/parser/roompropertysetter.h \
+          ./group/CGroup.h \
+          ./group/CGroupChar.h \
+          ./group/CGroupClient.h \
+          ./group/CGroupCommunicator.h \
+          ./group/CGroupServer.h \
+          ./group/CGroupStatus.h \
+          ./mapper/preferences/groupmanagerpage.h \
  mainwindow/clientmanager.h \
  mainwindow/mappermanager.h \
  mainwindow/groupmanager.h \
  mainwindow/actionmanager.h
 TEMPLATE = app
 RC_FILE = ./resources/mclient.rc
-FORMS += ./objecteditor/objecteditor.ui \
+FORMS += ./dialogs/ObjectEditor.ui \
          ./configuration/generalpage.ui \
          ./configuration/colorfontpage.ui \
-         ./mainwindow/keybinder.ui \
-         ./profilemanager/profiledialog.ui \
-         ./profilemanager/profilemanagerdialog.ui \
-         ./profilemanager/profileeditdialog.ui \
-         ./mmapper2/preferences/generalpage.ui \
-         ./mmapper2/preferences/parserpage.ui \
-         ./mmapper2/preferences/pathmachinepage.ui \
-         ./mmapper2/mainwindow/roomeditattrdlg.ui \
-         ./mmapper2/mainwindow/infomarkseditdlg.ui \
-         ./mmapper2/mainwindow/findroomsdlg.ui \
-         ./mmapper2/preferences/groupmanagerpage.ui
+         ./dialogs/KeyBinder.ui \
+         ./dialogs/ConnectDialog.ui \
+         ./dialogs/ProfileManagerDialog.ui \
+         ./dialogs/ProfileEditDialog.ui \
+         ./mapper/preferences/parserpage.ui \
+         ./mapper/preferences/pathmachinepage.ui \
+         ./mapper/mainwindow/roomeditattrdlg.ui \
+         ./mapper/mainwindow/infomarkseditdlg.ui \
+         ./mapper/mainwindow/findroomsdlg.ui \
+         ./mapper/preferences/groupmanagerpage.ui
 QT += network gui xml opengl
 CONFIG += warn_on \
           thread \
@@ -232,14 +234,14 @@ CONFIG += warn_on \
 CONFIG -= release
 CONFIG += debug
 TARGET = mclient
-INCLUDEPATH += . ./mainwindow ./powwow ./win32 ./wrapper ./configuration ./profilemanager ./objecteditor ./proxy ./parser \
-./mmapper2/global ./mmapper2/mapstorage ./mmapper2/mapdata ./mmapper2/proxy ./mmapper2/parser ./mmapper2/preferences ./mmapper2/configuration \
-./mmapper2/display ./mmapper2/mainwindow ./mmapper2/expandoracommon ./mmapper2/pathmachine ./mmapper2/mapfrontend ./mmapper2/pandoragroup
+INCLUDEPATH += . ./mainwindow ./client ./powwow ./win32 ./configuration ./profile ./dialogs ./group ./mapper/global ./mapper/mapstorage \
+./mapper/mapdata ./mapper/proxy ./mapper/parser ./mapper/preferences ./mapper/configuration ./mapper/display ./mapper/mainwindow \
+./mapper/expandoracommon ./mapper/pathmachine ./mapper/mapfrontend
 macx : LIBS += 
 win32 : LIBS += -llibgnurx
 unix : LIBS += -lm -W -Wall -O -pedantic
 DEPENDPATH += .
-DEFINES += USE_REGEXP=1 MCLIENT=1 MMAPPER=1 VERSION=\\\"1.2.13\\\"
+DEFINES += USE_REGEXP=1 MCLIENT=1 VERSION=\\\"1.2.13\\\"
 RESOURCES = resources/application.qrc
 UI_DIR = ../build/ui
 MOC_DIR = ../build/moc

@@ -85,7 +85,6 @@ class Configuration {
     QString exitsPattern, scoutPattern;
     QByteArray promptPattern, loginPattern, passwordPattern, menuPromptPattern;
 
-#ifdef MMAPPER
     int m_mapMode; //0 play, 1 map
 
     QString   m_remoteServerName;         /// Remote host and port settings
@@ -129,7 +128,6 @@ class Configuration {
     QRect m_groupManagerRect;
     QColor m_groupManagerColor;
     bool m_groupManagerRulesWarning;
-#endif
 
   private:
     Configuration();

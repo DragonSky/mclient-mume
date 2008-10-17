@@ -86,7 +86,7 @@ extern int select();
 #endif
 
 #ifdef MCLIENT
-#include "wrapper.h"
+#include "PowwowWrapper.h"
 #endif
 
 #include "defines.h"
@@ -252,7 +252,7 @@ char *group_delim;
 
 #ifdef MCLIENT
 /*
-int startPowwow(Wrapper* w, int argc, char **argv)
+int startPowwow(PowwowWrapper* w, int argc, char **argv)
 {
     wrapper = w;
 */

@@ -14,18 +14,45 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "MainWindow.h"
-#include "configuration.h"
+#ifndef _PROFILEMANAGERDIALOG_H
+#define _PROFILEMANAGERDIALOG_H
 
-#include <QApplication>
+#include <QDialog>
+#include "ui_ProfileManagerDialog.h"
 
-int main(int argc, char *argv[])
+class ProfileEditDialog;
+
+class ProfileManagerDialog : public QDialog, public Ui::ProfileManagerDialog
 {
-      Q_INIT_RESOURCE(application);
-      QApplication app(argc, argv);
-      Config().read();
-      MainWindow *_mainWindow = new MainWindow();
-      _mainWindow->start(argc, argv);
-      return app.exec();
-}
+  Q_OBJECT
 
+  public:
+    ProfileManagerDialog(QItemSelectionModel *model, QWidget* parent);
+    virtual ~ProfileManagerDialog();
+
+    QString selectedProfile ();
+
+  private:
+    void updateProfileFromDialog(const QString &profile);
+    ProfileEditDialog *mdlg;
+    QPushButton *loadButton;
+
+  signals:
+    void loadProfile(const QString &profile);
+
+  public slots:
+    void doAdd();
+    void doModify();
+
+  private slots:
+    void addClicked();
+    void modifyClicked();
+    void deleteClicked();
+    void duplicateClicked();
+    void loadClicked();
+    void doubleClicked(const QModelIndex &index);
+    void selectionChanged(const QItemSelection &index);
+    
+};
+
+#endif /* _PROFILEMANAGERDIALOG_H */
