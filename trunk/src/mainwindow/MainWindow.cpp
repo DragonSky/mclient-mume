@@ -48,17 +48,16 @@ MainWindow::MainWindow() {
   setWindowIcon(QIcon(":/icons/m.png"));
 
   /* Generate Managers */
-  ClientManager *_clientManager = ClientManager::self(this);
-  MapperManager *_mapperManager = MapperManager::self(this);
-  GroupManager *_groupManager = GroupManager::self(this);
-  ActionManager *_actionManager = ActionManager::self(this);
+  ClientManager *clientManager = ClientManager::self(this);
+  MapperManager *mapperManager = MapperManager::self(this);
+  GroupManager *groupManager = GroupManager::self(this);
 
   /* Create Central Widget */
   QVBoxLayout *vbox = new QVBoxLayout();
   vbox->setSpacing(0);
   vbox->setContentsMargins(0, 0, 0, 0);
-  vbox->addWidget(_clientManager->getTextEdit());
-  vbox->addWidget(_clientManager->getLineEdit());
+  vbox->addWidget(clientManager->getTextEdit());
+  vbox->addWidget(clientManager->getLineEdit());
   QWidget *mainWidget = new QWidget();
   mainWidget->setLayout(vbox);
   setCentralWidget(mainWidget);
@@ -69,26 +68,26 @@ MainWindow::MainWindow() {
   dockDialogLog->setAllowedAreas(Qt::AllDockWidgetAreas);
   dockDialogLog->setFeatures(QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::TopDockWidgetArea, dockDialogLog);
-
   logWindow = new QTextBrowser(dockDialogLog);
   logWindow->setObjectName("LogWindow");
   dockDialogLog->setWidget(logWindow);
 
   dockDialogMapper = new QDockWidget(tr("Map"), this);
-  dockDialogMapper->setObjectName("Mapper DockWidget");
+  dockDialogMapper->setObjectName("DockWidgetMapper");
   dockDialogMapper->setAllowedAreas(Qt::AllDockWidgetAreas);
   dockDialogMapper->setFeatures(QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::LeftDockWidgetArea, dockDialogMapper);
-  dockDialogMapper->setWidget(_mapperManager->getMapWindow());
+  dockDialogMapper->setWidget(mapperManager->getMapWindow());
 
   dockDialogGroup = new QDockWidget(tr("Group"), this);
   dockDialogGroup->setObjectName("DockWidgetGroup");
   dockDialogGroup->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
   dockDialogGroup->setFeatures(QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::TopDockWidgetArea, dockDialogGroup);
-  dockDialogGroup->setWidget(_groupManager->getGroup());
+  dockDialogGroup->setWidget(groupManager->getGroup());
 
   /* Create Other Child Widgets */
+  createActions();
   createMenus();
   createToolBars();
   createStatusBar();
@@ -128,8 +127,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
   }
 }
 
-void MainWindow::createMenus()
-{
+void MainWindow::createActions() {
+  ActionManager::self(this);
+}
+
+void MainWindow::createMenus() {
   ActionManager *actMgr = ActionManager::self();
 
   fileMenu = menuBar()->addMenu(tr("&File"));
@@ -177,8 +179,7 @@ void MainWindow::createMenus()
   helpMenu->addSeparator();
   helpMenu->addAction(actMgr->aboutAct);
   helpMenu->addAction(actMgr->aboutQtAct);
-  
-#ifdef MMAPPER
+
   roomMenu = mapperMenu->addMenu(tr("&Rooms"));
   connectionMenu = mapperMenu->addMenu(tr("&Connections"));
 
@@ -222,20 +223,19 @@ void MainWindow::createMenus()
   groupMenu->addAction(actMgr->groupOffAct);
   groupMenu->addAction(actMgr->groupClientAct);
   groupMenu->addAction(actMgr->groupServerAct);
-#endif
 }
 
-void MainWindow::createToolBars()
-{
+void MainWindow::createToolBars() {
   ActionManager *actMgr = ActionManager::self();
-  /*
+
   connectToolBar = addToolBar(tr("Connection"));
-  connectToolBar->addAction(connectAct);
-  connectToolBar->addAction(disconnectAct);
-  //connectToolBar->addAction(reconnectAct);
-  */
+  connectToolBar->setObjectName("ToolBarConnect");
+  connectToolBar->addAction(actMgr->connectAct);
+  connectToolBar->addAction(actMgr->disconnectAct);
+  connectToolBar->addAction(actMgr->reconnectAct);
 
   editToolBar = addToolBar(tr("Edit"));
+  editToolBar->setObjectName("ToolBarEdit");
   editToolBar->addAction(actMgr->cutAct);
   editToolBar->addAction(actMgr->copyAct);
   editToolBar->addAction(actMgr->pasteAct);
@@ -308,7 +308,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::editObjects() {
   if (!objectEditor) {
-    objectEditor = new ObjectEditor(PowwowWrapper::self(), this);
+    objectEditor = new ObjectEditor(this);
   }
   objectEditor->show();
   objectEditor->activateWindow();

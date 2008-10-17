@@ -176,7 +176,6 @@ void Configuration::read()
     dynamicDescriptionPatternsList.append("#!.*arrived from.*\\.");
   }
 
-#ifdef MMAPPER
   conf.beginGroup("Connection");
   m_remoteServerName = conf.value("Server name", "fire.pvv.org").toString();
   m_remotePort = conf.value("Remote port number", 4242).toInt();
@@ -224,7 +223,6 @@ void Configuration::read()
                                             conf.value("group manager rectangle height", 0).toInt());
   m_groupManagerRulesWarning = conf.value("group manager rules warning", true).toBool();
   conf.endGroup();
-#endif
 
 };
 
