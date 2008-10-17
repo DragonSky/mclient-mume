@@ -204,11 +204,7 @@ HEADERS += ./mainwindow/MainWindow.h \
           ./group/CGroupCommunicator.h \
           ./group/CGroupServer.h \
           ./group/CGroupStatus.h \
-          ./mapper/preferences/groupmanagerpage.h \
- mainwindow/clientmanager.h \
- mainwindow/mappermanager.h \
- mainwindow/groupmanager.h \
- mainwindow/actionmanager.h
+          ./mapper/preferences/groupmanagerpage.h
 TEMPLATE = app
 RC_FILE = ./resources/mclient.rc
 FORMS += ./dialogs/ObjectEditor.ui \
