@@ -142,17 +142,22 @@ void clear_input_line __P1 (int,deleteprompt)
      */
     if ((edlen && line_status == 0) || (promptlen && prompt_status == 0 && deleteprompt)) {
 	int newcol = deleteprompt ? 0 : col0;
+#ifndef MCLIENT
 	int realpos = line_status == 0 ? pos : (prompt_status == 0 ? 0 : -col0);
+#else
+        /** Do not delete the cursor position, as its in the LineEdit */
+        int realpos = line_status == 0 ? 0 : (prompt_status == 0 ? 0 : -col0);
+#endif
 	
 	tty_gotoxy_opt(CURCOL(realpos), CURLINE(realpos), newcol, line0);
-	tty_puts(edattrend);
+        tty_puts(edattrend);
 	if (line0 < lines - 1)
 	    tty_puts(tty_clreoscr);
         else
 	    tty_puts(tty_clreoln);
 	col0 = newcol;
     } else {
-	tty_puts(edattrend);
+      tty_puts(edattrend);
     }
 
     if (deleteprompt)
@@ -337,9 +342,6 @@ void kill_to_eol __P1 (char *,dummy)
 	    tty_puts(edattrbeg);
     }
     edbuf[edlen = pos] = '\0';
-#ifdef MCLIENT
-    wrapper_input_set(edbuf);
-#endif
 }
 
 /*
@@ -528,9 +530,6 @@ void complete_line __P1 (char *,dummy)
         pos = edlen;
         curr_line = i;
     }
-#ifdef MCLIENT
-    wrapper_input_set(edbuf);
-#endif
 }
 
 /*
@@ -763,9 +762,6 @@ void prev_line __P1 (char *,dummy)
 	clear_input_line(0);
 	strcpy(edbuf, hist[pickline]);
 	pos = edlen = strlen(edbuf);
-#ifdef MCLIENT
-        wrapper_input_set(edbuf);
-#endif
     }
 }
 
@@ -791,9 +787,6 @@ void next_line __P1 (char *,dummy)
 	clear_input_line(0);
 	strcpy(edbuf, hist[pickline]);
 	edlen = pos = strlen(edbuf);
-#ifdef MCLIENT
-        wrapper_input_set(edbuf);
-#endif
     }
 }
 

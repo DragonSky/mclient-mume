@@ -152,22 +152,20 @@ const int PowwowWrapper::computeDelaySleeptime() const {
 }
 
 /*
- * Redraw the Prompt if Necessary
+ * Redraw the Prompt if Necessary, Resync the LineInput
  */
 void PowwowWrapper::redrawEverything() const {
-  if (prompt_status == 1 && line_status == 0)
-    line_status = 1;
   if (prompt_status == 1)
+    /** internal echo -> must redraw; */
     draw_prompt();
   else if (prompt_status == -1) {
+    /** something sent to MUD -> waiting for it. */
     promptzero();
     col0 = surely_isprompt = '\0';
   }
-  if (line_status == 1) {  // ClientLineEdit needs to updated to the internal buffer
-      //qDebug("updating clientlineedit: %s %d", edbuf, edlen);
-      //emit inputClear();
-      //emit inputInsertText(edbuf);
-      //edlen = 0;
+  if (line_status == 1) {
+    /** changed something -> must resync LineInput */
+    wrapper_input_set(edbuf);
     line_status = 0;
   }
 }
@@ -277,8 +275,9 @@ void PowwowWrapper::getUserInput(const QString& input) {
     pos = n;
     edbuf[edlen] = '\0';
     last_edit_cmd = (function_any)enter_line;
-    if (line_status == 0)
-      tty_printf("%s", edbuf);
+    if (line_status == 0) {
+      tty_printf("%s%s%s", edattrbeg, edbuf, edattrend);
+    }
     enter_line("dummy");
   }
 
