@@ -251,15 +251,9 @@ int   delim_mode = DELIM_NORMAL;
 char *group_delim;
 
 #ifdef MCLIENT
-/*
-int startPowwow(PowwowWrapper* w, int argc, char **argv)
-{
-    wrapper = w;
-*/
-int startPowwow(int argc, char **argv) {
+int startPowwow __P2 (int,argc, char **,argv) {
 #else
-int main __P2 (int,argc, char **,argv)
-{
+int main __P2 (int,argc, char **,argv) {
 #endif
     char *p;
     int i;
