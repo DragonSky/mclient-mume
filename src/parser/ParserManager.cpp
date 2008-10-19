@@ -49,10 +49,13 @@ ParserManager::ParserManager(MainWindow *parent) : QObject(parent) {
   MapperManager *mapMgr = MapperManager::self();
   GroupManager *grpMgr = GroupManager::self();
 
+  // ParserManager --> MainWindow
+  connect(this, SIGNAL(log(const QString&, const QString&)),
+          parent, SLOT(log(const QString&, const QString&)));
+
   ConnectionListener *_server = new ConnectionListener(this);
   _server->setMaxPendingConnections (1);
-  _server->setRemoteHost(Config().m_remoteServerName);
-  _server->setRemotePort(Config().m_remotePort);
+  _server->start();
 
   _filter = new TelnetFilter(this);
   _xmlParser = new MumeXmlParser(mapMgr->getMapData(), this);
@@ -118,4 +121,18 @@ ParserManager::ParserManager(MainWindow *parent) : QObject(parent) {
 
 ParserManager::~ParserManager() {
   _self = 0;
+}
+
+void ParserManager::disableWrapper() {
+  PowwowWrapper *wrapper = PowwowWrapper::self();
+  disconnect(_parser, SIGNAL(sendToMud(const QByteArray&)), wrapper, SLOT(sendToMud(const QByteArray&)));
+  disconnect(_parser, SIGNAL(sendToUser(const QByteArray&)), wrapper, SLOT(sendToUser(const QByteArray&)));
+  disconnect(_xmlParser, SIGNAL(sendToMud(const QByteArray&)), wrapper, SLOT(sendToMud(const QByteArray&)));
+  disconnect(_xmlParser, SIGNAL(sendToUser(const QByteArray&)), wrapper, SLOT(sendToUser(const QByteArray&)));
+  disconnect(_filter, SIGNAL(sendToMud(const QByteArray&)),
+          wrapper, SLOT(sendToMud(const QByteArray&)));
+  disconnect(_filter, SIGNAL(sendToUser(const QByteArray&)),
+          wrapper, SLOT(sendToUser(const QByteArray&)));
+  
+  emit log("Wrapper", "Powwow disabled. Using Proxy");
 }

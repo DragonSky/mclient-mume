@@ -48,13 +48,17 @@
 MainWindow::MainWindow() {
   setWindowIcon(QIcon(":/icons/m.png"));
 
-  /* Generate Managers */
+  /** Create Initial Necessary Widgets */
+  logWindow = new QTextBrowser(this);
+  logWindow->setObjectName("LogWindow");
+
+  /** Generate Managers */
   ClientManager *clientManager = ClientManager::self(this);
   MapperManager *mapperManager = MapperManager::self(this);
   GroupManager *groupManager = GroupManager::self(this);
   ParserManager::self(this);
 
-  /* Create Central Widget */
+  /** Create Central Widget */
   QVBoxLayout *vbox = new QVBoxLayout();
   vbox->setSpacing(0);
   vbox->setContentsMargins(0, 0, 0, 0);
@@ -64,14 +68,12 @@ MainWindow::MainWindow() {
   mainWidget->setLayout(vbox);
   setCentralWidget(mainWidget);
 
-  /* Create Dock Widgets */
+  /** Create Dock Widgets */
   dockDialogLog = new QDockWidget(tr("Log"), this);
   dockDialogLog->setObjectName("DockWidgetLog");
   dockDialogLog->setAllowedAreas(Qt::AllDockWidgetAreas);
   dockDialogLog->setFeatures(QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::TopDockWidgetArea, dockDialogLog);
-  logWindow = new QTextBrowser(dockDialogLog);
-  logWindow->setObjectName("LogWindow");
   dockDialogLog->setWidget(logWindow);
 
   dockDialogMapper = new QDockWidget(tr("Map"), this);
@@ -88,17 +90,17 @@ MainWindow::MainWindow() {
   addDockWidget(Qt::TopDockWidgetArea, dockDialogGroup);
   dockDialogGroup->setWidget(groupManager->getGroup());
 
-  /* Create Other Child Widgets */
+  /** Create Other Child Widgets */
   createActions();
   createMenus();
   createToolBars();
   createStatusBar();
 
-  /* Read Settings */
+  /** Read Settings */
   readSettings();
   setCurrentProfile("");
 
-  /* Initialize Dialogs */
+  /** Initialize Dialogs */
   objectEditor = NULL;
   profileDialog = NULL;
   profileManager = NULL;

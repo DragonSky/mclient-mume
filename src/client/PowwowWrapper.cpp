@@ -59,6 +59,8 @@ PowwowWrapper::PowwowWrapper(QObject *parent) : QObject(parent) {
   /* Create the Delayed Label Timer */
   delayTimer = new QTimer;
   connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
+
+  emit log("lol", "lollerskates");
 }
 
 PowwowWrapper::~PowwowWrapper() {

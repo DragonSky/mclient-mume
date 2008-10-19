@@ -44,8 +44,12 @@ void ConnectionListener::incomingConnection(int socketDescriptor)
   {
     emit log ("Listener", "New connection: accepted.");
     doNotAcceptNewConnections();
-    Proxy *proxy = ParserManager::self()->getProxy();
-    proxy = new Proxy(socketDescriptor, _remoteHost, _remotePort, true, this);
+    ParserManager *prsMgr = ParserManager::self();
+    prsMgr->disableWrapper();
+    Proxy *proxy = prsMgr->getProxy();
+    QString remoteServer = Config().m_remoteServerName;
+    int remotePort = Config().m_remotePort;
+    proxy = new Proxy(socketDescriptor, remoteServer, remotePort, true, this);
     proxy->start();
   }
   else
@@ -69,4 +73,16 @@ void ConnectionListener::doNotAcceptNewConnections()
 void ConnectionListener::doAcceptNewConnections()
 {
   _acceptNewConnection = true;
+}
+
+void ConnectionListener::start() {
+  if (!listen(QHostAddress::Any, Config().m_localPort))
+  {
+    QMessageBox::critical(0, tr("mClient"),
+                          tr("Unable to start the server: %1.")
+                              .arg(errorString()));
+    return;
+  }
+
+  //emit log("ConnectionListener", tr("Server bound on localhost to port: %2.").arg(Config().m_localPort));
 }

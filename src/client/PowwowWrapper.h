@@ -99,6 +99,7 @@ class PowwowWrapper: public QObject {
     void inputClear() const;
     void close();            // to MainWindow
     void setCurrentProfile(const QString&) const;
+    void log(const QString&, const QString&);
 
     // to TelnetFilter
     void analyzeUserStream( const char*, const int& ) const;
