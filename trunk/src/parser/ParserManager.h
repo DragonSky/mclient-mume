@@ -39,6 +39,11 @@ class ParserManager: public QObject {
     Parser *getParser() { return _parser; }
     MumeXmlParser *getXmlParser() { return _xmlParser; }
 
+    void disableWrapper();
+
+  signals:
+    void log(const QString&, const QString&);
+
   private:
     ParserManager (MainWindow *);
     static ParserManager *_self;

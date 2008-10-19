@@ -34,10 +34,7 @@ class ConnectionListener : public QTcpServer {
   public:
     ConnectionListener(QObject *parent);
 
-    QString getRemoteHost() const { return _remoteHost; }
-    int getRemotePort() const { return _remotePort; }
-    void setRemoteHost(QString i) { _remoteHost = i; }
-    void setRemotePort(int i) { _remotePort = i; }
+    void start();
 
   public slots:
     void doNotAcceptNewConnections();
@@ -51,9 +48,6 @@ class ConnectionListener : public QTcpServer {
 
   private:
     Q_OBJECT
-
-    QString _remoteHost;
-    int _remotePort;
 
     bool _acceptNewConnection;
 };

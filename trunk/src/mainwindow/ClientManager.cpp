@@ -41,6 +41,9 @@ ClientManager::ClientManager(MainWindow *parent) {
 
   _textEdit->setFocusProxy(_lineEdit);
 
+  // PowwowWrapper <--> MainWindow
+  connect(_wrapper, SIGNAL(log(const QString&, const QString&)), parent, SLOT(log(const QString&, const QString&)) );
+
   // PowwowWrapper --> ClientTextEdit
   connect(_wrapper, SIGNAL(addText(const QString&)), _textEdit, SLOT(addText(const QString&)) );
   connect(_wrapper, SIGNAL(moveCursor(int)), _textEdit, SLOT(moveCursor(int)) );
