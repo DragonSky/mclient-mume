@@ -33,6 +33,8 @@
 #include "prespammedpath.h"
 #include "CGroup.h"
 
+#include "ParserManager.h"
+
 #include <qvariant.h>
 
 ProxyThreader::ProxyThreader(Proxy* proxy):
@@ -56,7 +58,7 @@ void ProxyThreader::run() {
 
 
 
-Proxy::Proxy(MapData* md, Mmapper2PathMachine* pm, CommandEvaluator* ce, PrespammedPath* pp, CGroup* gm, int & socketDescriptor, QString & host, int & port, bool threaded, QObject *parent)
+Proxy::Proxy(int & socketDescriptor, QString & host, int & port, bool threaded, QObject *parent)
   : QObject(NULL),
             m_socketDescriptor(socketDescriptor),
                                m_remoteHost(host),
@@ -64,13 +66,8 @@ Proxy::Proxy(MapData* md, Mmapper2PathMachine* pm, CommandEvaluator* ce, Prespam
                                                 m_mudSocket(NULL),
                                                     m_userSocket(NULL),
                                                         m_serverConnected(false),
-                                                            m_mapData(md),
-                                                                m_pathMachine(pm),
-                                                                    m_commandEvaluator(ce),
-                                                                        m_prespammedPath(pp),
-                                                                            m_groupManager(gm),
-                                                                                m_threaded(threaded),
-                                                                                m_parent(parent)
+                                                            m_threaded(threaded),
+                                                                m_parent(parent)
 {
   if (threaded)
     m_thread = new ProxyThreader(this);
@@ -129,43 +126,19 @@ bool Proxy::init()
   connect(m_userSocket, SIGNAL(disconnected()), this, SLOT(userTerminatedConnection()) );
   connect(m_userSocket, SIGNAL(readyRead()), this, SLOT(processUserStream()) );
 
-  m_filter = new TelnetFilter(this);
+  m_filter = ParserManager::self()->getTelnetFilter();
   connect(this, SIGNAL(analyzeUserStream( const char*, int )), m_filter, SLOT(analyzeUserStream( const char*, int )));
   connect(this, SIGNAL(analyzeMudStream( const char*, int )), m_filter, SLOT(analyzeMudStream( const char*, int )));
   connect(m_filter, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
   connect(m_filter, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
 
-  m_parser = new Parser(m_mapData, this);
-  connect(m_filter, SIGNAL(parseNewMudInput(IncomingData&)), m_parser, SLOT(parseNewMudInput(IncomingData&)));
-  connect(m_filter, SIGNAL(parseNewUserInput(IncomingData&)), m_parser, SLOT(parseNewUserInput(IncomingData&)));
+  m_parser = ParserManager::self()->getParser();
   connect(m_parser, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
   connect(m_parser, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
-  connect(m_parser, SIGNAL(setXmlMode()), m_filter, SLOT(setXmlMode()));
-
-        //connect(m_parser, SIGNAL(event(ParseEvent* )), (QObject*)(Mmapper2PathMachine*)((MainWindow*)(m_parent->parent()))->getPathMachine(), SLOT(event(ParseEvent* )), Qt::QueuedConnection);
-  connect(m_parser, SIGNAL(event(ParseEvent* )), m_pathMachine, SLOT(event(ParseEvent* )), Qt::QueuedConnection);
-  connect(m_parser, SIGNAL(releaseAllPaths()), m_pathMachine, SLOT(releaseAllPaths()), Qt::QueuedConnection);
-  connect(m_parser, SIGNAL(showPath(CommandQueue, bool)), m_prespammedPath, SLOT(setPath(CommandQueue, bool)), Qt::QueuedConnection);
-
-  m_parserXml = new MumeXmlParser(m_mapData, this);
-  connect(m_filter, SIGNAL(parseNewMudInputXml(IncomingData&)), m_parserXml, SLOT(parseNewMudInput(IncomingData&)));
-  connect(m_filter, SIGNAL(parseNewUserInputXml(IncomingData&)), m_parserXml, SLOT(parseNewUserInput(IncomingData&)));
+  
+  m_parserXml = ParserManager::self()->getXmlParser();
   connect(m_parserXml, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
   connect(m_parserXml, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
-  connect(m_parserXml, SIGNAL(setNormalMode()), m_filter, SLOT(setNormalMode()));
-
-        //connect(m_parserXml, SIGNAL(event(ParseEvent* )), (QObject*)(Mmapper2PathMachine*)((MainWindow*)(m_parent->parent()))->getPathMachine(), SLOT(event(ParseEvent* )), Qt::QueuedConnection);
-  connect(m_parserXml, SIGNAL(event(ParseEvent* )), m_pathMachine, SLOT(event(ParseEvent* )), Qt::QueuedConnection);
-  connect(m_parserXml, SIGNAL(releaseAllPaths()), m_pathMachine, SLOT(releaseAllPaths()), Qt::QueuedConnection);
-  connect(m_parserXml, SIGNAL(showPath(CommandQueue, bool)), m_prespammedPath, SLOT(setPath(CommandQueue, bool)), Qt::QueuedConnection);
-
-  //Group Manager Support
-  //TODO: Add normal parser support
-  connect(m_parserXml, SIGNAL(sendScoreLineEvent(QByteArray)), m_groupManager, SLOT(parseScoreInformation(QByteArray)), Qt::QueuedConnection);
-  connect(m_parserXml, SIGNAL(sendPromptLineEvent(QByteArray)), m_groupManager, SLOT(parsePromptInformation(QByteArray)), Qt::QueuedConnection);
-  connect(m_parserXml, SIGNAL(sendGroupTellEvent(QByteArray)), m_groupManager, SLOT(sendGTell(QByteArray)), Qt::QueuedConnection);
-  // Group Tell
-  connect(m_groupManager, SIGNAL(displayGroupTellEvent(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)), Qt::QueuedConnection);
 
   //m_userSocket->write("Connection to client established ...\r\n", 38);
   emit log("Proxy", "Connection to client established ...");

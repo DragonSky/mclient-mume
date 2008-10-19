@@ -96,7 +96,8 @@ SOURCES += ./main.cpp \
           ./group/CGroupCommunicator.cpp \
           ./group/CGroupServer.cpp \
           ./group/CGroupStatus.cpp \
-          ./mapper/preferences/groupmanagerpage.cpp
+          ./mapper/preferences/groupmanagerpage.cpp \
+ parser/ParserManager.cpp
 HEADERS += ./mainwindow/MainWindow.h \
            ./mainwindow/ClientManager.h \
            ./mainwindow/MapperManager.h \
@@ -204,7 +205,8 @@ HEADERS += ./mainwindow/MainWindow.h \
           ./group/CGroupCommunicator.h \
           ./group/CGroupServer.h \
           ./group/CGroupStatus.h \
-          ./mapper/preferences/groupmanagerpage.h
+          ./mapper/preferences/groupmanagerpage.h \
+ parser/ParserManager.h
 TEMPLATE = app
 RC_FILE = ./resources/mclient.rc
 FORMS += ./dialogs/ObjectEditor.ui \
@@ -232,7 +234,7 @@ CONFIG += debug
 TARGET = mclient
 INCLUDEPATH += . ./mainwindow ./client ./powwow ./win32 ./configuration ./profile ./dialogs ./group ./mapper/global ./mapper/mapstorage \
 ./mapper/mapdata ./mapper/proxy ./mapper/parser ./mapper/preferences ./mapper/configuration ./mapper/display ./mapper/mainwindow \
-./mapper/expandoracommon ./mapper/pathmachine ./mapper/mapfrontend
+./mapper/expandoracommon ./mapper/pathmachine ./mapper/mapfrontend ./parser
 macx : LIBS += 
 win32 : LIBS += -llibgnurx
 unix : LIBS += -lm -W -Wall -O -pedantic

@@ -126,8 +126,6 @@ class PowwowWrapper: public QObject {
 
     QHash<editsess*, InternalEditor*> editorHash;
 
-    TelnetFilter *filter;
-    MumeXmlParser *parserXml;
     QTimer *delayTimer;
     QObject *parent;         // MainWindow
 };
