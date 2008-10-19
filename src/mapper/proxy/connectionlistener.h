@@ -26,25 +26,18 @@
 #ifndef CONNECTIONLISTENER
 #define CONNECTIONLISTENER
 
-#include <QtGui>
-#include <QtCore>
+#include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
 
-class MapData;
-class Mmapper2PathMachine;
-class CommandEvaluator;
-class PrespammedPath;
-class CGroup;
-
 class ConnectionListener : public QTcpServer {
   public:
-    ConnectionListener(MapData*, Mmapper2PathMachine*, CommandEvaluator*, PrespammedPath*, CGroup*, QObject *parent);
+    ConnectionListener(QObject *parent);
 
-    QString getRemoteHost() const {return m_remoteHost;}
-    void setRemoteHost(QString i) {m_remoteHost = i;}
-    int getRemotePort() const {return m_remotePort;}
-    void setRemotePort(int i) {m_remotePort = i;}
+    QString getRemoteHost() const { return _remoteHost; }
+    int getRemotePort() const { return _remotePort; }
+    void setRemoteHost(QString i) { _remoteHost = i; }
+    void setRemotePort(int i) { _remotePort = i; }
 
   public slots:
     void doNotAcceptNewConnections();
@@ -59,16 +52,10 @@ class ConnectionListener : public QTcpServer {
   private:
     Q_OBJECT
 
-        QString m_remoteHost;
-    int m_remotePort;
+    QString _remoteHost;
+    int _remotePort;
 
-    MapData* m_mapData;
-    Mmapper2PathMachine* m_pathMachine;
-    CommandEvaluator* m_commandEvaluator;
-    PrespammedPath* m_prespammedPath;
-    CGroup* m_groupManager;
-
-        bool m_accept;
+    bool _acceptNewConnection;
 };
 
 #endif

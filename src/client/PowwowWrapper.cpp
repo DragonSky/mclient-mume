@@ -17,12 +17,7 @@
 #include "PowwowWrapper.h"
 
 #include "ClientTextEdit.h"
-#include "telnetfilter.h"
-#include "mumexmlparser.h"
 #include "mainwindow.h"
-#include "CGroup.h"
-#include "mmapper2pathmachine.h"
-#include "prespammedpath.h"
 
 #include "KeyBinder.h"
 #include "wrapper_cmd.h"
@@ -47,10 +42,7 @@
 
 #include "beam.h" //edit_sess,finish_edit, edit_end
 
-#include "MapperManager.h"
 #include "ClientManager.h"
-#include "GroupManager.h"
-#include "mapdata.h"
 
 PowwowWrapper *PowwowWrapper::_self = 0;
 
@@ -67,17 +59,6 @@ PowwowWrapper::PowwowWrapper(QObject *parent) : QObject(parent) {
   /* Create the Delayed Label Timer */
   delayTimer = new QTimer;
   connect(delayTimer, SIGNAL(timeout()), this, SLOT(delayTimerExpired()) );
-
-  /* Create the Telnet Filter */
-  filter = new TelnetFilter(this);
-  connect(this, SIGNAL(analyzeUserStream( const char*, const int& )), 
-          filter, SLOT(analyzeUserStream( const char*, int )));
-  connect(this, SIGNAL(analyzeMudStream( const char*, const int& )), 
-          filter, SLOT(analyzeMudStream( const char*, int )));
-  connect(filter, SIGNAL(sendToMud(const QByteArray&)), 
-          this, SLOT(sendToMud(const QByteArray&)));
-  connect(filter, SIGNAL(sendToUser(const QByteArray&)), 
-          this, SLOT(sendToUser(const QByteArray&)));
 }
 
 PowwowWrapper::~PowwowWrapper() {
@@ -86,25 +67,6 @@ PowwowWrapper::~PowwowWrapper() {
 
 /* Powwow Initialization Function */
 void PowwowWrapper::start(int argc, char** argv) {
-  parserXml = new MumeXmlParser(MapperManager::self()->getMapData(), this);
-  qDebug("Created XML Parser");
-
-  connect(filter, SIGNAL(parseNewMudInputXml(IncomingData&)), parserXml, SLOT(parseNewMudInput(IncomingData&)));
-  connect(filter, SIGNAL(parseNewUserInputXml(IncomingData&)), parserXml, SLOT(parseNewUserInput(IncomingData&)));
-
-  connect(parserXml, SIGNAL(sendToMud(const QByteArray&)), this, SLOT(sendToMud(const QByteArray&)));
-  connect(parserXml, SIGNAL(sendToUser(const QByteArray&)), this, SLOT(sendToUser(const QByteArray&)));
-  connect(parserXml, SIGNAL(setNormalMode()), filter, SLOT(setNormalMode()));
-
-  connect(parserXml, SIGNAL(event(ParseEvent* )), MapperManager::self()->getPathMachine(), SLOT(event(ParseEvent* )), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(releaseAllPaths()), MapperManager::self()->getPathMachine(), SLOT(releaseAllPaths()), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(showPath(CommandQueue, bool)), MapperManager::self()->getPrespammedPath(), SLOT(setPath(CommandQueue, bool)), Qt::QueuedConnection);
-
-  //Group Manager Support
-  connect(parserXml, SIGNAL(sendScoreLineEvent(QByteArray)), GroupManager::self()->getGroup(), SLOT(parseScoreInformation(QByteArray)), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(sendPromptLineEvent(QByteArray)), GroupManager::self()->getGroup(), SLOT(parsePromptInformation(QByteArray)), Qt::QueuedConnection);
-  connect(parserXml, SIGNAL(sendGroupTellEvent(QByteArray)), GroupManager::self()->getGroup(), SLOT(sendGTell(QByteArray)), Qt::QueuedConnection);
-
   startPowwow(argc, argv);
   qDebug("Started Powwow!");
   ClientManager::self()->getTextEdit()->viewDimensionsChanged();

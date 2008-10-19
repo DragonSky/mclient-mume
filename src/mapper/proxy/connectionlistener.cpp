@@ -24,30 +24,28 @@
 *************************************************************************/
 
 #include "connectionlistener.h"
+#include "configuration.h"
 #include "proxy.h"
+#include "ParserManager.h"
 
-ConnectionListener::ConnectionListener(MapData* md, Mmapper2PathMachine* pm, CommandEvaluator* ce, PrespammedPath* pp, CGroup* gm, QObject *parent)
-  : QTcpServer(parent)
+ConnectionListener::ConnectionListener(QObject *parent): QTcpServer(parent)
 {
-  m_accept = true;
+  _acceptNewConnection = true;
 
-  m_mapData = md;
-  m_pathMachine = pm;
-  m_commandEvaluator = ce;
-  m_prespammedPath = pp;
-  m_groupManager = gm;
-
-  connect(this, SIGNAL(log(const QString&, const QString&)), parent, SLOT(log(const QString&, const QString&)));
+  // ConnectionListener --> MainWindow
+  connect(this, SIGNAL(log(const QString&, const QString&)),
+          parent->parent(), SLOT(log(const QString&, const QString&)));
+  qDebug("ConnectionListener Connected");
 }
-
 
 void ConnectionListener::incomingConnection(int socketDescriptor)
 {
-  if (m_accept)
+  if (_acceptNewConnection)
   {
     emit log ("Listener", "New connection: accepted.");
     doNotAcceptNewConnections();
-    Proxy *proxy = new Proxy(m_mapData, m_pathMachine, m_commandEvaluator, m_prespammedPath, m_groupManager, socketDescriptor, m_remoteHost, m_remotePort, true, this);
+    Proxy *proxy = ParserManager::self()->getProxy();
+    proxy = new Proxy(socketDescriptor, _remoteHost, _remotePort, true, this);
     proxy->start();
   }
   else
@@ -65,12 +63,10 @@ void ConnectionListener::incomingConnection(int socketDescriptor)
 
 void ConnectionListener::doNotAcceptNewConnections()
 {
-  m_accept = false;
+  _acceptNewConnection = false;
 }
 
 void ConnectionListener::doAcceptNewConnections()
 {
-  m_accept = true;
+  _acceptNewConnection = true;
 }
-
-

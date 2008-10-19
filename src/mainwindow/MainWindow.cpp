@@ -40,6 +40,7 @@
 #include "MapperManager.h"
 #include "GroupManager.h"
 #include "ActionManager.h"
+#include "ParserManager.h"
 
 #include "mapwindow.h"
 #include "CGroup.h"
@@ -51,6 +52,7 @@ MainWindow::MainWindow() {
   ClientManager *clientManager = ClientManager::self(this);
   MapperManager *mapperManager = MapperManager::self(this);
   GroupManager *groupManager = GroupManager::self(this);
+  ParserManager::self(this);
 
   /* Create Central Widget */
   QVBoxLayout *vbox = new QVBoxLayout();
