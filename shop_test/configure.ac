@@ -14,8 +14,6 @@ AT_WITH_QT([xml network gui],[qt warn_off debug],
             OBJECTS_DIR = ./obj
             UI_DIR = ./ui])
 
-AX_BOOST_BASE([1.33.1])
-AX_BOOST_PYTHON
 
 AC_PREFIX_DEFAULT(`pwd`)
 

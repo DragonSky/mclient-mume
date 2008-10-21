@@ -8,8 +8,8 @@ AM_CPPFLAGS=$(BOOST_CPPFLAGS)
 # For a program:
 bin_PROGRAMS = shop tokenize
 #noinst_HEADERS =
-INCLUDES = -I@top_builddir@/ui -I$(PYTHON_INCLUDE_DIR)
-LDADD = @top_builddir@/moc/libmoc.la $(LIBS) -l$(PYTHON_LIB)
+INCLUDES = -I@top_builddir@/ui
+LDADD = @top_builddir@/moc/libmoc.la $(LIBS)
 
 shop_SOURCES = shop.cpp 
 
