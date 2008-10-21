@@ -1,0 +1,4 @@
+!#~ cW>show 14
+It is a canoe.
+It weighs two stone and seven pounds.
+[32mA Captain tells you 'It would cost you 11 silver 40 copper.'[0m

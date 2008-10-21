@@ -1,0 +1,7 @@
+*# cW>show 1594
+It is a broad spear (flawless, new).
+This stabbing weapon can be wielded one-handed.
+It is poor while attacking and poor while defending; its speed is slow, and it
+inflicts little damage upon hitting.
+It weighs four pounds.
+[32mGildor the blacksmith tells you 'It would cost you eight silver four copper.'[0m

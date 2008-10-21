@@ -1,0 +1,217 @@
+You can buy:
+
+   1. three fine metal breastplates (well-maintained, new) up to 13 gold 17 silver.
+   5. ten metal breastplates (well-maintained, new) up to seven gold 18 silver.
+  16. ten rigid leather breastplates (satisfactory, new) up to five silver 49 copper.
+  27. two sturdy metal breastplates (well-maintained, well-seasoned) up to five gold four silver.
+  30. six chain mail hauberks (well-maintained, seasoned) up to one gold three silver.
+  37. ten fine, soft leather jerkins (flawless, new) up to three silver 31 copper.
+  48. twenty-one soft leather jerkins (flawless, new) up to two silver 21 copper.
+  70. nine sturdy, soft leather jerkins (well-maintained, new) up to two silver 72 copper.
+  80. an enruned robe (worn, aged) for four silver 71 copper.
+  82. a chequered shirt (used, seasoned) for 13 copper.
+  84. a green shirt (well-maintained, fresh) for 45 copper.
+  86. a grey shirt (flawless, seasoned) for 39 copper.
+  88. six plain shirts (well-maintained, new) up to 54 copper.
+  95. ten thick wool vests (flawless, new) up to four silver 89 copper.
+-----
+ 106. ten chain mail coifs (well-maintained, new) up to one gold six silver.
+ 117. two straw hats (worn, new) up to 20 copper.
+ 120. two blood-encrusted helms (flawless, new) up to five gold two silver.
+ 123. a great helm (well-maintained, old) for two gold 11 silver.
+ 125. a full metal helmet (flawless, well-seasoned) for one gold 18 silver.
+ 127. ten leather helmets (flawless, fresh) up to one silver 15 copper.
+ 138. four metal helmets (flawless, new) up to two gold four silver.
+ 143. three reinforced leather helmets (satisfactory, new) up to three silver 14 copper.
+ 147. nine spiked metal helmets (well-maintained, new) up to three gold 17 silver.
+ 157. two sturdy leather helmets (satisfactory, aged) up to 68 copper.
+ 160. a sturdy reinforced leather helmet (flawless, new) for three silver 97 copper.
+ 162. a black hood (neglected, new) for 52 copper.
+ 164. a grey hood (flawless, hoary) for three copper.
+ 166. seven plain hoods (flawless, fresh) up to 43 copper.
+-----
+ 174. a black pair of pants (well-maintained, old) for nine copper.
+ 176. four brown pairs of pants (well-maintained, new) up to 42 copper.
+ 181. a grey pair of pants (flawless, new) for 44 copper.
+ 183. three plain pairs of pants (flawless, fresh) up to 34 copper.
+ 187. five pairs of greaves (flawless, new) up to six gold six silver.
+ 193. a sturdy pair of greaves (well-maintained, aged) for three gold 11 silver.
+ 195. eight pairs of chain mail leggings (well-maintained, fresh) up to one gold five silver.
+ 204. a plain flowing skirt (flawless, aged) for 68 copper.
+ 206. five fine pairs of soft leather trousers (used, new) up to one silver 98 copper.
+ 212. twelve pairs of hard leather trousers (flawless, new) up to three silver 69 copper.
+ 225. nine pairs of plain trousers (flawless, new) up to 38 copper.
+ 235. eleven pairs of soft leather trousers (flawless, new) up to one silver 66 copper.
+ 247. two sturdy pairs of hard leather trousers (worn, well-seasoned) up to two silver 55 copper.
+
+*** Return: continue, b: back one page, r: redisplay, q:quit (23%) *** 
+ 250. ten sturdy pairs of soft leather trousers (well-maintained, new) up to one silver 88 copper.
+-----
+ 261. a fine pair of metal boots (flawless, seasoned) for five gold eight silver.
+ 263. seven pairs of metal boots (marred, new) up to three gold four silver.
+ 271. nineteen pairs of rigid leather boots (flawless, new) up to two silver 25 copper.
+ 291. ten pairs of soft leather boots (satisfactory, new) up to one silver nine copper.
+ 302. nine sturdy pairs of rigid leather boots (flawless, new) up to two silver 92 copper.
+ 312. ten sturdy pairs of soft leather boots (used, new) up to one silver 28 copper.
+ 323. a pair of heavy shoes (well-maintained, aged) for six silver 69 copper.
+-----
+ 325. three pairs of metal gauntlets (neglected, well-seasoned) up to two gold 14 silver.
+ 329. a sturdy pair of metal gauntlets (used, fresh) for four gold 17 silver.
+ 331. two fine pairs of leather gloves (worn, seasoned) up to 80 copper.
+ 334. ten pairs of chain mail gloves (well-maintained, new) up to one gold two silver.
+ 345. three pairs of rigid leather gloves (used, new) up to one silver 57 copper.
+ 349. eighteen pairs of soft leather gloves (well-maintained, new) up to 98 copper.
+ 368. seven sturdy pairs of chain mail gloves (used, fresh) up to 19 silver 76 copper.
+ 376. three sturdy pairs of soft leather gloves (worn, new) up to one silver 21 copper.
+-----
+ 380. ten pairs of chain mail sleeves (flawless, new) up to one gold seven silver.
+ 391. seventeen pairs of rigid leather sleeves (flawless, new) up to three silver 92 copper.
+ 409. ten pairs of soft leather sleeves (flawless, new) up to one silver 93 copper.
+ 420. ten sturdy pairs of chain mail sleeves (satisfactory, new) up to one gold 12 silver.
+ 431. five sturdy pairs of rigid leather sleeves (satisfactory, seasoned) up to three silver two copper.
+ 437. sixteen sturdy pairs of soft leather sleeves (flawless, fresh) up to one silver 66 copper.
+ 454. ten pairs of metal vambraces (neglected, new) up to five gold 17 silver.
+ 465. two pairs of plate vambraces (flawless, fresh) up to 11 gold two silver.
+ 468. a sturdy pair of metal vambraces (flawless, fresh) for seven gold two silver.
+-----
+ 470. ten metal bucklers (used, new) up to 12 silver 34 copper.
+ 481. ten full metal shields (flawless, new) up to one gold 11 silver.
+ 492. twelve full wooden shields (well-maintained, new) up to 18 silver 90 copper.
+ 505. a gilded round shield (flawless, aged) for six gold 11 silver.
+ 507. ten large metal full shields (flawless, new) up to two gold.
+ 518. twelve large metal shields (flawless, new) up to 18 silver 24 copper.
+ 531. a large metal wall shield (satisfactory, seasoned) for 19 gold eight silver.
+ 533. eleven large wooden full shields (flawless, new) up to one gold four silver.
+ 545. eleven large wooden shields (flawless, new) up to 11 silver 24 copper.
+ 557. seven large wooden wall shields (flawless, new) up to four gold ten silver.
+ 565. ten metal shields (flawless, new) up to 14 silver 80 copper.
+ 576. ten metal wall shields (satisfactory, new) up to eight gold 14 silver.
+ 587. seven red-skull shields (satisfactory, new) up to 14 silver six copper.
+ 595. five shields of Arthedain (flawless, new) up to 12 gold seven silver.
+ 601. two shields of Cardolan (flawless, new) up to seven gold 16 silver.
+ 604. thirteen small metal shields (flawless, new) up to ten silver 81 copper.
+
+*** Return: continue, b: back one page, r: redisplay, q:quit (49%) *** 
+ 618. ten small metal target shields (flawless, new) up to six silver 84 copper.
+ 629. eighteen small wooden shields (flawless, new) up to six silver 82 copper.
+ 648. eleven small wooden target shields (flawless, new) up to four silver 54 copper.
+ 660. five spiked shields (flawless, new) up to 15 silver 42 copper.
+ 666. thirteen wooden shields (flawless, new) up to nine silver ten copper.
+ 680. eleven wooden target shields (flawless, new) up to seven silver 98 copper.
+ 692. ten wooden wall shields (satisfactory, new) up to two gold 18 silver.
+ 703. two Zaugurz shields (flawless, new) up to seven gold eight silver.
+ 706. seven Isengard shields (flawless, new) up to one gold five silver.
+-----
+ 714. a black cape (well-maintained, seasoned) for seven silver 50 copper.
+ 716. two buttoned cassocks (well-maintained, new) up to ten silver 67 copper.
+ 719. ten black cloaks (flawless, new) up to two silver 25 copper.
+ 730. four blue cloaks (flawless, new) up to two silver four copper.
+ 735. ten brown cloaks (flawless, new) up to two silver 26 copper.
+ 746. eleven forest green cloaks (flawless, fresh) up to two gold 16 silver.
+ 758. ten green cloaks (flawless, new) up to two silver 20 copper.
+ 769. nine grey cloaks (well-maintained, new) up to two silver 18 copper.
+ 779. ten plain cloaks (flawless, new) up to two silver 23 copper.
+ 790. ten red cloaks (satisfactory, new) up to one silver 99 copper.
+ 801. two sacred cloaks (flawless, new) up to 39 gold two silver.
+ 804. ten heavy wool coats (well-maintained, new) up to nine silver 31 copper.
+ 815. ten brown bear furs (flawless, new) up to eight silver 53 copper.
+ 826. a cave-bear fur (flawless, seasoned) for nine silver 13 copper.
+ 828. thirteen grey wolf furs (well-maintained, new) up to one silver nine copper.
+ 842. a soft, thick, white fur (satisfactory, aged) for eight silver 70 copper.
+ 844. twelve fine lion pelts (flawless, new) up to 13 silver 63 copper.
+ 857. nine black and silver surcoats (flawless, new) up to 16 silver 33 copper.
+-----
+ 867. three wolfskin wristbands (flawless, fresh) up to seven silver one copper.
+-----
+ 871. ten bolt-cases up to two silver 85 copper.
+ 882. twenty-two quivers up to two silver 28 copper.
+-----
+ 905. sixty-eight arrows up to 39 copper.
+ 974. ten bolts up to 57 copper.
+ 985. ten slingstones up to 17 copper.
+ 996. ten round stones up to two copper.
+-----
+1007. ten slings up to 57 copper.
+-----
+1018. nineteen shortbows up to 11 silver 40 copper.
+1038. ten light crossbows up to 17 silver ten copper.
+1049. twelve longbows up to 17 silver ten copper.
+1062. ten yew longbows up to 11 gold seven silver.
+
+*** Return: continue, b: back one page, r: redisplay, q:quit (69%) *** 
+1073. an orkish shortbow for 17 silver 33 copper.
+-----
+1075. ten iron-shod maces up to one gold 14 silver.
+-----
+1086. nineteen daggers (flawless, new) up to six silver 80 copper.
+1106. seven dirks (flawless, new) up to eight silver 64 copper.
+1114. ten horns (flawless, new) up to seven silver 28 copper.
+1125. eleven butcher knives (satisfactory, new) up to five silver 27 copper.
+1137. fifteen hunting knives (satisfactory, new) up to three silver 28 copper.
+1153. eleven rapiers (well-maintained, new) up to 16 silver 75 copper.
+1165. twenty shortswords (flawless, new) up to 11 silver 33 copper.
+1186. eleven stilettos (flawless, new) up to five silver 67 copper.
+1198. ten brown thorns (worn, new) up to nine silver eight copper.
+-----
+1209. ten broadswords (flawless, new) up to one gold eight silver.
+1220. ten cutlasses (flawless, new) up to 13 silver 62 copper.
+1231. ten falchions (flawless, new) up to one gold eight silver.
+1242. nine broad-bladed knives (satisfactory, new) up to two silver 85 copper.
+1252. fifteen longswords (flawless, new) up to one gold two silver.
+1268. sixteen sabres (flawless, new) up to 16 silver 88 copper.
+1285. six broad scimitars (flawless, fresh) up to one gold seven silver.
+1292. ten scimitars (flawless, new) up to one gold two silver.
+1303. five sickles (satisfactory, well-seasoned) up to one silver 90 copper.
+1309. seventeen backswords (flawless, new) up to 17 silver.
+1327. ten bastard swords (flawless, new) up to one gold 13 silver.
+1338. a Beorning sword (flawless, new) for 17 silver 93 copper.
+1340. ten two-handed swords (flawless, new) up to two gold 14 silver.
+1351. six sharp talons (satisfactory, new) up to one gold 12 silver.
+-----
+1358. ten battle axes (flawless, new) up to one gold 17 silver.
+1369. ten two-handed axes (well-maintained, new) up to three gold seven silver.
+1380. sixteen woodsman's axes (flawless, new) up to eight silver 50 copper.
+1397. a brutal cleaver (flawless, new) for one gold one silver.
+1399. ten halberds (flawless, new) up to one gold seven silver.
+1410. nine handaxes (flawless, new) up to ten silver 60 copper.
+1420. thirteen hatchets (flawless, new) up to four silver 50 copper.
+-----
+1434. three very large wooden clubs up to six silver 84 copper.
+1438. ten very heavy branches up to one silver 14 copper.
+1449. six gnarled wooden clubs up to three silver 99 copper.
+1456. two spiked war clubs up to five silver 70 copper.
+1459. ten wooden clubs up to three silver 42 copper.
+1470. ten cudgels up to two silver 28 copper.
+1481. a cruelly-spiked mace for one gold seven silver.
+1483. eleven maces up to 17 silver ten copper.
+
+*** Return: continue, b: back one page, r: redisplay, q:quit (89%) *** 
+1495. a war mattock for 57 gold.
+1497. eight heavy morningstars up to two gold 12 silver.
+1506. ten morningstars up to one gold three silver.
+1517. ten picks up to nine silver 12 copper.
+1528. eleven shovels up to six silver 84 copper.
+1540. nine quarterstaves up to eight silver 55 copper.
+-----
+1550. ten large warhammers up to one gold 14 silver.
+1561. ten steel-shafted mattocks up to 30 gold ten silver.
+1572. two heavy warhammers up to three gold three silver.
+1575. eleven warhammers up to 17 silver ten copper.
+1587. two black metal staves up to 11 gold five silver.
+-----
+1590. ten pikes (flawless, new) up to 17 silver four copper.
+1601. eleven pitchforks (flawless, new) up to five silver 13 copper.
+1613. nine broad spears (flawless, new) up to eight silver four copper.
+1623. fifteen longspears (flawless, new) up to six silver 74 copper.
+1639. thirteen short spears (flawless, new) up to four silver 54 copper.
+-----
+1653. four lances (neglected, new) up to four silver 52 copper.
+1658. a steel-tipped lance (used, well-seasoned) for five silver 82 copper.
+-----
+1660. a scourge for nine silver 12 copper.
+1662. two whips up to five silver 70 copper.
+-----
+1665. seven metal-shod staves up to one gold three silver.
+1673. ten staves inlaid with gems up to one gold three silver.
+-----
+1684. four bars of iron up to nine silver 69 copper.

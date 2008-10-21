@@ -1,0 +1,3 @@
+It is a pint.
+It weighs three pounds.
+[32mAn elven bartender tells you 'It would cost you 17 copper.'[0m

@@ -1,0 +1,19 @@
+"You can buy:" initiates what follows.
+
+For each line of input:
+Tokenize the string, using ' ' as a separater.
+
+If the first token is a number followed by a period (1.), parse it.
+Otherwise, continue.
+
+The second token will be either 'a' or 'an', or a number word.  Number words
+should be turned into ints and stored.
+
+The next X tokens will be the item name.  Put those into a string, until
+running into a token like 'up' or 'for'.
+
+The string beginning with 'up' or 'for' is the cost.  If 'for' is found, the
+rest of the line is the price, and it contains number words that should be
+stored as ints (anything that isn't 'gold', 'silver', 'copper', 'lauren',
+'caleb', 'busc').  If 'up' is found, then the next will be 'to', after which
+are the number words for the price.
