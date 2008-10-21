@@ -1,2 +1,0 @@
-MOC_DIR = @top_builddir@/moc
-UI_DIR = @top_builddir@/ui
