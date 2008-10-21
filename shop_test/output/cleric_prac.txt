@@ -1,0 +1,14 @@
+You have 0 practice sessions left.
+An elven priest can teach you any of these spells:
+                   Sessions Knowledge Difficulty  Advice
+bless                 0/12      0%    Normal      You are too inexperienced
+blindness             0/ 3      0%    Hard        You are too inexperienced
+cure blindness        0/ 3      0%    Normal      You are too inexperienced
+cure disease          0/ 2      0%    Easy        You are too inexperienced
+cure light            3/ 3     44%    Easy        You know as much as I do
+cure serious          0/ 8      0%    Normal      You are too inexperienced
+detect evil           0/ 8      0%    Easy        Learn it or not, your choice
+detect poison         0/ 3      0%    Easy        Takes some time to learn
+protection from evil  0/12      0%    Normal      You are too inexperienced
+sense life            0/ 3      0%    Normal      You are too inexperienced
+strength              0/ 8      0%    Hard        You are too inexperienced

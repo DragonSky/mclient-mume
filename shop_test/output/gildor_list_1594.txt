@@ -1,0 +1,12 @@
+You can buy:
+
+1594. nine broad spears:
+      1595.  (flawless, new) for eight silver four copper.
+      1596.  (used, new) for seven silver 88 copper.
+      1597.  (flawless, fresh) for seven silver 82 copper.
+      1598.  (used, fresh) for seven silver 36 copper.
+      1599.  (well-maintained, fresh) for seven silver 29 copper.
+      1600.  (well-maintained, fresh) for seven silver 14 copper.
+      1601.  (worn, fresh) for seven silver three copper.
+      1602.  (flawless, fresh) for seven silver two copper.
+      1603.  (satisfactory, fresh) for six silver 99 copper.

@@ -1,0 +1,10 @@
+You can buy:
+
+  1. twenty piles of steamed crabs up to 57 copper.
+-----
+ 22. twenty blackberry tarts up to six copper.
+-----
+ 43. twenty pints full of ale up to 17 copper.
+ 64. twenty bottles full of beer up to 57 copper.
+ 85. twenty bottles full of local up to 22 copper.
+106. twenty small bottles full of whisky up to 57 copper.

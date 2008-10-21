@@ -1,0 +1,14 @@
+You have 0 practice sessions left.
+A grey-haired elf can teach you any of these spells:
+                   Sessions Knowledge Difficulty  Advice
+armour                8/ 8     47%    Hard        You know as much as I do
+burning hands         0/ 6      0%    Normal      You are too inexperienced
+call familiar         0/ 4      0%    Normal      You are too inexperienced
+create light          0/ 2      0%    Easy        You are too inexperienced
+detect invisibility   0/ 3      0%    Normal      Takes some time to learn
+find the path         0/11      0%    Normal      You are too inexperienced
+locate                0/16      0%    Hard        You are too inexperienced
+magic missile         0/ 4      0%    Easy        You could learn easily
+night vision          0/ 3      0%    Normal      You are too inexperienced
+shocking grasp        0/ 6      0%    Normal      You are too inexperienced
+shroud                0/ 7      0%    Hard        You are too inexperienced
