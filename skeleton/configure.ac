@@ -6,8 +6,7 @@ AM_INIT_AUTOMAKE([simple_client], 1.0)
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_LIBTOOL
-
-AC_LANG([C])
+AC_ENABLE_SHARED
 
 AT_WITH_QT([xml network gui],[qt warn_off debug],
             [MOC_DIR = ./moc
@@ -15,8 +14,8 @@ AT_WITH_QT([xml network gui],[qt warn_off debug],
             UI_DIR = ./ui])
 #AT_REQUIRE_QT_VERSION(4.4.0)
 
-AX_BOOST_BASE([1.33.1])
-AX_BOOST_PYTHON
+#AX_BOOST_BASE([1.33.1])
+#AX_BOOST_PYTHON
 
 AC_PREFIX_DEFAULT(`pwd`)
 
@@ -24,6 +23,7 @@ AC_CONFIG_FILES([Makefile
                  Makedef
                  ui/Makefile
                  moc/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 src/plugins/Makefile])
 
 AC_OUTPUT

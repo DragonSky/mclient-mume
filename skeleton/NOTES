@@ -1,0 +1,13 @@
+Flow of data:
+============
+
+InputPlugin -> FilterPlugin -> ... -> FilterPlugin -> OutputPlugin
+            /                 \                        \
+InputPlugin                    OutputPlugin             OutputPlugin
+
+
+InputPlugins have a list of QObject subscribers,
+FilterPlugins have a list of OObject subscribers and a QObject source,
+OutputPlugins only have a QObject source.
+
+InputPlugins start the chain, but OutputPlugins can connect anywhere.

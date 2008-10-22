@@ -71,10 +71,10 @@ void PowwowWrapper::connectToHost(const QString& host,
     _socket->connectToHost(host, port);
 }
 
-
+/*
 #include <boost/python.hpp>
 using namespace boost::python;
-
+*/
 //BOOST_PYTHON_MODULE(powwow) 
 //{
     //class_<QObject>("QObject", no_init);
