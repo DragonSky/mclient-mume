@@ -16,6 +16,7 @@ class SimpleInputPlugin public QObject, public InputPluginInterface {
         QString& pluginName() const;
         void (const QString& data) const;
 
+
 };
 
 
