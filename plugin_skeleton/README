@@ -1,0 +1,4 @@
+To make it go, run ./build.sh.  If everything builds smoothly, 
+
+cd build
+bin/plugin_skeleton
