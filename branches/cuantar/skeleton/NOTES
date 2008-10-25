@@ -1,6 +1,7 @@
 Flow of data:
 ============
 
+MUME side                                              client side
 InputPlugin -> FilterPlugin -> ... -> FilterPlugin -> OutputPlugin
             /                 \                        \
 InputPlugin                    OutputPlugin             OutputPlugin
@@ -11,3 +12,11 @@ FilterPlugins have a list of OObject subscribers and a QObject source,
 OutputPlugins only have a QObject source.
 
 InputPlugins start the chain, but OutputPlugins can connect anywhere.
+
+InputPlugins get data from somewhere, be it a widget or a proxy, and pass it
+on via QEvents.  The function that passes on the data can be a slot called by
+signals on e.g. socket receiving data, or user input in the input bar.
+InputPlugins can listen to a proxy for user input, or to the MUME socket.
+
+Output plugins take data and do something with it.  This something can be
+sending it to a socket (by connecting as a source) 

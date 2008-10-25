@@ -9,8 +9,8 @@ class InputPluginInterface {
         virtual ~InputPluginInterface() { }
         
         virtual QString& pluginName() const=0;
-        //virtual void sendData(const QString& data) const=0;
         virtual const bool& addListener(const QObject& listener)=0;
+        
 };
 
 
