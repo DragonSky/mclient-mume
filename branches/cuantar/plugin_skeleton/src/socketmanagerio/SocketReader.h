@@ -4,10 +4,6 @@
 #include <QThread>
 
 #include <QString>
-#include <QVector> 
-
-#include <tr1/memory>
-using std::tr1::shared_ptr;
 
 class QTcpSocket;
 
@@ -27,14 +23,8 @@ class SocketReader : public QThread {
 
         void closeSocket() const;
 
-        // Wrapper functions
-        //size_t read(char* buf, size_t size) const;
-        //bool atEnd() const;
-        //qint64 bytesAvailable() const;
+        void run();
 
-    protected: 
-
-        void postEvent(const char* data);
 
     private:
         QTcpSocket* _socket;
