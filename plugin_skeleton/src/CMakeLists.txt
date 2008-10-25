@@ -9,7 +9,7 @@ ADD_DEFINITIONS(-DQT_SHARED)
 
 
 set(plugin_skeleton_SRCS
-    plugintest.cpp
+    plugin_skeleton.cpp
     socketdatafilter/SocketData.cpp)
 
 set(plugin_skeleton_MOC_HDRS
