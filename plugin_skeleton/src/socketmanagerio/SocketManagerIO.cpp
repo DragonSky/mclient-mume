@@ -25,8 +25,8 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
 
     // Load config: figure out how many sockets, and load them.
     QSettings s;
-    _host = s.value(_shortName+"/host").toString();
-    _port = s.value(_shortName+"/port").toInt();
+    //_host = s.value(_shortName+"/host").toString();
+    //ke _port = s.value(_shortName+"/port").toInt();
 }
 
 
