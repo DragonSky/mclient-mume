@@ -10,7 +10,7 @@ class MClientDisplayInterface {
         // called from the main thread; initialises all QWidgets needed.
         // The plugin developer MUST do this, or the plugin will cause a
         // segfault.  (actually I'm not positive that's such a strong 'must')
-        const bool initDisplay();
+        virtual const bool initDisplay()=0;
 
 };
 
