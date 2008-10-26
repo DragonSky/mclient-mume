@@ -54,6 +54,6 @@ class MClientPluginInterface {
 };
 
 Q_DECLARE_INTERFACE(MClientPluginInterface,
-        "dsc.mclient.MClientPluginInterface/1.0")
+        "mume.mclient.MClientPluginInterface/1.0")
 
 #endif // MCLIENTPLUGININTERFACE_H

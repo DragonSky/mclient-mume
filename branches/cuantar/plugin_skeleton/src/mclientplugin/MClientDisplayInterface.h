@@ -7,11 +7,14 @@
 class MClientDisplayInterface {
     
     public:
-        // show yourself
+        // called from the main thread; initialises all QWidgets needed.
+        // The plugin developer MUST do this, or the plugin will cause a
+        // segfault.  (actually I'm not positive that's such a strong 'must')
+        const bool initDisplay();
 
 };
 
 Q_DECLARE_INTERFACE(MClientDisplayInterface,
-        "dsc.mclient.MClientDisplayInterface/1.0")
+        "mume.mclient.MClientDisplayInterface/1.0")
 
 #endif /* MCLIENTDISPLAYINTERFACE_H */
