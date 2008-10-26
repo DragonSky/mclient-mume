@@ -11,6 +11,7 @@ class QPluginLoader;
 class QPushButton;
 class QString;
 class QTreeView;
+class QTextEdit;
 
 
 class PluginConfigWidget : public QWidget {
@@ -30,6 +31,7 @@ class PluginConfigWidget : public QWidget {
         QHash<QString, QPluginLoader*> _plugins;
         QPushButton* _configButton;
         QTreeView* _tree;
+        QTextEdit* _descBox;
 
 };
 
