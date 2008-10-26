@@ -45,14 +45,15 @@ PluginConfigWidget::PluginConfigWidget(QHash<QString, QPluginLoader*> plugins,
 
     }
     
-    QTreeView* tree = new QTreeView(this);
-    tree->setModel(model);
-    tree->setColumnWidth(1,400);
-    tree->setRootIsDecorated(false);
-    tree->setSelectionMode(QAbstractItemView::SingleSelection);
+    _tree = new QTreeView(this);
+    _tree->setModel(model);
+    _tree->setColumnWidth(1,400);
+    _tree->setRootIsDecorated(false);
+    _tree->setSelectionMode(QAbstractItemView::SingleSelection);
+    _tree->setAlternatingRowColors(true);
 
     QVBoxLayout* vlayout = new QVBoxLayout();
-    vlayout->addWidget(tree);
+    vlayout->addWidget(_tree);
 
     _configButton = new QPushButton(this);
     _configButton->setText("Configure...");
@@ -61,12 +62,15 @@ PluginConfigWidget::PluginConfigWidget(QHash<QString, QPluginLoader*> plugins,
     this->setLayout(vlayout);
     this->setMinimumSize(500,500);
 
-    connect(tree->selectionModel(), 
+    // Needed to ensure that when the selection changes, we hear it
+    connect(_tree->selectionModel(), 
             SIGNAL(selectionChanged(const QItemSelection&, 
                     const QItemSelection&)), 
             this, 
             SLOT(updateSelection(const QItemSelection&, 
                     const QItemSelection&)));
+
+    connect(_configButton, SIGNAL(pressed()), this, SLOT(on_configure()));
 }
 
 
@@ -107,14 +111,24 @@ void PluginConfigWidget::updateSelection(const QItemSelection &selected,
 }
 
 
-void PluginConfigWidget::on_configure(const QModelIndex& index) {
+void PluginConfigWidget::on_configure() {
     // The Configure... button has been pressed, so we want to get the plugin
     // at the current index and configure() it.
 
-    /*
-    if(ip->configurable()) {
-        ip->configure();
+    qDebug() << "Configuring!";
+    qDebug() << _tree->currentIndex().row();
+    QString sn = 
+        _tree->model()->index(_tree->currentIndex().row(),0)
+        .data(Qt::UserRole).toString();
+    QHash<QString, QPluginLoader*>::iterator it = _plugins.find(sn);
+    if(it != _plugins.end()) {
+        MClientPluginInterface* pi = 
+            qobject_cast<MClientPluginInterface*>(it.value()->instance());
+        if(!pi) {
+            qDebug() << "couldn't cast!";
+            return;
+        }
+
+        pi->configure();
     }
-    */
-    qDebug() << "Checking to see if something is configurable";
 }

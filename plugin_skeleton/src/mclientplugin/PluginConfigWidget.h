@@ -10,6 +10,7 @@ class QModelIndex;
 class QPluginLoader;
 class QPushButton;
 class QString;
+class QTreeView;
 
 
 class PluginConfigWidget : public QWidget {
@@ -21,13 +22,14 @@ class PluginConfigWidget : public QWidget {
         ~PluginConfigWidget();
 
     public slots:
-        void on_configure(const QModelIndex& index);
+        void on_configure();
         void updateSelection(const QItemSelection &selected,
             const QItemSelection &deselected);
 
     private:
         QHash<QString, QPluginLoader*> _plugins;
         QPushButton* _configButton;
+        QTreeView* _tree;
 
 };
 
