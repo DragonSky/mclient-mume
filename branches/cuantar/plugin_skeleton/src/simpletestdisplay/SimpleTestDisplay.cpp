@@ -1,5 +1,7 @@
 #include "SimpleTestDisplay.h"
 
+#include "ClientWidget.h"
+#include "PowwowWrapper.h"
 #include "SimpleTest.h"
 
 #include <QApplication>
@@ -50,6 +52,9 @@ void SimpleTestDisplay::configure() {
     // This is a test
     //_simpleTests.insert("SimpleTest", new SimpleTest());
     qDebug() << "monkey!";
+
+    // call this separately!
+    initDisplay();
 }
 
 
@@ -60,4 +65,20 @@ const bool SimpleTestDisplay::loadSettings() {
         
 const bool SimpleTestDisplay::saveSettings() const {
     return true;
+}
+
+
+// Display plugin members
+const bool SimpleTestDisplay::initDisplay() {
+    PowwowWrapper* pw = PowwowWrapper::Instance();
+    ClientWidget* cw = new ClientWidget();
+   
+    _widgets.insert("monkey!", cw); 
+
+   
+    pw->connectToHost("mume.org", 4242);
+    cw->show();
+
+    return true;
+
 }

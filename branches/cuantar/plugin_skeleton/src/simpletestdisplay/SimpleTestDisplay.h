@@ -9,6 +9,7 @@
 class QEvent;
 class QPushButton;
 
+class ClientWidget;
 class SimpleTest;
 
 
@@ -25,11 +26,15 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
         const bool loadSettings();
         const bool saveSettings() const;
 
+        // Display members
+        const bool initDisplay();
+
 
     private:
         QPointer<QPushButton> _button;
 
         QHash<QString, SimpleTest*> _simpleTests;
+        QHash<QString, ClientWidget*> _widgets;
 };
 
 

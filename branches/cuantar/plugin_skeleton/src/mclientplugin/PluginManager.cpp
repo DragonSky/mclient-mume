@@ -248,6 +248,7 @@ void PluginManager::customEvent(QEvent* e) {
 // We want to start an event loop in a separate thread to handle plugins
 void PluginManager::run() {
     loadAllPlugins();
+    emit doneLoading();
     exec();
 }
 
