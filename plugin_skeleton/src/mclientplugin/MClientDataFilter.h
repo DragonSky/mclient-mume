@@ -39,6 +39,6 @@ class MClientDataFilter : public MClientPluginInterface {
 };
 
 Q_DECLARE_INTERFACE(MClientDataFilter,
-        "dsc.mclient.MClientDataFilter/1.0")
+        "mume.mclient.MClientDataFilter/1.0")
 
 #endif /* MCLIENTDATAFILTER_H */

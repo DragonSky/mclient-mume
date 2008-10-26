@@ -12,6 +12,6 @@ class MClientFilterInterface {
 };
 
 Q_DECLARE_INTERFACE(MClientFilterInterface,
-        "dsc.mclient.MClientFilterInterface/1.0")
+        "mume.mclient.MClientFilterInterface/1.0")
 
 #endif /* MCLIENTFILTERINTERFACE_H */

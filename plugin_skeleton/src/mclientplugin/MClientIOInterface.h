@@ -25,6 +25,6 @@ class MClientIOInterface {
 };
 
 Q_DECLARE_INTERFACE(MClientIOInterface,
-        "dsc.mclient.MClientIOInterface/1.0")
+        "mume.mclient.MClientIOInterface/1.0")
 
 #endif /* MCLIENTIOINTERFACE_H */
