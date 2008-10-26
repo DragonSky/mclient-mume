@@ -8,6 +8,7 @@
 class QItemSelection;
 class QModelIndex;
 class QPluginLoader;
+class QPushButton;
 class QString;
 
 
@@ -26,6 +27,7 @@ class PluginConfigWidget : public QWidget {
 
     private:
         QHash<QString, QPluginLoader*> _plugins;
+        QPushButton* _configButton;
 
 };
 
