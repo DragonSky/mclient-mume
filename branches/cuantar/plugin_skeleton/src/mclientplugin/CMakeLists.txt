@@ -14,14 +14,16 @@ set(mclientplugin_SRCS
     MClientPlugin.cpp
     MClientFilterPlugin.cpp
     MClientIOPlugin.cpp
-    MClientDisplayPlugin.cpp)
+    MClientDisplayPlugin.cpp
+    PluginConfigWidget.cpp)
 
 SET(mclientplugin_MOC_HDRS
     PluginManager.h
     MClientPlugin.h
     MClientFilterPlugin.h
     MClientIOPlugin.h
-    MClientDisplayPlugin.h)
+    MClientDisplayPlugin.h
+    PluginConfigWidget.h)
 
 QT4_WRAP_CPP(mclientplugin_MOC_SRCS ${mclientplugin_MOC_HDRS})
 add_library(mclientplugin ${mclientplugin_SRCS}

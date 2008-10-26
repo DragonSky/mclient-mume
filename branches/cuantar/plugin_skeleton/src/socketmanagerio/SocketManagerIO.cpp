@@ -2,6 +2,7 @@
 
 #include <QByteArray>
 #include <QEvent>
+#include <QSettings>
 
 Q_EXPORT_PLUGIN2(socketmanagerio, SocketManagerIO)
 
@@ -18,6 +19,8 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _dataTypes << "SendToSocketEvent";
     _configurable = true;
 
+    // SocketManager members
+
 }
 
 
@@ -28,18 +31,36 @@ SocketManagerIO::~SocketManagerIO() {
 
 // MClientPlugin members
 void SocketManagerIO::customEvent(QEvent* e) {
+    
 }
 
 
 void SocketManagerIO::configure() {
+    // Need to display a table of (identifier, host, port)
+    // Selecting one and pushing an "Edit..." button will bring up a dialog
+    // with three QLineEdits, one for each field.  Closing that will save the
+    // data to a member variable and update the table.
+    
+    // It will originally be populated by QSettings.
+
+/*    
+    if(!_config) {
+        _config = new QWidget();
+    } 
+    _config->show();
+*/
 }
 
 
 const bool SocketManagerIO::loadSettings() {
+    QSettings s;
+    s.value(_shortName+"/testkey", 60);
 }
 
 
 const bool SocketManagerIO::saveSettings() const {
+    QSettings s;
+    s.setValue(_shortName+"/testkey", 80);
 }
 
 
