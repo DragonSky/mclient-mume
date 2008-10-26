@@ -9,6 +9,7 @@
 #include <QStandardItemModel>
 #include <QString>
 #include <QStringList>
+#include <QTextEdit>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -47,20 +48,25 @@ PluginConfigWidget::PluginConfigWidget(QHash<QString, QPluginLoader*> plugins,
     
     _tree = new QTreeView(this);
     _tree->setModel(model);
-    _tree->setColumnWidth(1,400);
+    _tree->setColumnWidth(0,200);
     _tree->setRootIsDecorated(false);
     _tree->setSelectionMode(QAbstractItemView::SingleSelection);
     _tree->setAlternatingRowColors(true);
+    _tree->setWordWrap(true);
 
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(_tree);
+
+    _descBox = new QTextEdit();
+    //_descBox->setEditable(false);
+    vlayout->addWidget(_descBox);
 
     _configButton = new QPushButton(this);
     _configButton->setText("Configure...");
     vlayout->addWidget(_configButton);
 
     this->setLayout(vlayout);
-    this->setMinimumSize(500,500);
+    this->setMinimumSize(600,300);
 
     // Needed to ensure that when the selection changes, we hear it
     connect(_tree->selectionModel(), 
@@ -98,11 +104,12 @@ void PluginConfigWidget::updateSelection(const QItemSelection &selected,
                     qDebug() << "couldn't cast!";
                     return;
                 }
+                _descBox->setText(pi->description());
                 if(pi->configurable()) {
-                    qDebug() << sn << "is configurable";
+                    //qDebug() << sn << "is configurable";
                     _configButton->setEnabled(true);
                 } else {
-                    qDebug() << sn << "is NOT configurable";
+                    //qDebug() << sn << "is NOT configurable";
                     _configButton->setDisabled(true);
                 }
             }
@@ -116,7 +123,7 @@ void PluginConfigWidget::on_configure() {
     // at the current index and configure() it.
 
     qDebug() << "Configuring!";
-    qDebug() << _tree->currentIndex().row();
+    //qDebug() << _tree->currentIndex().row();
     QString sn = 
         _tree->model()->index(_tree->currentIndex().row(),0)
         .data(Qt::UserRole).toString();
