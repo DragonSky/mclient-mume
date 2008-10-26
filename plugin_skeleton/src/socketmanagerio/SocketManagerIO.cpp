@@ -1,5 +1,7 @@
 #include "SocketManagerIO.h"
 
+#include "SocketManagerIOConfig.h"
+
 #include <QByteArray>
 #include <QEvent>
 #include <QSettings>
@@ -21,6 +23,10 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
 
     // SocketManager members
 
+    // Load config: figure out how many sockets, and load them.
+    QSettings s;
+    _host = s.value(_shortName+"/host").toString();
+    _port = s.value(_shortName+"/port").toInt();
 }
 
 
@@ -43,12 +49,8 @@ void SocketManagerIO::configure() {
     
     // It will originally be populated by QSettings.
 
-/*    
-    if(!_config) {
-        _config = new QWidget();
-    } 
-    _config->show();
-*/
+    if(!_configWidget) _configWidget = new SocketManagerIOConfig();
+    if(!_configWidget->isVisible()) _configWidget->show();
 }
 
 

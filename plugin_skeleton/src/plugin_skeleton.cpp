@@ -10,6 +10,11 @@
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
+
+    QApplication::setOrganizationName("MUME");
+    QApplication::setOrganizationDomain("mume.org");
+    QApplication::setApplicationName("mclient");
+
     
     PluginManager* pm = PluginManager::instance();
     pm->start(QThread::LowPriority);
@@ -24,11 +29,9 @@ int main(int argc, char** argv) {
     me = new MClientEvent(new MClientEventData(sd), "SocketDataEvent");
     QApplication::postEvent(pm, me);
 
-    /*
     sd2 = new SocketData(QByteArray("yar2"));
     me2 = new MClientEvent(new MClientEventData(sd2), "NotASocketDataEvent");
     QApplication::postEvent(pm, me2);
-    */
 
     while(!pm->doneLoading()) sleep(.1);
     pm->configureTest();
