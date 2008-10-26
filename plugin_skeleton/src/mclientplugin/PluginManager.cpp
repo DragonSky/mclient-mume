@@ -1,5 +1,6 @@
 #include "PluginManager.h"
 
+#include "MClientDisplayInterface.h"
 #include "MClientPluginInterface.h"
 #include "MClientEvent.h"
 #include "PluginConfigWidget.h"
@@ -262,4 +263,16 @@ const bool PluginManager::doneLoading() const {
 void PluginManager::configureTest() { 
     if(!_configWidget) _configWidget = new PluginConfigWidget(_loadedPlugins);
     if(!_configWidget->isVisible()) _configWidget->show();
+}
+
+
+void PluginManager::initDisplays() {
+    QPluginLoader* pl;
+    foreach(pl,_loadedPlugins) {
+        MClientDisplayInterface* di;
+        di = qobject_cast<MClientDisplayInterface*>(pl->instance());
+        if(di) {
+            di->initDisplay();
+        }
+    }
 }

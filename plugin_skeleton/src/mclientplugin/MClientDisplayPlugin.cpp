@@ -13,3 +13,7 @@ MClientDisplayPlugin::~MClientDisplayPlugin() {
 
 void MClientDisplayPlugin::customEvent(QEvent* e) {
 }
+
+
+const bool MClientDisplayPlugin::initDisplay() {
+}
