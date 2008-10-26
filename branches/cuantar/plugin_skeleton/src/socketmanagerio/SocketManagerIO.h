@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QHash>
 
+class SocketManagerIOConfig;
 class SocketReader;
 
 class QByteArray;
@@ -34,7 +35,7 @@ class SocketManagerIO : public MClientIOPlugin {
 
     private:
         QHash<QString, SocketReader*> _sockets;
-        QPointer<QDialog> _configDialog;
+        QPointer<SocketManagerIOConfig> _configWidget;
     
 };
 

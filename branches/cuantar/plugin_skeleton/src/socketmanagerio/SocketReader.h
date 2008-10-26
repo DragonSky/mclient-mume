@@ -28,10 +28,13 @@ class SocketReader : public QThread {
 
     private:
         QTcpSocket* _socket;
-        int _port;
-        QString _host;
         int _counter;
         bool _delete;
+       
+        // Config
+        QString _host;
+        int _port;
+        
 
     private slots:
         void on_connect();
