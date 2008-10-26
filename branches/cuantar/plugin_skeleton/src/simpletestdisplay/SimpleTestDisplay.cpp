@@ -53,8 +53,6 @@ void SimpleTestDisplay::configure() {
     //_simpleTests.insert("SimpleTest", new SimpleTest());
     qDebug() << "monkey!";
 
-    // call this separately!
-    initDisplay();
 }
 
 
