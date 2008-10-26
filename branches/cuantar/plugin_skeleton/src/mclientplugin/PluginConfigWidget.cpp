@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QPluginLoader>
+#include <QPushButton>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
@@ -52,6 +53,11 @@ PluginConfigWidget::PluginConfigWidget(QHash<QString, QPluginLoader*> plugins,
 
     QVBoxLayout* vlayout = new QVBoxLayout();
     vlayout->addWidget(tree);
+
+    _configButton = new QPushButton(this);
+    _configButton->setText("Configure...");
+    vlayout->addWidget(_configButton);
+
     this->setLayout(vlayout);
     this->setMinimumSize(500,500);
 
@@ -74,21 +80,29 @@ void PluginConfigWidget::updateSelection(const QItemSelection &selected,
     QModelIndex index;
     QModelIndexList items = selected.indexes();
     
+    // Check whether the item represented by index is configurable, and if
+    // so, enable the Configure..." button.
     foreach(index, items) {
         if(index.column() == 0) {
             QString sn = index.data(Qt::UserRole).toString();
-            qDebug() << sn;
             QHash<QString, QPluginLoader*>::iterator it = _plugins.find(sn);
             if(it != _plugins.end()) {
                 MClientPluginInterface* pi = 
-                    qobject_cast<MClientPluginInterface*>(it.value()->instance());
-                if(!pi) qDebug() << "suck";
-                if(pi->configurable()) qDebug() << "it is configurable";
+                    qobject_cast<MClientPluginInterface*>(
+                            it.value()->instance());
+                if(!pi) {
+                    qDebug() << "couldn't cast!";
+                    return;
+                }
+                if(pi->configurable()) {
+                    qDebug() << sn << "is configurable";
+                    _configButton->setEnabled(true);
+                } else {
+                    qDebug() << sn << "is NOT configurable";
+                    _configButton->setDisabled(true);
+                }
             }
         }
-        // Check whether the item represented by index is configurable, and if
-        // so, enable the Configure..." button.
-        
     }
 }
 
