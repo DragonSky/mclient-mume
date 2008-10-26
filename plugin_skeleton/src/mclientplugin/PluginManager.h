@@ -4,7 +4,9 @@
 #include <QThread>
 
 #include <QHash>
+#include <QPointer>
 
+class PluginConfigWidget;
 class PluginEntry;
 
 class QApplication;
@@ -61,6 +63,8 @@ class PluginManager : public QThread {
 
         // In what directory are plugins located?  ConfigManager knows.
         QString _pluginDir;
+
+        QPointer<PluginConfigWidget> _configWidget;
 
     private:
         static PluginManager* _pinstance;

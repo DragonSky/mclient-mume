@@ -2,6 +2,7 @@
 
 #include "MClientPluginInterface.h"
 #include "MClientEvent.h"
+#include "PluginConfigWidget.h"
 #include "PluginEntry.h"
 
 #include <QApplication>
@@ -182,12 +183,6 @@ const bool PluginManager::loadPlugin(const QString& libName) {
                     }
                 }
 
-                /*
-                if(!deps.isEmpty()) {
-                    qDebug() << "deps are not empty!";
-                    return false;
-                } 
-                */
 
 
             } // deps
@@ -210,6 +205,9 @@ const bool PluginManager::loadPlugin(const QString& libName) {
                     _pluginTypes.insert(s, loader);
                 }
             }
+
+            // Each plugin takes care of its own settings
+            iPlugin->loadSettings();
             qDebug() << "Successfully loaded plugin" << iPlugin->shortName();
         } // casted
     } // loaded
@@ -247,6 +245,7 @@ void PluginManager::customEvent(QEvent* e) {
 }
 
 
+// We want to start an event loop in a separate thread to handle plugins
 void PluginManager::run() {
     loadAllPlugins();
     exec();
@@ -259,13 +258,7 @@ const bool PluginManager::doneLoading() const {
 }
 
 
-void PluginManager::configureTest() {
-    QPluginLoader* pl;
-    foreach(pl, _loadedPlugins) {
-        MClientPluginInterface* ip = 
-                qobject_cast<MClientPluginInterface*>(pl->instance());
-        if(ip) {
-            ip->configure();
-        }
-    }
+void PluginManager::configureTest() { 
+    if(!_configWidget) _configWidget = new PluginConfigWidget(_loadedPlugins);
+    if(!_configWidget->isVisible()) _configWidget->show();
 }

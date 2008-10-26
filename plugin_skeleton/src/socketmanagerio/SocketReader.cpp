@@ -18,7 +18,6 @@ SocketReader::SocketReader(QObject* parent) : QThread(parent) {
     
 
     _socket = new QTcpSocket();
-    _socket->setReadBufferSize(0);
     _counter = 0;
     _delete = 0;
 
