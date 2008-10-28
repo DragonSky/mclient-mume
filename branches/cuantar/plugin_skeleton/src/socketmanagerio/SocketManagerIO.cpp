@@ -25,7 +25,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";
 //    _dependencies.insert("some_stupid_api", 10);
     _implemented.insert("some_stupid_api",10);
-    _dataTypes << "SendToSocketEvent";
+    _dataTypes << "SendToSocketData";
     _configurable = true;
 
     // SocketManager members
@@ -48,7 +48,21 @@ SocketManagerIO::~SocketManagerIO() {
 
 // MClientPlugin members
 void SocketManagerIO::customEvent(QEvent* e) {
+    if(!e->type() == 10001) return;
     
+    MClientEvent* me;
+    me = static_cast<MClientEvent*>(e);
+
+    qDebug() << "customEvent in SocketManagerIO";
+    if(me->dataTypes().contains("SendToSocketData")) {
+        QByteArray ba = me->payload()->toByteArray();
+        qDebug() << ba.data();
+        SocketReader* sr;
+        foreach(sr, _sockets) {
+            qDebug() << "sending the data to" << sr;
+            sr->sendToSocket(ba);
+        }
+    }
 }
 
 
