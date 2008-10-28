@@ -35,6 +35,9 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
 
         QHash<QString, SimpleTest*> _simpleTests;
         QHash<QString, ClientWidget*> _widgets;
+
+    signals: 
+        void dataReceived(QString s);
 };
 
 

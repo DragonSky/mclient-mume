@@ -45,6 +45,7 @@ void SimpleTestDisplay::customEvent(QEvent* e) {
     if(me->dataTypes().contains("FilteredData")) {
         QByteArray ba = me->payload()->toByteArray();
         qDebug() << ba.data();
+        emit dataReceived(QString(ba.data()));
     }
 }
 
@@ -80,7 +81,7 @@ const bool SimpleTestDisplay::saveSettings() const {
 // Display plugin members
 const bool SimpleTestDisplay::initDisplay() {
     PowwowWrapper* pw = PowwowWrapper::Instance();
-    ClientWidget* cw = new ClientWidget();
+    ClientWidget* cw = new ClientWidget(this);
    
     _widgets.insert("monkey!", cw); 
 

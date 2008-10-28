@@ -5,6 +5,7 @@
 
 class ClientLineEdit;
 class ClientTextEdit;
+class SimpleTestDisplay;
 
 class QTcpSocket;
 class QVBoxLayout;
@@ -13,7 +14,7 @@ class ClientWidget : public QWidget {
     Q_OBJECT
     
     public:
-        ClientWidget(QWidget* parent=0);
+        ClientWidget(SimpleTestDisplay* st, QWidget* parent=0);
         ~ClientWidget();
         void connectToHost(const QString& host, const qint64& port) const;
 
@@ -27,6 +28,7 @@ class ClientWidget : public QWidget {
         ClientLineEdit* _lineEdit;
         QTcpSocket* _socket;
         QVBoxLayout* _layout;
+        SimpleTestDisplay* _st;
 
 
     signals:
