@@ -1,4 +1,11 @@
+cmake_minimum_required (VERSION 2.6)
 project(plugin_skeleton)
+
+# Make sure we know where the executable is
+SET(EXECUTABLE_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/bin"
+    CACHE INTERNAL "")
+SET(LIBRARY_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/bin/plugins"
+    CACHE INTERNAL "")
 
 # Set up Qt4
 find_package(Qt4 REQUIRED)
