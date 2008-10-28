@@ -226,22 +226,18 @@ const QPluginLoader* PluginManager::pluginWithAPI(const QString& api) const {
 
 void PluginManager::customEvent(QEvent* e) {
     MClientEvent* me = static_cast<MClientEvent*>(e);
-    //qDebug() << me->payload()->objectName();
-    me->payload()->setObjectName("potato");
-//    qDebug() << "Got an event!" << me->dataType();
-   
-    QHash<QString, QPluginLoader*>::iterator it =
-        _pluginTypes.find(me->dataType());
+  
+    QHash<QString, QPluginLoader*>::iterator it = _pluginTypes.begin();
     
-    if(it == _pluginTypes.end()) return;
-
     for(it; it != _pluginTypes.end(); ++it) {
-        // Need to make a copy, since the original event
-        // will be deleted when this function returns
-//        qDebug() << "posting" << me->dataType() << "to" 
-//            << it.value()->instance();
-        MClientEvent* nme = new MClientEvent(*me);
-        QApplication::postEvent(it.value()->instance(),nme);
+        if(me->dataTypes().contains(it.key())) {
+            qDebug() << "posting" << me->dataTypes() << "to" 
+                << it.value()->instance();
+            // Need to make a copy, since the original event
+            // will be deleted when this function returns
+            MClientEvent* nme = new MClientEvent(*me);
+            QApplication::postEvent(it.value()->instance(),nme);
+        }
     }
 }
 

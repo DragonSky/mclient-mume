@@ -3,22 +3,23 @@
 #include "MClientEventData.h"
 
 #include <QDebug>
-#include <QObject>
+#include <QVariant>
 #include <QString>
 
 
-MClientEvent::MClientEvent(MClientEventData* payload, const QString type) 
+MClientEvent::MClientEvent(MClientEventData* payload, const QStringList types) 
         : QEvent(QEvent::Type(10001)) {
 //    qDebug() << "MClientEvent::MClientEvent()";
 
     // We take ownership of payload!
     _payload = QSharedDataPointer<MClientEventData>(payload);
     //_payload->refs();
-    _dataType = type;
+    _dataTypes = types;
 }
 
 MClientEvent::MClientEvent(const MClientEvent& me) 
-        : QEvent(QEvent::Type(10001)), _payload(me._payload) {
+        : QEvent(QEvent::Type(10001)), _payload(me._payload),
+        _dataTypes(me._dataTypes) {
      //       qDebug() << "copying shit, yo";
 /*
 //    MClientEvent& me2 = const_cast<MClientEvent&>(me);
@@ -30,16 +31,26 @@ MClientEvent::MClientEvent(const MClientEvent& me)
 
 
 MClientEvent::~MClientEvent() {
-    //qDebug() << "MClientEvent::~MClientEvent()";
+    qDebug() << "MClientEvent::~MClientEvent()";
 }
 
 
-const QString& MClientEvent::dataType() const {
-    return _dataType;
+QStringList MClientEvent::dataTypes() const {
+    return _dataTypes;
 }
 
 
-QObject* MClientEvent::payload() {
+const QString MClientEvent::session() const {
+    return _session;
+}
+
+
+void MClientEvent::session(const QString s) {
+    _session = s;
+}
+
+
+QVariant* MClientEvent::payload() {
     return _payload->payload();
 }
 

@@ -1,24 +1,30 @@
 #include "SocketReader.h"
 
+#include "SocketManagerIO.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QString>
 #include <QTcpSocket>
 
-#include <algorithm>
-using std::copy;
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
 
-#include "netinet/in.h"
-
-
-SocketReader::SocketReader(QObject* parent) : QThread(parent) { 
-    
+SocketReader::SocketReader(QString id, QObject* parent) : QThread(parent) { 
+   
+    _id = id;
+    _sm = qobject_cast<SocketManagerIO*>(parent);
+    if(!_sm) qWarning() << "you can't set something else as a socketreader parent!";
 
     _socket = new QTcpSocket();
-    _counter = 0;
+    _proxy.setType(QNetworkProxy::NoProxy);
+    //_proxy.setType(QNetworkProxy::Socks5Proxy);
+    //_proxy.setHostName("proxy.example.com");
+    //_proxy.setPort(1080);
+    //_proxy.setUser("username");
+    //_proxy.setPassword("password");
+    //QNetworkProxy::setApplicationProxy(proxy)
+    _socket->setProxy(_proxy);
+    
+
     _delete = 0;
 
     connect(_socket, SIGNAL(connected()), this, SLOT(on_connect())); 
@@ -30,7 +36,7 @@ SocketReader::SocketReader(QObject* parent) : QThread(parent) {
 }
 
 
-void SocketReader::connectToHost(const QString& host, const int& port) {
+void SocketReader::connectToHost(const QString host, const int& port) {
     _host = host;
     _port = port;
     _socket->connectToHost(_host, _port);
@@ -48,12 +54,11 @@ void SocketReader::on_connect() {
 
 
 void SocketReader::on_readyRead() {
-    
+    if(!isRunning()) start(LowPriority);
 }
 
 
 void SocketReader::on_disconnect() {
-//    Logger(1) << "socket on port" << _port << "has disconnected" << endl;
     if(_delete == 0) {
         _delete = 1;
         deleteLater();
@@ -77,10 +82,15 @@ const int& SocketReader::port() const {
 
 
 void SocketReader::closeSocket() const {
-//    Logger(1) << "SocketReader::closeSocket()" << endl;
     _socket->close();
 }
 
+
 void SocketReader::run() {
+    
+    qDebug() << "SocketReader" << _id << "reading data!";
+    // Just read everything there is to be read into a QByteArray.
+    QByteArray ba = _socket->readAll(); 
+    _sm->socketReadData(ba, _id);
 
 }

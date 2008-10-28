@@ -32,6 +32,8 @@ class SocketManagerIO : public MClientIOPlugin {
         void disconnectDevice();
         void sendData(const QByteArray data);
 
+        void socketReadData(const QByteArray data, const QString socket);
+
 
     private:
         QHash<QString, SocketReader*> _sockets;

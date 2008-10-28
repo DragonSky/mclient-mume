@@ -1,10 +1,15 @@
 #ifndef SOCKETREADER_H
 #define SOCKETREADER_H
 
+#include <QString>
 #include <QThread>
 
+#include <QNetworkProxy>
 #include <QString>
 
+class SocketManagerIO;
+
+class QNetworkProxy;
 class QTcpSocket;
 
 
@@ -13,10 +18,10 @@ class SocketReader : public QThread {
 
     public:
         
-        SocketReader(QObject* parent=0);
+        SocketReader(QString id, QObject* parent=0);
         ~SocketReader();
 
-        void connectToHost(const QString& host, const int& port);
+        void connectToHost(const QString host, const int& port);
         
         const int& port() const;
         const QString& host() const;
@@ -28,7 +33,10 @@ class SocketReader : public QThread {
 
     private:
         QTcpSocket* _socket;
-        int _counter;
+        QNetworkProxy _proxy;
+        SocketManagerIO* _sm;
+        QString _id;
+        
         bool _delete;
        
         // Config
