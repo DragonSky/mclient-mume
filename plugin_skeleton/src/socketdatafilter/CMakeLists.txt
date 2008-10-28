@@ -20,7 +20,8 @@ add_library(socketdatafilter SHARED ${socketdatafilter_SRCS}
     ${socketdatafilter_MOC_SRCS})
 target_link_libraries(socketdatafilter mclientplugin ${QT_LIBRARIES})
 
-install(TARGETS 
-    socketdatafilter 
-    LIBRARY DESTINATION lib)
-
+INSTALL(TARGETS socketdatafilter
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)

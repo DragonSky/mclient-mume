@@ -19,6 +19,8 @@ add_library(socketmanagerio SHARED ${socketmanagerio_SRCS}
     ${socketmanagerio_MOC_SRCS})
 target_link_libraries(socketmanagerio mclientplugin ${QT_LIBRARIES})
 
-install(TARGETS
-    socketmanagerio 
-    LIBRARY DESTINATION lib)
+INSTALL(TARGETS socketmanagerio
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)

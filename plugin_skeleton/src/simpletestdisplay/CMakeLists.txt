@@ -30,7 +30,8 @@ add_library(simpletestdisplay SHARED ${simpletestdisplay_SRCS}
     ${simpletestdisplay_MOC_SRCS})
 target_link_libraries(simpletestdisplay mclientplugin ${QT_LIBRARIES})
 
-install(TARGETS 
-    simpletestdisplay 
-    LIBRARY DESTINATION lib)
-
+INSTALL(TARGETS simpletestdisplay
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
