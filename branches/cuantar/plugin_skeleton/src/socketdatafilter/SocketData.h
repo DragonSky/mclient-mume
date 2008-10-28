@@ -10,9 +10,10 @@ class SocketData : public QObject, public QSharedData {
 
     public:
         SocketData(const QByteArray data, QObject* parent=0);
+        
         ~SocketData();
 
-        const QByteArray& data() const;
+        QByteArray data() const;
 
     private:
         QByteArray _data;

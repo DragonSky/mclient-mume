@@ -1,8 +1,15 @@
 #include "SocketManagerIO.h"
 
+#include "SocketData.h"
 #include "SocketManagerIOConfig.h"
+#include "SocketReader.h"
 
+#include "MClientEvent.h"
+#include "PluginManager.h"
+
+#include <QApplication>
 #include <QByteArray>
+#include <QDebug>
 #include <QEvent>
 #include <QSettings>
 
@@ -27,6 +34,10 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     QSettings s;
     //_host = s.value(_shortName+"/host").toString();
     //ke _port = s.value(_shortName+"/port").toInt();
+
+    SocketReader* sr = new SocketReader("Session1", this);
+    _sockets.insert("Session1",sr);
+    sr->connectToHost("mume.org",4242);
 }
 
 
@@ -79,6 +90,24 @@ void SocketManagerIO::disconnectDevice() {
 
 void SocketManagerIO::sendData(const QByteArray data) {
     // Send data to the sockets.
+}
+
+
+void SocketManagerIO::socketReadData(const QByteArray data, const QString id) {
+    qDebug() << "received data from" << id;
+
+    //SocketData* sd = new SocketData(data);
+    QVariant* qv = new QVariant(data);
+    QStringList tags;
+    tags << "SocketData";
+
+    MClientEvent* me;
+    me = new MClientEvent(new MClientEventData(qv), tags);
+    me->session(id);
+
+    // segfault here
+    QApplication::postEvent(PluginManager::instance(), me);
+
 }
 
 

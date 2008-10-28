@@ -13,6 +13,6 @@ SocketData::~SocketData() {
 }
 
 
-const QByteArray& SocketData::data() const {
+QByteArray SocketData::data() const {
     return _data;
 }

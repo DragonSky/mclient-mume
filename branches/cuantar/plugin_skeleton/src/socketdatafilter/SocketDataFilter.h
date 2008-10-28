@@ -10,7 +10,6 @@ class QEvent;
 
 class SocketDataFilter : public MClientFilterPlugin {
     Q_OBJECT
-//    Q_INTERFACES(MClientFilterInterface MClientPluginInterface)
     
     public:
         SocketDataFilter(QObject* parent=0);
@@ -24,7 +23,6 @@ class SocketDataFilter : public MClientFilterPlugin {
 
 
     private:
-        const int determineType(const QByteArray& data) const;
 
 };
 

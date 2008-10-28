@@ -4,10 +4,14 @@
 #include "PowwowWrapper.h"
 #include "SimpleTest.h"
 
+#include "MClientEvent.h"
+#include "SocketData.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QEvent>
 #include <QPushButton>
+#include <QVariant>
 
 Q_EXPORT_PLUGIN2(simpletestdisplay, SimpleTestDisplay)
 
@@ -20,7 +24,7 @@ SimpleTestDisplay::SimpleTestDisplay(QWidget* parent)
     _description = "A simple test display plugin.";
     _dependencies.insert("terrible_test_api", 1);
 //    _implemented.insert("some_other_api",1);
-    _dataTypes << "SimpleTestEvent";
+    _dataTypes << "FilteredData";
     _configurable = true;
 
     qDebug() << this->configurable();
@@ -33,6 +37,15 @@ SimpleTestDisplay::~SimpleTestDisplay() {
 
 void SimpleTestDisplay::customEvent(QEvent* e) {
     qDebug() << "simple test display got an event!";
+    if(!e->type() == 10001) return;
+    
+    MClientEvent* me;
+    me = static_cast<MClientEvent*>(e);
+
+    if(me->dataTypes().contains("FilteredData")) {
+        QByteArray ba = me->payload()->toByteArray();
+        qDebug() << ba.data();
+    }
 }
 
 
@@ -49,8 +62,6 @@ void SimpleTestDisplay::configure() {
     _button->setMinimumSize(400,400);
     if(!_button->isVisible()) _button->show();
 
-    // This is a test
-    //_simpleTests.insert("SimpleTest", new SimpleTest());
     qDebug() << "monkey!";
 
 }
@@ -73,8 +84,7 @@ const bool SimpleTestDisplay::initDisplay() {
    
     _widgets.insert("monkey!", cw); 
 
-   
-    pw->connectToHost("mume.org", 4242);
+    //pw->connectToHost("mume.org", 4242);
     cw->show();
 
     return true;

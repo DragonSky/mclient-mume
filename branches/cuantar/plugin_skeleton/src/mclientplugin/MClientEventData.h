@@ -3,20 +3,23 @@
 
 #include <QSharedData>
 
-class QObject;
+class QVariant;
 
 
 class MClientEventData : public QSharedData {
     
     public:
-        MClientEventData(QObject* payload);
+        MClientEventData(QVariant* payload);
+        MClientEventData(const MClientEventData& med);
         ~MClientEventData();
 
-        QObject* payload();
-        //void refs() const;
+        QVariant* payload();
+        
+        // testing
+        void refs() const;
 
     private:
-        QObject* _payload;
+        QVariant* _payload;
 
 };
 
