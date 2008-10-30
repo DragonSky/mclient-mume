@@ -1,7 +1,6 @@
 #include "SimpleTestDisplay.h"
 
 #include "ClientWidget.h"
-#include "PowwowWrapper.h"
 #include "SimpleTest.h"
 
 #include "MClientEvent.h"
@@ -80,12 +79,10 @@ const bool SimpleTestDisplay::saveSettings() const {
 
 // Display plugin members
 const bool SimpleTestDisplay::initDisplay() {
-    PowwowWrapper* pw = PowwowWrapper::Instance();
     ClientWidget* cw = new ClientWidget(this);
    
     _widgets.insert("monkey!", cw); 
 
-    //pw->connectToHost("mume.org", 4242);
     cw->show();
 
     return true;
