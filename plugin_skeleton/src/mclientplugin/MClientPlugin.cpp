@@ -4,7 +4,7 @@
 #include <QString>
 
 
-MClientPlugin::MClientPlugin(QObject* parent) : QObject(parent) {
+MClientPlugin::MClientPlugin(QObject* parent) : QThread(parent) {
     _shortName = "mclientplugin";
     _longName = "The Original MClientPlugin";
     _description = "If you see this text, the plugin author did not replace the default description.";
@@ -60,6 +60,10 @@ const bool MClientPlugin::configurable() const {
     return _configurable;
 }
 
+
+// This is needed in Qt 4.3 because run is pure virtual -- not in 4.4
+void MClientPlugin::run() {
+}
 
 /*
 void MClientPlugin::configure() {
