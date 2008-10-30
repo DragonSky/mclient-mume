@@ -4,7 +4,7 @@ project(plugin_skeleton)
 # Make sure we know where the executable is
 SET(EXECUTABLE_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/bin"
     CACHE INTERNAL "")
-SET(LIBRARY_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/bin/plugins"
+SET(LIBRARY_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/plugins"
     CACHE INTERNAL "")
 
 # Set up Qt4

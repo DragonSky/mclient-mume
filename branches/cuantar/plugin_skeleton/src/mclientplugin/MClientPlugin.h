@@ -2,7 +2,7 @@
 #define MCLIENTPLUGIN_H
 
 #include "MClientPluginInterface.h"
-#include <QObject>
+#include <QThread>
 
 #include <QtPlugin>
 
@@ -12,7 +12,7 @@
 class QString;
 
 
-class MClientPlugin : public QObject, public MClientPluginInterface {
+class MClientPlugin : public QThread, public MClientPluginInterface {
     Q_OBJECT
     Q_INTERFACES(MClientPluginInterface)
     
@@ -47,19 +47,21 @@ class MClientPlugin : public QObject, public MClientPluginInterface {
         const QStringList& dataTypes() const;
         
         // Consider putting this here and leaving it virtual.
-        void customEvent(QEvent* e)=0;
+        virtual void customEvent(QEvent* e)=0;
         
         // Can this be configured manually?
         const bool configurable() const;
 
         // If so, we need to implement this
-        void configure()=0;
+        virtual void configure()=0;
 
         // Also, all plugins need to have the ability to load settings.
-        const bool loadSettings()=0;
+        virtual const bool loadSettings()=0;
 
         // And also they need to save them.
-        const bool saveSettings() const=0;
+        virtual const bool saveSettings() const=0;
+
+        virtual void run();
 
     protected:
         QString _libName;
