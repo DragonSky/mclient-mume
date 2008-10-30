@@ -16,8 +16,6 @@ class ClientWidget : public QWidget {
     public:
         ClientWidget(SimpleTestDisplay* st, QWidget* parent=0);
         ~ClientWidget();
-        void connectToHost(const QString& host, const qint64& port) const;
-
 
     public slots:
         void sendUserInput();

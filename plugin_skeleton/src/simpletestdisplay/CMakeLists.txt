@@ -12,18 +12,14 @@ set(simpletestdisplay_SRCS
     SimpleTest.cpp
     ClientWidget.cpp
     ClientTextEdit.cpp
-    ClientLineEdit.cpp
-    ClientSocket.cpp
-    PowwowWrapper.cpp)
+    ClientLineEdit.cpp)
 
 set(simpletestdisplay_MOC_HDRS
     SimpleTestDisplay.h
     SimpleTest.h
     ClientWidget.h
     ClientTextEdit.h
-    ClientLineEdit.h
-    ClientSocket.h
-    PowwowWrapper.h)
+    ClientLineEdit.h)
 
 QT4_WRAP_CPP(simpletestdisplay_MOC_SRCS ${simpletestdisplay_MOC_HDRS})
 add_library(simpletestdisplay SHARED ${simpletestdisplay_SRCS}

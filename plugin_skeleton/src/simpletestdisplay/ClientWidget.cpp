@@ -2,7 +2,6 @@
 
 #include "ClientLineEdit.h"
 #include "ClientTextEdit.h"
-#include "PowwowWrapper.h"
 #include "SimpleTestDisplay.h"
 
 #include "MClientEvent.h"
@@ -29,23 +28,15 @@ ClientWidget::ClientWidget(SimpleTestDisplay* st, QWidget* parent)
     _lineEdit = new ClientLineEdit(this);
     _layout->addWidget(_lineEdit);
    
-    PowwowWrapper* wrapper = PowwowWrapper::Instance();
-    // When the wrapper receives data, display it in the textedit
-    connect(_st, SIGNAL(dataReceived(const QString&)), _textEdit, 
-            SLOT(displayText(const QString&)));
-    
     // Send data when user presses return
     connect(_lineEdit, SIGNAL(returnPressed()), this, 
             SLOT(sendUserInput()));
     
+    // When the STD receives data, display it in the textedit
+    connect(_st, SIGNAL(dataReceived(const QString&)), _textEdit, 
+            SLOT(displayText(const QString&)));
+    
     setMinimumSize(640, 480);
-}
-
-
-void ClientWidget::connectToHost(const QString& host, 
-        const qint64& port) const {
-    PowwowWrapper* wrapper = PowwowWrapper::Instance();
-    wrapper->connectToHost(host, port);
 }
 
 
