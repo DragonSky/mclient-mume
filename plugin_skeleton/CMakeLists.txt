@@ -1,11 +1,17 @@
 cmake_minimum_required (VERSION 2.6)
+#if(COMMAND cmake_policy)
+#    cmake_policy(SET CMP0003 NEW)
+#endif(COMMAND cmake_policy)
+
+
 project(plugin_skeleton)
 
 # Make sure we know where the executable is
-SET(EXECUTABLE_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/bin"
-    CACHE INTERNAL "")
-SET(LIBRARY_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/plugins"
-    CACHE INTERNAL "")
+# These lines break the install on linux!
+#SET(EXECUTABLE_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/bin"
+#    CACHE INTERNAL "")
+#SET(LIBRARY_OUTPUT_PATH "${plugin_skeleton_BINARY_DIR}/plugins"
+#    CACHE INTERNAL "")
 
 # Set up Qt4
 find_package(Qt4 REQUIRED)
