@@ -10,7 +10,6 @@ class QEvent;
 class QPushButton;
 
 class ClientWidget;
-class SimpleTest;
 
 
 class SimpleTestDisplay : public MClientDisplayPlugin {
@@ -35,7 +34,6 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
     private:
         QPointer<QPushButton> _button;
 
-        QHash<QString, SimpleTest*> _simpleTests;
         QHash<QString, ClientWidget*> _widgets;
 
     signals: 

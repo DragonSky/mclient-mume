@@ -9,14 +9,12 @@ add_definitions(-DQT_SHARED)
 # simpletestdisplay
 set(simpletestdisplay_SRCS
     SimpleTestDisplay.cpp
-    SimpleTest.cpp
     ClientWidget.cpp
     ClientTextEdit.cpp
     ClientLineEdit.cpp)
 
 set(simpletestdisplay_MOC_HDRS
     SimpleTestDisplay.h
-    SimpleTest.h
     ClientWidget.h
     ClientTextEdit.h
     ClientLineEdit.h)

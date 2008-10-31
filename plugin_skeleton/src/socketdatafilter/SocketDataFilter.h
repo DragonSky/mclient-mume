@@ -20,8 +20,8 @@ class SocketDataFilter : public MClientFilterPlugin {
         void configure();
         const bool loadSettings();
         const bool saveSettings() const;
-        const bool startSession();
-        const bool stopSession();
+        const bool startSession(QString s);
+        const bool stopSession(QString s);
 
 
     private:

@@ -1,7 +1,6 @@
 #include "SimpleTestDisplay.h"
 
 #include "ClientWidget.h"
-#include "SimpleTest.h"
 
 #include "MClientEvent.h"
 #include "SocketData.h"
