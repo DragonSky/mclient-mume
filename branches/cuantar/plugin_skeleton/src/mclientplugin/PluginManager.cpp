@@ -265,10 +265,13 @@ void PluginManager::configureTest() {
 void PluginManager::initDisplays() {
     QPluginLoader* pl;
     foreach(pl,_loadedPlugins) {
-        MClientDisplayInterface* di;
-        di = qobject_cast<MClientDisplayInterface*>(pl->instance());
-        if(di) {
-            di->initDisplay();
+        MClientPluginInterface* pi;
+        pi = qobject_cast<MClientPluginInterface*>(pl->instance());
+//        MClientDisplayInterface* di;
+//        di = qobject_cast<MClientDisplayInterface*>(pl->instance());
+        if(pi) {
+            //di->initDisplay();
+            pi->startSession("test");
         }
     }
 }
