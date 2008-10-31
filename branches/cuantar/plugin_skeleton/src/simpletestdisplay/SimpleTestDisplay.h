@@ -29,7 +29,7 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
         const bool stopSession(QString s);
 
         // Display members
-        const bool initDisplay();
+        const bool initDisplay(QString s);
 
 
     private:

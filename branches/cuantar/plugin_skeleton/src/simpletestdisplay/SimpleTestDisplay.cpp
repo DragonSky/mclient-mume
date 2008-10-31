@@ -78,6 +78,7 @@ const bool SimpleTestDisplay::saveSettings() const {
 
 
 const bool SimpleTestDisplay::startSession(QString s) {
+    initDisplay(s);
     return true;
 }
 
@@ -88,10 +89,10 @@ const bool SimpleTestDisplay::stopSession(QString s) {
 
 
 // Display plugin members
-const bool SimpleTestDisplay::initDisplay() {
-    ClientWidget* cw = new ClientWidget(this);
+const bool SimpleTestDisplay::initDisplay(QString s) {
+    ClientWidget* cw = new ClientWidget(s, this);
    
-    _widgets.insert("monkey!", cw); 
+    _widgets.insert(s, cw); 
 
     cw->show();
 

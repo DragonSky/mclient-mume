@@ -14,7 +14,7 @@ class ClientWidget : public QWidget {
     Q_OBJECT
     
     public:
-        ClientWidget(SimpleTestDisplay* st, QWidget* parent=0);
+        ClientWidget(QString s, SimpleTestDisplay* st, QWidget* parent=0);
         ~ClientWidget();
 
     public slots:
@@ -27,6 +27,9 @@ class ClientWidget : public QWidget {
         QTcpSocket* _socket;
         QVBoxLayout* _layout;
         SimpleTestDisplay* _st;
+
+    private:
+        QString _session;
 
 
     signals:

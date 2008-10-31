@@ -16,8 +16,10 @@
 #include <QVBoxLayout>
 
 
-ClientWidget::ClientWidget(SimpleTestDisplay* st, QWidget* parent) 
+ClientWidget::ClientWidget(QString s, SimpleTestDisplay* st, QWidget* parent) 
     : QWidget(parent) {
+    _session = s;
+
     _st = st;
     _layout = new QVBoxLayout(this);
     setLayout(_layout);
