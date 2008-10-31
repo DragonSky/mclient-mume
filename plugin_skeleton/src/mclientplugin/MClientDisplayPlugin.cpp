@@ -15,5 +15,5 @@ void MClientDisplayPlugin::customEvent(QEvent* e) {
 }
 
 
-const bool MClientDisplayPlugin::initDisplay() {
+const bool MClientDisplayPlugin::initDisplay(QString s) {
 }
