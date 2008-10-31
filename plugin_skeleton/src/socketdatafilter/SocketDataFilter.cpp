@@ -16,7 +16,7 @@ Q_EXPORT_PLUGIN2(socketdatafilter, SocketDataFilter)
 
 SocketDataFilter::SocketDataFilter(QObject* parent) 
         : MClientFilterPlugin(parent) {
-    _libName = "libsocketdatafilter.so";
+//    _libName = "libsocketdatafilter.so";
     _shortName = "socketdatafilter";
     _longName = "Socket Data Filter";
     _description = "A socket data filter.";

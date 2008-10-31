@@ -12,7 +12,7 @@ class MClientPluginInterface {
     
     public:
         // The library filename relative to plugins dir
-        virtual const QString& libName() const=0;
+//        virtual const QString& libName() const=0;
 
         // The short name of the plugin used in hashes and maps
         virtual const QString& shortName() const=0;

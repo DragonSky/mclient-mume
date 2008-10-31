@@ -19,7 +19,7 @@ Q_EXPORT_PLUGIN2(socketmanagerio, SocketManagerIO)
 SocketManagerIO::SocketManagerIO(QObject* parent) 
         : MClientIOPlugin(parent) {
     
-    _libName = "libsocketmanagerio.so";
+//    _libName = "libsocketmanagerio.so";
     _shortName = "socketmanagerio";
     _longName = "SocketManager";
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";

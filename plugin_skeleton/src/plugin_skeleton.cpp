@@ -41,7 +41,8 @@ int main(int argc, char** argv) {
     QApplication::postEvent(pm, me2);
     */
 
-    while(!pm->doneLoading()) ; // sleep(.1);
+    //while(!pm->doneLoading()) ; // sleep(.1);
+    sleep(.5);
     pm->configureTest();
     //pm->configureTest(); // testing whether I can save things
 
