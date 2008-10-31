@@ -36,7 +36,7 @@ class PluginManager : public QThread {
 
         // for testing
         void configureTest();
-        const bool doneLoading() const;
+        //const bool doneLoading() const;
         void initDisplays();
     
     protected:
@@ -65,13 +65,23 @@ class PluginManager : public QThread {
         // In what directory are plugins located?  ConfigManager knows.
         QString _pluginDir;
 
+        // The plugin index
+        QString _pluginIndex;
+
         QPointer<PluginConfigWidget> _configWidget;
 
     private:
         static PluginManager* _pinstance;
+
+        const bool indexPlugins();
+        const bool writePluginIndex();
+        const bool readPluginIndex();
         
         // for testing
         bool _doneLoading;
+
+    signals:
+        void doneLoading();
 
 };
 

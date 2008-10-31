@@ -21,7 +21,7 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         ~MClientPlugin();
 
         // The library filename relative to plugins dir
-        const QString& libName() const;
+//        const QString& libName() const;
 
         // The short name of the plugin used in hashes and maps
         const QString& shortName() const;
@@ -71,7 +71,7 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         virtual void run();
 
     protected:
-        QString _libName;
+//        QString _libName;
         QString _shortName;
         QString _longName;
         QString _description;

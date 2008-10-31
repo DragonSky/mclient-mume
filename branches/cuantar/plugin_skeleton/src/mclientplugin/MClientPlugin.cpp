@@ -16,9 +16,11 @@ MClientPlugin::~MClientPlugin() {
 }
 
 
+/*
 const QString& MClientPlugin::libName() const {
     return _libName;
 }
+*/
 
 
 const QString& MClientPlugin::shortName() const {

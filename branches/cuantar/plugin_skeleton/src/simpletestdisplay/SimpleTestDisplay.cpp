@@ -16,7 +16,7 @@ Q_EXPORT_PLUGIN2(simpletestdisplay, SimpleTestDisplay)
 
 SimpleTestDisplay::SimpleTestDisplay(QWidget* parent) 
         : MClientDisplayPlugin(parent) {
-    _libName = "libsimpletestdisplay.so";
+//    _libName = "libsimpletestdisplay.so";
     _shortName = "simpletestdisplay";
     _longName = "Simple Test Display";
     _description = "A simple test display plugin.";

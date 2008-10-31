@@ -7,7 +7,9 @@
 #include "PluginEntry.h"
 
 #include <QApplication>
+#include <QDateTime>
 #include <QDebug>
+#include <QDir>
 #include <QHash>
 #include <QLibrary>
 #include <QPluginLoader>
@@ -39,7 +41,45 @@ PluginManager::PluginManager(QWidget* display, QObject* io, QObject* filter,
 
 PluginManager::PluginManager(QObject* parent) : QThread(parent) {
     _pluginDir = "./plugins";
+    _pluginIndex = "plugindb.xml";
 
+    // Create plugin index file if it doesn't exist, or re-index plugins if
+    // the number of entries in the file differs from the number of plugins in
+    // the plugin dir.  This should replace the hardcoded PluginEntries.
+    
+    // Does the index exist?  If so, load it.  If not, create it.
+    if(!QFile::exists(_pluginIndex)) {
+        qDebug() << "index doesn't exist!";
+        indexPlugins();
+    } else {
+        QDir pluginsDir = QDir(qApp->applicationDirPath());
+        pluginsDir.cdUp();
+        pluginsDir.cd(_pluginDir);
+
+        QFileInfo finfo(pluginsDir.absoluteFilePath(_pluginIndex));
+        
+        // Is the index up-to-date 
+        // (i.e. newer than anything in the pluginsDir?)
+        QDateTime indexMod = finfo.lastModified();
+    
+        bool reIndex = false;
+        foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
+            QDateTime pluginMod = QFileInfo(fileName).lastModified();
+            if(indexMod < pluginMod) {
+                reIndex = true;
+                break;
+            }
+        }
+        if(reIndex) {
+            qDebug() << "index is older than some plugin";
+            indexPlugins();
+        }
+    }
+
+
+    // Load plugins using data in that file, which should now be accurate.
+
+    /*
     // Testing
     PluginEntry* e = new PluginEntry();
     e->shortName("socketdatafilter");
@@ -63,6 +103,7 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
     e->libName("libsimpletestdisplay.so");
     qDebug() << e->libName();
     _availablePlugins.insert(e->libName(), e);
+    */
 
     _doneLoading = false;
 }
@@ -85,9 +126,24 @@ PluginManager::~PluginManager() {
 }
 
 
-
 void PluginManager::loadAllPlugins() {
-    
+
+    /*
+    QDir pluginsDir = QDir(qApp->applicationDirPath());
+    pluginsDir.cdUp();
+    pluginsDir.cd("plugins");
+
+    foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
+        bool loader = loadPlugin(pluginsDir.absoluteFilePath(fileName));
+        if(!loader) {
+            qDebug() << "Could not load plugin" << fileName;//pe->shortName();
+
+        } else {
+            //qDebug() << "Successfully loaded plugin" << pe->shortName();
+        }
+       
+    }
+    */
     PluginEntry* pe;
     foreach(pe, _availablePlugins) {
         if(_loadedPlugins.find(pe->shortName()) == _loadedPlugins.end()) {
@@ -109,7 +165,14 @@ void PluginManager::loadAllPlugins() {
 const bool PluginManager::loadPlugin(const QString& libName) {
     qDebug() << "loadPlugin call for" << libName;
 
+    /*
+    QDir pluginsDir = QDir(qApp->applicationDirPath());
+    pluginsDir.cdUp();
+    pluginsDir.cd(_pluginDir);
+    */
+
     QString fileName = _pluginDir + "/" + libName;
+    //QString fileName = libName;
 
     if(!QLibrary::isLibrary(fileName)) {
         // Error handling
@@ -171,7 +234,8 @@ const bool PluginManager::loadPlugin(const QString& libName) {
                                 _loadedPlugins.end()) {
                             qDebug() << "attempting to load dep" 
                                 << pe->libName();
-                            if(loadPlugin(pe->libName())) {
+                            if(loadPlugin(//pluginsDir.absoluteFilePath(
+                                            pe->libName())) {//) {
                                 qDebug() << "succeeded!";
                     //        deps.erase(it);
 
@@ -250,10 +314,12 @@ void PluginManager::run() {
 }
 
 
+/*
 // For testing
 const bool PluginManager::doneLoading() const {
     return _doneLoading;
 }
+*/
 
 
 void PluginManager::configureTest() { 
@@ -274,4 +340,63 @@ void PluginManager::initDisplays() {
             pi->startSession("test");
         }
     }
+}
+
+
+const bool PluginManager::indexPlugins() {
+    QDir pluginsDir = QDir(qApp->applicationDirPath());
+    pluginsDir.cdUp();
+    pluginsDir.cd(_pluginDir);
+
+    PluginEntry* e = 0;
+    foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
+        qDebug() << pluginsDir.absoluteFilePath(fileName);
+
+        // Load the plugin
+        QPluginLoader* loader = 
+            new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
+
+        if(!loader->load()) {
+            qDebug() << "couldn't load!";
+            continue;
+        }
+
+        // Cast it
+        MClientPluginInterface* pi = 
+            qobject_cast<MClientPluginInterface*>(loader->instance());
+        if(!pi) {
+            qDebug() << "couldn't cast";
+            continue;
+        }
+
+        
+        // Put its info in memory
+        e = new PluginEntry();
+        e->shortName(pi->shortName());
+        e->longName(pi->longName());
+        e->libName(fileName);
+        QHash<QString, int>::const_iterator it = pi->implemented().begin();
+        for(it; it!=pi->implemented().end(); ++it) {
+            e->addAPI(it.key(), it.value());
+        }
+        qDebug() << "indexed" << e->libName();
+        _availablePlugins.insert(e->libName(), e);
+
+        loader->unload();
+    }
+    // Write the list of PluginEntrys to disk
+    writePluginIndex();
+}
+
+
+const bool PluginManager::writePluginIndex() {
+    QHash<QString, PluginEntry*>::iterator it = _availablePlugins.begin();
+    for(it; it!=_availablePlugins.end(); ++it) {
+        // Write it out as xml
+    }
+}
+
+
+const bool PluginManager::readPluginIndex() {
+    // Read in the plugin db xml into PluginEntrys
 }

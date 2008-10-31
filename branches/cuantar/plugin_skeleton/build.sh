@@ -1,6 +1,7 @@
 #!/bin/bash
 
-if [ ! -d build ]; then mkdir build; fi
+if [ -d build ]; then rm -rf build; fi
+mkdir build
 cd build
 cmake ../ -DCMAKE_INSTALL_PREFIX=. && make && make install
 
