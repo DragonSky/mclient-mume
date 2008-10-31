@@ -2,7 +2,6 @@
 
 #include "MClientEvent.h"
 #include "PluginManager.h"
-#include "SocketData.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -75,8 +74,6 @@ void SocketDataFilter::customEvent(QEvent* e) {
 }
 
 
-
-
 void SocketDataFilter::configure() {
 }
 
@@ -86,4 +83,14 @@ const bool SocketDataFilter::loadSettings() {
 
 
 const bool SocketDataFilter::saveSettings() const {
+}
+
+
+const bool SocketDataFilter::startSession(QString s) {
+    return true;
+}
+
+
+const bool SocketDataFilter::stopSession(QString s) {
+    return true;
 }
