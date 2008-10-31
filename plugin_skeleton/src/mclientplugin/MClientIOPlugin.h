@@ -24,13 +24,6 @@ class MClientIOPlugin : public MClientPlugin, public MClientIOInterface {
         virtual void connectDevice();
         virtual void disconnectDevice();
 
-    //protected:
-        // This will get subclassed as needed by the developer
-        // QIODevice* _device;
-        
-        // Bad idea: we don't want to limit ourselves to a single socket,
-        // file, whatever.  Maybe we want a plugin that reads from a few
-        // places and combines the data before spitting it out.
 };
 
 
