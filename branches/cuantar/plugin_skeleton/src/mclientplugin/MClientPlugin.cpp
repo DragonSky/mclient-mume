@@ -67,6 +67,15 @@ void MClientPlugin::run() {
 
 /*
 void MClientPlugin::configure() {
+    // Suppose we have a method like this that we want to make pure virtual in
+    // the future, so that all plugins are required to implement it.
+    //
+    // One way to smooth the transition is to implement it here, but put a
+    // qWarning or a Logger message to the effect of:
+    //
+    // MClientPlugin::configure() will become pure virtual in the future.
+    // Plugin developers should implement it before that happens to avoid
+    // breakage!
 
 }
 
