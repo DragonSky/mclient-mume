@@ -91,6 +91,17 @@ const bool SocketManagerIO::saveSettings() const {
 }
 
 
+const bool SocketManagerIO::startSession(QString s) {
+    return true;
+}
+
+
+const bool SocketManagerIO::stopSession(QString s) {
+    return true;
+}
+
+
+// IO members
 void SocketManagerIO::connectDevice() {
     // Adds a socket to the hash and attempts to connect.  May prompt the
     // user for input about where to connect and on what port.

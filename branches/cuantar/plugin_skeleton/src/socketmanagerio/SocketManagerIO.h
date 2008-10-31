@@ -26,6 +26,8 @@ class SocketManagerIO : public MClientIOPlugin {
         void configure();
         const bool loadSettings();
         const bool saveSettings() const;
+        const bool startSession(QString s);
+        const bool stopSession(QString s);
 
         // IO members
         void connectDevice();

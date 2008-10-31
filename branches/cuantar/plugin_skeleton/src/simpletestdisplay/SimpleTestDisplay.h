@@ -25,6 +25,8 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
         void configure();
         const bool loadSettings();
         const bool saveSettings() const;
+        const bool startSession(QString s);
+        const bool stopSession(QString s);
 
         // Display members
         const bool initDisplay();

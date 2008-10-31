@@ -77,6 +77,16 @@ const bool SimpleTestDisplay::saveSettings() const {
 }
 
 
+const bool SimpleTestDisplay::startSession(QString s) {
+    return true;
+}
+
+
+const bool SimpleTestDisplay::stopSession(QString s) {
+    return true;
+}
+
+
 // Display plugin members
 const bool SimpleTestDisplay::initDisplay() {
     ClientWidget* cw = new ClientWidget(this);
