@@ -21,7 +21,7 @@ class MClientDisplayPlugin : public MClientPlugin,
         virtual void customEvent(QEvent* e);
 
         // Display members
-        const bool initDisplay();
+        virtual const bool initDisplay();
 };
 
 

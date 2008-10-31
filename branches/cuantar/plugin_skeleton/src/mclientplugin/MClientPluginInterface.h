@@ -51,6 +51,13 @@ class MClientPluginInterface {
 
         // And also they need to save them.
         virtual const bool saveSettings() const=0;
+
+        // Create objects local to one session
+        virtual const bool startSession(QString s)=0;
+
+        // Destroy objects local to one session
+        virtual const bool stopSession(QString s)=0;
+
 };
 
 Q_DECLARE_INTERFACE(MClientPluginInterface,
