@@ -27,6 +27,7 @@ install(TARGETS
     RUNTIME DESTINATION bin)
 
 add_subdirectory(mclientplugin)
-add_subdirectory(socketdatafilter)
+#add_subdirectory(socketdatafilter)
 add_subdirectory(socketmanagerio)
 add_subdirectory(simpletestdisplay)
+add_subdirectory(telnet)

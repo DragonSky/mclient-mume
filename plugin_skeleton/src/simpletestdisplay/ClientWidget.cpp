@@ -48,11 +48,19 @@ ClientWidget::~ClientWidget() {
 
 void ClientWidget::sendUserInput() {
     _lineEdit->selectAll();
-    //PowwowWrapper::Instance()->getUserInput(_lineEdit->selectedText());
-    QByteArray ba(_lineEdit->selectedText().toStdString().c_str());
-    QVariant* qv = new QVariant(ba);
-    QStringList sl("SendToSocketData");
-
-    MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
-    QApplication::postEvent(PluginManager::instance(), me);
+    if (_lineEdit->selectedText().startsWith("#connect")) {
+      QVariant* qv = new QVariant();
+      QStringList sl("ConnectToHost");
+      MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
+      QApplication::postEvent(PluginManager::instance(), me);
+      
+    } else {
+      //PowwowWrapper::Instance()->getUserInput(_lineEdit->selectedText());
+      QByteArray ba(_lineEdit->selectedText().toStdString().c_str());
+      QVariant* qv = new QVariant(ba);
+      QStringList sl("SendToSocketData");
+      
+      MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
+      QApplication::postEvent(PluginManager::instance(), me);
+    }
 }

@@ -348,6 +348,9 @@ const bool PluginManager::indexPlugins() {
     pluginsDir.cdUp();
     pluginsDir.cd(_pluginDir);
 
+
+    qDebug() << "Files: " << pluginsDir.entryList(QDir::Files);
+
     PluginEntry* e = 0;
     foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
         qDebug() << pluginsDir.absoluteFilePath(fileName);
@@ -394,6 +397,7 @@ const bool PluginManager::writePluginIndex() {
     for(it; it!=_availablePlugins.end(); ++it) {
         // Write it out as xml
     }
+    qDebug("index writen");
 }
 
 
