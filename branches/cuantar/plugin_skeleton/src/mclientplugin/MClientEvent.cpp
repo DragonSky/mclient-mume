@@ -31,7 +31,7 @@ MClientEvent::MClientEvent(const MClientEvent& me)
 
 
 MClientEvent::~MClientEvent() {
-    qDebug() << "MClientEvent::~MClientEvent()";
+  //qDebug() << "MClientEvent::~MClientEvent()";
 }
 
 

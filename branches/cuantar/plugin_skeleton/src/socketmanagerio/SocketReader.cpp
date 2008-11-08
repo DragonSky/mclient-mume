@@ -2,6 +2,10 @@
 
 #include "SocketManagerIO.h"
 
+#include "MClientEvent.h"
+#include "PluginManager.h"
+#include <QVariant>
+
 #include <QApplication>
 #include <QDebug>
 #include <QString>
@@ -49,7 +53,15 @@ SocketReader::~SocketReader() {
 
 
 void SocketReader::on_connect() {
+  qDebug() << "\t!! Socket CONNECTED";
 
+    QVariant* qv = new QVariant();
+    QStringList tags;
+    tags << "SocketConnected";
+    MClientEvent* me;
+    me = new MClientEvent(new MClientEventData(qv), tags);
+    me->session(_id);
+    QApplication::postEvent(PluginManager::instance(), me);    
 }
 
 
@@ -59,6 +71,16 @@ void SocketReader::on_readyRead() {
 
 
 void SocketReader::on_disconnect() {
+  qDebug() << "\t!! Socket DISCONNECTED";
+
+    QVariant* qv = new QVariant();
+    QStringList tags;
+    tags << "SocketDisconnected";
+    MClientEvent* me;
+    me = new MClientEvent(new MClientEventData(qv), tags);
+    me->session(_id);
+    QApplication::postEvent(PluginManager::instance(), me);
+
     if(_delete == 0) {
         _delete = 1;
         deleteLater();

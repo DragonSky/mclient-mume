@@ -45,6 +45,9 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
 
         // Returns a QStringList of data types it cares about
         const QStringList& dataTypes() const;
+
+	// Returns the session that this plugin is registered to
+	const QString& session() const;
         
         // Consider putting this here and leaving it virtual.
         virtual void customEvent(QEvent* e)=0;
@@ -76,6 +79,7 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         QString _longName;
         QString _description;
         QString _version;
+	QString _session;
 
         bool _configurable;
 

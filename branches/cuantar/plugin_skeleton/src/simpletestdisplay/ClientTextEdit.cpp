@@ -19,13 +19,16 @@ ClientTextEdit::~ClientTextEdit() {
 
 
 void ClientTextEdit::displayText(const QString& str) {
-    qDebug() << "Received text:" << str;
+    //qDebug() << "Received text:" << str;
     //_doc->setPlainText(str);
     addText(str);
 }
 
 
 void ClientTextEdit::addText(const QString& str) {
+
+  _cursor->insertText(str, _format);
+  return ;
 
   // ANSI codes are formatted as the following:
   // escape + [ + n1 (+ n2) + m

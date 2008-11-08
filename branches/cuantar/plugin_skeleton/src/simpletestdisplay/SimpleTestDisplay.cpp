@@ -34,7 +34,7 @@ SimpleTestDisplay::~SimpleTestDisplay() {
 
 
 void SimpleTestDisplay::customEvent(QEvent* e) {
-    qDebug() << "simple test display got an event!";
+  //qDebug() << "simple test display got an event!";
     if(!e->type() == 10001) return;
     
     MClientEvent* me;
@@ -42,7 +42,7 @@ void SimpleTestDisplay::customEvent(QEvent* e) {
 
     if(me->dataTypes().contains("FilteredData")) {
         QByteArray ba = me->payload()->toByteArray();
-        qDebug() << ba.data();
+        qDebug() << "Displayed: " << ba.data();
         emit dataReceived(QString(ba.data()));
     }
 }
@@ -94,6 +94,8 @@ const bool SimpleTestDisplay::initDisplay(QString s) {
     _widgets.insert(s, cw); 
 
     cw->show();
+
+    emit dataReceived(QString("Type #connect to connect to MUME\n"));
 
     return true;
 

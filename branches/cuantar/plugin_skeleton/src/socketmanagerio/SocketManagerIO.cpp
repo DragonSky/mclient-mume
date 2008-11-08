@@ -25,7 +25,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";
 //    _dependencies.insert("some_stupid_api", 10);
     _implemented.insert("some_stupid_api",10);
-    _dataTypes << "SendToSocketData";
+    _dataTypes << "SendToSocketData" << "ConnectToHost";
     _configurable = true;
 
     // SocketManager members
@@ -34,10 +34,6 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     QSettings s;
     //_host = s.value(_shortName+"/host").toString();
     //ke _port = s.value(_shortName+"/port").toInt();
-
-    SocketReader* sr = new SocketReader("Session1", this);
-    _sockets.insert("Session1",sr);
-    sr->connectToHost("mume.org",4242);
 }
 
 
@@ -53,15 +49,21 @@ void SocketManagerIO::customEvent(QEvent* e) {
     MClientEvent* me;
     me = static_cast<MClientEvent*>(e);
 
-    qDebug() << "customEvent in SocketManagerIO";
+    //qDebug() << "customEvent in SocketManagerIO";
     if(me->dataTypes().contains("SendToSocketData")) {
         QByteArray ba = me->payload()->toByteArray();
         qDebug() << ba.data();
         SocketReader* sr;
         foreach(sr, _sockets) {
-            qDebug() << "sending the data to" << sr;
+	  //qDebug() << "sending the data to" << sr;
             sr->sendToSocket(ba);
         }
+    } else if (me->dataTypes().contains("ConnectToHost")) {
+      QList<QVariant> ls = me->payload()->toList();
+      qDebug() << ls;
+      SocketReader* sr = new SocketReader("Session1", this);
+      _sockets.insert("Session1",sr);
+      sr->connectToHost("mume.org",4242);
     }
 }
 
@@ -76,6 +78,9 @@ void SocketManagerIO::configure() {
 
     if(!_configWidget) _configWidget = new SocketManagerIOConfig();
     if(!_configWidget->isVisible()) _configWidget->show();
+
+    // This also causes the client to connect
+    connectDevice();
 }
 
 
