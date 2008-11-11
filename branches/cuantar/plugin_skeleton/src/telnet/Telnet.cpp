@@ -285,9 +285,12 @@ bool Telnet::doSendData (const string &data)
   QByteArray ba(data.c_str());
   QVariant* qv = new QVariant(ba);
   QStringList sl("SendToSocketData");  
+  postEvent(qv, sl, session());
+/*
   MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
   me->session(session());
   QApplication::postEvent(PluginManager::instance(), me);
+*/
 
   //update counter
   d->sentbytes += dataLength;
@@ -769,9 +772,12 @@ printf ("\n");
 	QVariant* qv = new QVariant(unicodeData);
 	QStringList sl;
 	sl << "FilteredData";
+    postEvent(qv, sl, session());
+    /*
 	MClientEvent* e2 = new MClientEvent(new MClientEventData(qv), sl);
 	e2->session(session());
 	QApplication::postEvent(PluginManager::instance(), e2);
+    */
 	qDebug() << "posted FilteredData!";
 	
 //         invokeEvent ("data-received", sess(), unicodeData);
@@ -809,9 +815,12 @@ printf ("\n");
       QVariant* qv = new QVariant(unicodeData);
       QStringList sl;
       sl << "FilteredData";
+      postEvent(qv, sl, session());
+      /*
       MClientEvent* e2 = new MClientEvent(new MClientEventData(qv), sl);
       e2->session(session());
       QApplication::postEvent(PluginManager::instance(), e2);
+      */
       qDebug() << "posted FilteredData!";
 //    invokeEvent ("data-received", sess(), unicodeData);
     }
