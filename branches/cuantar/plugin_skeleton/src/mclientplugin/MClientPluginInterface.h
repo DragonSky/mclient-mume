@@ -58,6 +58,10 @@ class MClientPluginInterface {
         // Destroy objects local to one session
         virtual const bool stopSession(QString s)=0;
 
+        // Post an event to the PluginManager
+        virtual void postEvent(QVariant* payload, QStringList types,
+                QString session)=0;
+
 };
 
 Q_DECLARE_INTERFACE(MClientPluginInterface,

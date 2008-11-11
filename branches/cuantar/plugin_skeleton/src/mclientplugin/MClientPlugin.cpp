@@ -1,7 +1,14 @@
 #include "MClientPlugin.h"
 
+#include "MClientEvent.h"
+#include "MClientEventData.h"
+#include "PluginManager.h"
+
+#include <QApplication>
 #include <QEvent>
 #include <QString>
+#include <QStringList>
+#include <QVariant>
 
 
 MClientPlugin::MClientPlugin(QObject* parent) : QThread(parent) {
@@ -70,6 +77,17 @@ const bool MClientPlugin::configurable() const {
 
 // This is needed in Qt 4.3 because run is pure virtual -- not in 4.4
 void MClientPlugin::run() {
+}
+
+
+// Post an event
+void MClientPlugin::postEvent(QVariant* payload, QStringList tags, 
+        QString session) {
+    PluginManager* pm = PluginManager::instance();
+    MClientEvent* me = new MClientEvent(new MClientEventData(payload), tags);
+    me->session(session);
+
+    QApplication::postEvent(pm, me);
 }
 
 /*
