@@ -9,11 +9,10 @@ ADD_DEFINITIONS(-DQT_SHARED)
 
 
 set(plugin_skeleton_SRCS
-    plugin_skeleton.cpp
-    socketdatafilter/SocketData.cpp)
+    plugin_skeleton.cpp)
 
 set(plugin_skeleton_MOC_HDRS
-    socketdatafilter/SocketData.h)
+    )
 
 QT4_WRAP_CPP(plugin_skeleton_MOC_SRCS ${plugin_skeleton_MOC_HDRS})
 
