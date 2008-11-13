@@ -20,10 +20,12 @@ class SocketReader : public QThread {
         SocketReader(QString s, SocketManagerIO* sm, QObject* parent=0);
         ~SocketReader();
 
-        void connectToHost(const QString host, const int& port);
+        void connectToHost();//const QString host, const int& port);
         
         const int& port() const;
+        void port(const int);
         const QString& host() const;
+        void host(const QString);
 
         void closeSocket() const;
         

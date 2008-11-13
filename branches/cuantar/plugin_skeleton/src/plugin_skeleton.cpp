@@ -21,9 +21,8 @@ int main(int argc, char** argv) {
     //while(!pm->doneLoading()) ; // sleep(.1);
     sleep(.5);
     pm->configureTest();
-    //pm->configureTest(); // testing whether I can save things
 
-    pm->initDisplays();
+    pm->initSession("test");
     
     int retval = app.exec();
     pm->destroy();
