@@ -25,7 +25,14 @@ PluginManager* PluginManager::instance() {
     }
     
     return _pinstance;
+}
 
+
+void PluginManager::destroy() {
+    quit();
+    wait();
+    delete this;
+    _pinstance = 0;
 }
 
 
@@ -120,6 +127,7 @@ PluginManager::~PluginManager() {
     // Unload all plugins
     QPluginLoader* pm;
     foreach(pm, _loadedPlugins) {
+        delete pm->instance();
         pm->unload();
         delete pm;
     }
@@ -214,9 +222,11 @@ const bool PluginManager::loadPlugin(const QString& libName) {
                 foreach(pe, _availablePlugins) {
                     int version = pe->version(it.key());
                     if(!version) {
+                        /*
                         qDebug() << "Plugin" << pe->shortName() 
                                  << "does not provide an implementation of" 
                                  << it.key();
+                        */
                     } else {
 
                         // Found one of the APIs, so check the version
@@ -348,12 +358,11 @@ const bool PluginManager::indexPlugins() {
     pluginsDir.cdUp();
     pluginsDir.cd(_pluginDir);
 
-
-    qDebug() << "Files: " << pluginsDir.entryList(QDir::Files);
+    //qDebug() << "Files: " << pluginsDir.entryList(QDir::Files);
 
     PluginEntry* e = 0;
     foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
-        qDebug() << pluginsDir.absoluteFilePath(fileName);
+        //qDebug() << pluginsDir.absoluteFilePath(fileName);
 
         // Load the plugin
         QPluginLoader* loader = 
@@ -371,7 +380,6 @@ const bool PluginManager::indexPlugins() {
             qDebug() << "couldn't cast";
             continue;
         }
-
         
         // Put its info in memory
         e = new PluginEntry();
@@ -382,7 +390,7 @@ const bool PluginManager::indexPlugins() {
         for(it; it!=pi->implemented().end(); ++it) {
             e->addAPI(it.key(), it.value());
         }
-        qDebug() << "indexed" << e->libName();
+        //qDebug() << "indexed" << e->libName();
         _availablePlugins.insert(e->libName(), e);
 
         loader->unload();

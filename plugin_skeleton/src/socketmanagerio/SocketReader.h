@@ -1,7 +1,6 @@
 #ifndef SOCKETREADER_H
 #define SOCKETREADER_H
 
-#include <QString>
 #include <QThread>
 
 #include <QNetworkProxy>
@@ -18,7 +17,7 @@ class SocketReader : public QThread {
 
     public:
         
-        SocketReader(QString id, QObject* parent=0);
+        SocketReader(QString s, SocketManagerIO* sm, QObject* parent=0);
         ~SocketReader();
 
         void connectToHost(const QString host, const int& port);
@@ -32,12 +31,14 @@ class SocketReader : public QThread {
 
         void run();
 
+        const QString& session() const;
+
 
     private:
         QTcpSocket* _socket;
         QNetworkProxy _proxy;
         SocketManagerIO* _sm;
-        QString _id;
+        QString _session;
         
         bool _delete;
        

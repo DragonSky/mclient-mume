@@ -22,9 +22,9 @@ void MClientIOPlugin::sendData(const QByteArray data) {
 }
 
 
-void MClientIOPlugin::connectDevice() {
+void MClientIOPlugin::connectDevice(QString s) {
 }
 
 
-void MClientIOPlugin::disconnectDevice() {
+void MClientIOPlugin::disconnectDevice(QString s) {
 }

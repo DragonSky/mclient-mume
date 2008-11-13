@@ -21,6 +21,7 @@ class PluginManager : public QThread {
 
     public:
         static PluginManager* instance();
+        void destroy();
 
         PluginManager(QWidget* display, QObject* io, QObject* filter,
                 QObject* parent=0);

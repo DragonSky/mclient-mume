@@ -25,7 +25,7 @@ class MClientEvent : public QEvent {
         QVariant* payload();
         QSharedDataPointer<MClientEventData> shared() const;
 
-        const QString session() const;
+        const QString& session() const;
         void session(const QString);
 
     protected:

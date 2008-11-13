@@ -188,13 +188,14 @@ const bool Telnet::saveSettings() const {
 
 
 const bool Telnet::startSession(QString s) {
-    _session = s;
+    _runningSessions <<  s;
     return true;
 }
 
 
 const bool Telnet::stopSession(QString s) {
-    return true;
+    int removed = _runningSessions.removeAll(s);
+    return removed!=0?true:false;
 }
 
 void Telnet::setupEncoding ()
@@ -285,12 +286,10 @@ bool Telnet::doSendData (const string &data)
   QByteArray ba(data.c_str(), dataLength);
   QVariant* qv = new QVariant(ba);
   QStringList sl("SendToSocketData");  
-  postEvent(qv, sl, session());
-/*
-  MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
-  me->session(session());
-  QApplication::postEvent(PluginManager::instance(), me);
-*/
+  // FIXME: HACK! :(
+  foreach(QString s, _runningSessions) {
+      postEvent(qv, sl, s);
+  }
 
   //update counter
   d->sentbytes += dataLength;
@@ -772,12 +771,10 @@ printf ("\n");
 	QVariant* qv = new QVariant(unicodeData);
 	QStringList sl;
 	sl << "FilteredData";
-    postEvent(qv, sl, session());
-    /*
-	MClientEvent* e2 = new MClientEvent(new MClientEventData(qv), sl);
-	e2->session(session());
-	QApplication::postEvent(PluginManager::instance(), e2);
-    */
+    //FIXME: HACK! :(
+    foreach(QString s, _runningSessions) {
+        postEvent(qv, sl, s);
+    }
 	qDebug() << "posted FilteredData!";
 	
 //         invokeEvent ("data-received", sess(), unicodeData);
@@ -815,12 +812,10 @@ printf ("\n");
       QVariant* qv = new QVariant(unicodeData);
       QStringList sl;
       sl << "FilteredData";
-      postEvent(qv, sl, session());
-      /*
-      MClientEvent* e2 = new MClientEvent(new MClientEventData(qv), sl);
-      e2->session(session());
-      QApplication::postEvent(PluginManager::instance(), e2);
-      */
+      //FIXME: HACK! :(
+      foreach(QString s, _runningSessions) {
+          postEvent(qv, sl, s);
+      }
       qDebug() << "posted FilteredData!";
 //    invokeEvent ("data-received", sess(), unicodeData);
     }

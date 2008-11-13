@@ -21,8 +21,8 @@ class MClientIOPlugin : public MClientPlugin, public MClientIOInterface {
 
         // IO members
         virtual void sendData(const QByteArray data);
-        virtual void connectDevice();
-        virtual void disconnectDevice();
+        virtual void connectDevice(QString s);
+        virtual void disconnectDevice(QString s);
 
 };
 

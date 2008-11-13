@@ -12,13 +12,15 @@
 #include <QTcpSocket>
 
 
-SocketReader::SocketReader(QString id, QObject* parent) : QThread(parent) { 
+SocketReader::SocketReader(QString s, SocketManagerIO* sm, QObject* parent) 
+    : QThread(parent) { 
    
-    _id = id;
-    _sm = qobject_cast<SocketManagerIO*>(parent);
-    if(!_sm) qWarning() << "you can't set something else as a socketreader parent!";
+    _session = s;
+//    _sm = qobject_cast<SocketManagerIO*>(parent);
+//    if(!_sm) qWarning() << "you can't set something else as a socketreader parent!";
+    _sm = sm;
 
-    _socket = new QTcpSocket();
+    _socket = new QTcpSocket(this);
     _proxy.setType(QNetworkProxy::NoProxy);
     //_proxy.setType(QNetworkProxy::Socks5Proxy);
     //_proxy.setHostName("proxy.example.com");
@@ -28,7 +30,6 @@ SocketReader::SocketReader(QString id, QObject* parent) : QThread(parent) {
     //QNetworkProxy::setApplicationProxy(proxy)
     _socket->setProxy(_proxy);
     
-
     _delete = 0;
 
     connect(_socket, SIGNAL(connected()), this, SLOT(on_connect())); 
@@ -43,11 +44,19 @@ SocketReader::SocketReader(QString id, QObject* parent) : QThread(parent) {
 void SocketReader::connectToHost(const QString host, const int& port) {
     _host = host;
     _port = port;
+    //FIXME: HACK! :(
+    if(_socket->thread() != this->thread()) {
+        qDebug() << "* threads in SocketReader:" << this->thread() 
+            << _socket->thread();
+        _socket->moveToThread(this->thread());
+    }
     _socket->connectToHost(_host, _port);
 }
 
 
 SocketReader::~SocketReader() {
+    terminate();
+    wait();
     delete _socket;
 }
 
@@ -58,9 +67,10 @@ void SocketReader::on_connect() {
     QVariant* qv = new QVariant();
     QStringList tags;
     tags << "SocketConnected";
+
     MClientEvent* me;
     me = new MClientEvent(new MClientEventData(qv), tags);
-    me->session(_id);
+    me->session(_session);
     QApplication::postEvent(PluginManager::instance(), me);    
 }
 
@@ -78,7 +88,7 @@ void SocketReader::on_disconnect() {
     tags << "SocketDisconnected";
     MClientEvent* me;
     me = new MClientEvent(new MClientEventData(qv), tags);
-    me->session(_id);
+    me->session(_session);
     QApplication::postEvent(PluginManager::instance(), me);
 
     if(_delete == 0) {
@@ -109,12 +119,14 @@ void SocketReader::closeSocket() const {
 
 
 void SocketReader::run() {
+    setTerminationEnabled(false);
     
-    qDebug() << "SocketReader" << _id << "reading data!";
+    qDebug() << "SocketReader" << _session << "reading data!";
     // Just read everything there is to be read into a QByteArray.
     QByteArray ba = _socket->readAll(); 
-    _sm->socketReadData(ba, _id);
-
+    _sm->socketReadData(ba, _session);
+    
+    setTerminationEnabled(true);
 }
 
 
@@ -124,4 +136,9 @@ void SocketReader::sendToSocket(QByteArray ba) {
     int len = _socket->write(ba);
     //_socket->write("\n");
     qDebug() << len << "bytes written";
+}
+
+
+const QString& SocketReader::session() const {
+    return _session;
 }

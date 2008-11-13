@@ -8,9 +8,6 @@
 #include <QStringList>
 #include <QVariant>
 
-#include <algorithm>
-using std::copy;
-
 Q_EXPORT_PLUGIN2(socketdatafilter, SocketDataFilter)
 
 
@@ -27,6 +24,7 @@ SocketDataFilter::SocketDataFilter(QObject* parent)
 
 
 SocketDataFilter::~SocketDataFilter() {
+    stopAllSessions();
 }
 
 
@@ -38,38 +36,29 @@ void SocketDataFilter::customEvent(QEvent* e) {
     } else {
         qDebug() << "Doing some crap with the event";
         MClientEvent* me = static_cast<MClientEvent*>(e);
+        qDebug() << "Doing some crap with the event";
 
+        // Shouldn't have to do this test
         bool found = false;
         QString s;
         QStringList types = me->dataTypes();
-//        qDebug() << types.size();
         foreach(s,types) {
-//            qDebug() << "string s" << s;
             if(_dataTypes.contains(s)) {
                 found = true;
-//                qDebug() << "found" << s;
                 break;
             }
         }
-//        if(found == false) { qDebug() << "found == false"; return; }
-
-        // Do processing of the QObject* stored on the event
-        //SocketData* o = qobject_cast<SocketData*>(me->payload());
-        //if(!o) return;
-//        qDebug() << "Doing EVEN MORE crap with the event";
-        me->shared()->refs();
+        //me->shared()->refs();
       
         // Send out a FilteredData
-            QByteArray ba = me->payload()->toByteArray();
-            ba.append("monkey!");
-            QVariant* qv = new QVariant(ba);
-            QStringList sl;
-            sl << "FilteredData";
-            MClientEvent* e2 =
-                new MClientEvent(new MClientEventData(qv), sl);
-            e2->session(me->session());
-            QApplication::postEvent(PluginManager::instance(), e2);
-            qDebug() << "posted FilteredData!";
+        QByteArray ba = me->payload()->toByteArray();
+        ba.append("monkey!"); //filtering ;)
+        
+        QVariant* qv = new QVariant(ba);
+        QStringList sl("FilteredData");
+        
+        postEvent(qv, sl, me->session());
+        qDebug() << "posted FilteredData!";
     }
 }
 
@@ -79,18 +68,22 @@ void SocketDataFilter::configure() {
 
 
 const bool SocketDataFilter::loadSettings() {
+    return true;
 }
 
 
 const bool SocketDataFilter::saveSettings() const {
+    return true;
 }
 
 
 const bool SocketDataFilter::startSession(QString s) {
+    _runningSessions << s;
     return true;
 }
 
 
 const bool SocketDataFilter::stopSession(QString s) {
-    return true;
+    int removed =  _runningSessions.removeAll(s);
+    return removed!=0?true:false;
 }
