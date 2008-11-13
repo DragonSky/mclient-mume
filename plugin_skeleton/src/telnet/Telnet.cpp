@@ -145,7 +145,7 @@ void Telnet::customEvent(QEvent* e) {
 	    reset ();
 
 	    d->sentbytes = 0;
-
+	    
 	    //negotiate some telnet options, if allowed
 	    if (d->_startupneg)
 	      {
@@ -272,7 +272,7 @@ bool Telnet::doSendData (const string &data)
   //write data to socket - it's so complicated because sometimes only a part of data
   //is accepted at a time
   int dataLength = data.length ();
-//   const char *dd = data.c_str();
+  //  const char *dd = data.c_str();
 //   int written = 0;
 //   do {
 //     int w = d->socket->write (dd + written, dataLength - written);
@@ -282,7 +282,7 @@ bool Telnet::doSendData (const string &data)
 //     written += w;
 //   } while (written < dataLength);
 
-  QByteArray ba(data.c_str());
+  QByteArray ba(data.c_str(), dataLength);
   QVariant* qv = new QVariant(ba);
   QStringList sl("SendToSocketData");  
   postEvent(qv, sl, session());

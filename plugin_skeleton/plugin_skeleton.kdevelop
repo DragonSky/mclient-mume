@@ -40,43 +40,7 @@
         <default/>
       </environments>
     </make>
-    <blacklist>
-      <path>build</path>
-      <path>build/CMakeFiles</path>
-      <path>build/CMakeFiles/CompilerIdC</path>
-      <path>build/CMakeFiles/CompilerIdC/CMakeCCompilerId.c</path>
-      <path>build/CMakeFiles/CompilerIdCXX</path>
-      <path>build/CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp</path>
-      <path>build/Makefile</path>
-      <path>build/src</path>
-      <path>build/src/Makefile</path>
-      <path>build/src/mclientplugin</path>
-      <path>build/src/mclientplugin/Makefile</path>
-      <path>build/src/mclientplugin/moc_MClientDisplayPlugin.cxx</path>
-      <path>build/src/mclientplugin/moc_MClientFilterPlugin.cxx</path>
-      <path>build/src/mclientplugin/moc_MClientIOPlugin.cxx</path>
-      <path>build/src/mclientplugin/moc_MClientPlugin.cxx</path>
-      <path>build/src/mclientplugin/moc_PluginConfigWidget.cxx</path>
-      <path>build/src/mclientplugin/moc_PluginManager.cxx</path>
-      <path>build/src/simpletestdisplay</path>
-      <path>build/src/simpletestdisplay/Makefile</path>
-      <path>build/src/simpletestdisplay/moc_ClientLineEdit.cxx</path>
-      <path>build/src/simpletestdisplay/moc_ClientSocket.cxx</path>
-      <path>build/src/simpletestdisplay/moc_ClientTextEdit.cxx</path>
-      <path>build/src/simpletestdisplay/moc_ClientWidget.cxx</path>
-      <path>build/src/simpletestdisplay/moc_PowwowWrapper.cxx</path>
-      <path>build/src/simpletestdisplay/moc_SimpleTest.cxx</path>
-      <path>build/src/simpletestdisplay/moc_SimpleTestDisplay.cxx</path>
-      <path>build/src/socketdatafilter</path>
-      <path>build/src/socketdatafilter/Makefile</path>
-      <path>build/src/socketdatafilter/moc_SocketData.cxx</path>
-      <path>build/src/socketdatafilter/moc_SocketDataFilter.cxx</path>
-      <path>build/src/socketmanagerio</path>
-      <path>build/src/socketmanagerio/Makefile</path>
-      <path>build/src/socketmanagerio/moc_SocketManagerIOConfig.cxx</path>
-      <path>build/src/socketmanagerio/moc_SocketManagerIO.cxx</path>
-      <path>build/src/socketmanagerio/moc_SocketReader.cxx</path>
-    </blacklist>
+    <blacklist/>
     <filetypes>
       <filetype>*.java</filetype>
       <filetype>*.h</filetype>
@@ -155,7 +119,7 @@
       <root></root>
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
       <qmake>/usr/bin/qmake</qmake>
-      <designer></designer>
+      <designer>/usr/bin/designer</designer>
       <designerpluginpaths/>
     </qt>
   </kdevcppsupport>

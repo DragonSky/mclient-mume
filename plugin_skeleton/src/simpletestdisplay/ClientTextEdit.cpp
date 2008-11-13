@@ -3,14 +3,38 @@
 #include <QDebug>
 #include <QTextCursor>
 #include <QTextDocument>
-
+#include <QTextFrame>
+#include <QTextCharFormat>
 
 ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
+    setReadOnly(true);
+    setOverwriteMode(true);
+    setUndoRedoEnabled(false);
+    setDocumentTitle("mClient");
+    setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+    setTabChangesFocus(false);
     _doc = new QTextDocument(this);
+    //_doc->setMaximumBlockCount(Config().scrollbackSize); // max number of lines?
+    _doc->setUndoRedoEnabled(false);
     setDocument(_doc);
-    
-    _cursor = new QTextCursor(_doc);
-    _format = _cursor->charFormat();
+    QTextFrame* frame = _doc->rootFrame();
+    _cursor = frame->firstCursorPosition();
+
+    QTextFrameFormat frameFormat = frame->frameFormat();
+    frameFormat.setBackground(Qt::black);
+    frameFormat.setForeground(Qt::lightGray);
+    frame->setFrameFormat(frameFormat);
+
+    _format = _cursor.charFormat();
+    //_format.setFont(Config().serverOutputFont);
+    _format.setBackground(Qt::black);
+    _format.setForeground(Qt::lightGray);
+    _cursor.setCharFormat(_format);
+
+    /*
+    QFontMetrics fm(Config().serverOutputFont);
+    setTabStopWidth(fm.width(" ") * 8); // A tab is 8 spaces wide
+    */
 }
 
 
@@ -26,10 +50,6 @@ void ClientTextEdit::displayText(const QString& str) {
 
 
 void ClientTextEdit::addText(const QString& str) {
-
-  _cursor->insertText(str, _format);
-  return ;
-
   // ANSI codes are formatted as the following:
   // escape + [ + n1 (+ n2) + m
   QRegExp ansiRx("\\0033\\[((?:\\d+;)*\\d+)m");
@@ -48,8 +68,11 @@ void ClientTextEdit::addText(const QString& str) {
     // split several semicoloned ansi codes into individual codes
     subAnsi = ansi[i].split(";"); 
     QStringListIterator ansiIterator(subAnsi);
+    /*
+    // HACK: ANSI support not included yet.
     while (ansiIterator.hasNext() && i != 0)
-      //updateFormat(format, ansiIterator.next().toInt()); //TODO format
+      updateFormat(_format, ansiIterator.next().toInt());
+    */
 
     // split the text into sub-blocks
     blocks[i].replace((char)20, " "); // replace hex-spaces with normal spaces
@@ -58,52 +81,48 @@ void ClientTextEdit::addText(const QString& str) {
       j = 0;
       do {
         //qDebug("j%d k%d %s", j, k, blocks[i].toAscii().data());
-        // this is for the "You begin to search.." etc lines
-        if (blocks[i].length() > 2) { 
-          _cursor->insertText(blocks[i].mid(j, k), _format);
+        if (blocks[i].length() > 2) { // this is for the "You begin to search.." etc lines
+          _cursor.insertText(blocks[i].mid(j, k), _format);
           moveCursor(-1);
-        } else {                     
-            // HACK because the twiddler has a backspace following the 
-            // twiddler character
+        } else {                     // HACK because the twiddler has a backspace following the twiddler character
           moveCursor(-1);
-          _cursor->insertText(blocks[i].mid(j, k), _format);
+          _cursor.insertText(blocks[i].mid(j, k), _format);
         }
         j = k + 1;
       } while ((k = blocks[i].indexOf(subBlockRx, j)) != -1);
-      _cursor->insertText(blocks[i].mid(j), _format);
-    } else _cursor->insertText(blocks[i], _format);
+      _cursor.insertText(blocks[i].mid(j), _format);
+    } else _cursor.insertText(blocks[i], _format);
 
     /*
     for (j = 0; (j = subBlockRx.indexIn(blocks[i], j)) != -1; j += subBlockRx.matchedLength()) {
     qDebug("%s", subBlock.join(",").toAscii().data());
       if (subBlockRx.cap(1).contains(QRegExp("\\0010"))) {
-        cursor.insertText(blockIterator.next(), format);
+        _cursor.insertText(blockIterator.next(), _format);
         moveCursor(-1);
       }
       else {
-        cursor.insertText(blockIterator.next(), format);
+        _cursor.insertText(blockIterator.next(), _format);
       }
     }
     */
   }
-  setTextCursor(*_cursor);
+  setTextCursor(_cursor);
   ensureCursorVisible();
 }
 
-
 void ClientTextEdit::moveCursor(const int& diff) {
-    int col = _cursor->columnNumber();
-    int pos = _cursor->position();
+    int col = _cursor.columnNumber();
+    int pos = _cursor.position();
     QTextCursor::MoveOperation direction;
 
     if (diff > 0) {
         direction = QTextCursor::Right;
     
-    } else if(diff < 0 && _cursor->columnNumber() != 0) {
+    } else if(diff < 0 && _cursor.columnNumber() != 0) {
         direction = QTextCursor::Left;
     
     } else return;
 
-    _cursor->movePosition(direction, QTextCursor::KeepAnchor, abs(diff));
+    _cursor.movePosition(direction, QTextCursor::KeepAnchor, abs(diff));
 }
 

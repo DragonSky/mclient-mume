@@ -20,7 +20,7 @@ class ClientTextEdit : public QTextEdit {
 
 
     protected:
-        QTextCursor* _cursor;
+        QTextCursor _cursor;
         QTextDocument* _doc;
         QTextCharFormat _format;
 
