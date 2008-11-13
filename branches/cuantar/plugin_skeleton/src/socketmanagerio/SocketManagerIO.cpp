@@ -51,7 +51,7 @@ void SocketManagerIO::customEvent(QEvent* e) {
         
         SocketReader* sr;
         foreach(sr, _sockets.values(me->session())) {
-            sr->sendToSocket(ba);
+            sr->sendToSocket(new QByteArray(ba.data()));
         }
 
     } else if(me->dataTypes().contains("ConnectToHost")) {
