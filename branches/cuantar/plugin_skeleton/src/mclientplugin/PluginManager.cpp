@@ -14,6 +14,7 @@
 #include <QLibrary>
 #include <QPluginLoader>
 #include <QString>
+#include <QtXml>
 #include <QWidget>
 
 
@@ -63,7 +64,7 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
         pluginsDir.cdUp();
         pluginsDir.cd(_pluginDir);
 
-        QFileInfo finfo(pluginsDir.absoluteFilePath(_pluginIndex));
+        QFileInfo finfo(_pluginIndex);//pluginsDir.absoluteFilePath(_pluginIndex));
         
         // Is the index up-to-date 
         // (i.e. newer than anything in the pluginsDir?)
@@ -71,7 +72,9 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
     
         bool reIndex = false;
         foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
-            QDateTime pluginMod = QFileInfo(fileName).lastModified();
+            QDateTime pluginMod = 
+                QFileInfo(pluginsDir.absoluteFilePath(fileName))
+                    .lastModified();
             if(indexMod < pluginMod) {
                 reIndex = true;
                 break;
@@ -80,6 +83,8 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
         if(reIndex) {
             qDebug() << "index is older than some plugin";
             indexPlugins();
+        } else {
+            readPluginIndex();
         }
     }
 
@@ -396,19 +401,99 @@ const bool PluginManager::indexPlugins() {
         loader->unload();
     }
     // Write the list of PluginEntrys to disk
-    writePluginIndex();
+    return writePluginIndex();
 }
 
 
 const bool PluginManager::writePluginIndex() {
-    QHash<QString, PluginEntry*>::iterator it = _availablePlugins.begin();
-    for(it; it!=_availablePlugins.end(); ++it) {
-        // Write it out as xml
+    QIODevice* device = new QFile(_pluginIndex);
+    if(!device->open(QIODevice::WriteOnly)) {
+        qCritical() << "Can't open file for writing:" << _pluginIndex;
+        return false;
     }
-    qDebug("index writen");
+
+    QXmlStreamWriter* xml = new QXmlStreamWriter(device);
+    xml->setAutoFormatting(true);
+    xml->writeStartDocument();
+    xml->writeStartElement("index");
+    
+    //QHash<QString, PluginEntry*>::iterator it = _availablePlugins.begin();
+    //for(it; it!=_availablePlugins.end(); ++it) {
+    foreach(PluginEntry* e, _availablePlugins) {
+        // Write it out as xml
+        xml->writeStartElement("plugin");
+
+        xml->writeStartElement("libname");
+        xml->writeCharacters(e->libName());
+        xml->writeEndElement();
+
+        xml->writeStartElement("shortname");
+        xml->writeCharacters(e->shortName());
+        xml->writeEndElement();
+
+        xml->writeStartElement("longname");
+        xml->writeCharacters(e->longName());
+        xml->writeEndElement();
+
+        foreach(QString s, e->apiList()) {
+            qDebug() << s << e->apiList();
+            xml->writeEmptyElement("api");
+            xml->writeAttribute("name", s);
+            xml->writeAttribute("version", QString::number(e->version(s)));
+        }
+
+        xml->writeEndElement(); // plugin
+    }
+
+    xml->writeEndElement(); // index
+    xml->writeEndDocument();
+
+    delete device;
+    delete xml;
+
+    qDebug("index written");
 }
 
 
 const bool PluginManager::readPluginIndex() {
     // Read in the plugin db xml into PluginEntrys
+    QIODevice* device = new QFile(_pluginIndex);
+    if(!device->open(QIODevice::ReadOnly)) {
+        qCritical() << "Can't open file for reading:" << _pluginIndex;
+        return false;
+    }
+
+    QXmlStreamReader* xml = new QXmlStreamReader(device);
+
+    PluginEntry* e = 0;
+    while(!xml->atEnd()) {
+        xml->readNext();
+
+        if(xml->isEndElement()) {
+            if(xml->name() == "plugin") {
+                _availablePlugins.insert(e->libName(), e);
+            }
+        
+        } else if(xml->isStartElement()) {
+            if(xml->name() == "plugin") {
+                e = new PluginEntry();
+            
+            } else if(xml->name() == "libname") {
+                e->libName(xml->readElementText());
+
+            } else if(xml->name() == "shortname") {
+                e->shortName(xml->readElementText());
+
+            } else if(xml->name() == "longname") {
+                e->longName(xml->readElementText());
+
+            } else if(xml->name() == "api") {
+                QXmlStreamAttributes attr = xml->attributes();
+                QString name = attr.value("name").toString();
+                int version = attr.value("version").toString().toInt();
+                e->addAPI(name, version);
+            }
+        }
+    }
+    return true;
 }
