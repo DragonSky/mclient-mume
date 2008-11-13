@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QEvent>
 #include <QIODevice>
+#include <QMap>
 #include <QSettings>
 
 Q_EXPORT_PLUGIN2(socketmanagerio, SocketManagerIO)
@@ -28,6 +29,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _configurable = true;
 
     // SocketManager members
+    saveSettings();
 
 }
 
@@ -79,16 +81,21 @@ void SocketManagerIO::configure() {
 
 
 const bool SocketManagerIO::loadSettings() {
+    // Here's one profile -- need to be able to load many
     QSettings s;
-    s.value(_shortName+"/testkey", 60);
-    //_host = s.value(_shortName+"/host").toString();
-    //_port = s.value(_shortName+"/port").toInt();
+    QMap<QString, QVariant> m;
+    m = s.value(_shortName+"/test").toMap();
+    qDebug() << m.value("host").toString();
+    qDebug() << m.value("port").toInt();
 }
 
 
 const bool SocketManagerIO::saveSettings() const {
     QSettings s;
-    s.setValue(_shortName+"/testkey", 80);
+    QMap<QString, QVariant> m;
+    m.insert("host", "mume.org");
+    m.insert("port", 4242);
+    s.setValue(_shortName+"/test", QVariant(m));
 }
 
 
