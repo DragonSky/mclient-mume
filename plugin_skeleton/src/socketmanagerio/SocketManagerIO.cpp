@@ -144,7 +144,6 @@ void SocketManagerIO::sendData(const QByteArray data) {
 void SocketManagerIO::socketReadData(const QByteArray data, const QString s) {
     qDebug() << "received data from" << s;
 
-    //SocketData* sd = new SocketData(data);
     QVariant* qv = new QVariant(data);
     QStringList tags;
     tags << "SocketData";
