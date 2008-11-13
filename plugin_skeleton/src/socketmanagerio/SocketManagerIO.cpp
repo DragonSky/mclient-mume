@@ -1,6 +1,5 @@
 #include "SocketManagerIO.h"
 
-#include "SocketData.h"
 #include "SocketManagerIOConfig.h"
 #include "SocketReader.h"
 

@@ -8,12 +8,10 @@ add_definitions(-DQT_SHARED)
 
 # socketdatafilter
 set(socketdatafilter_SRCS
-    SocketDataFilter.cpp
-    SocketData.cpp)
+    SocketDataFilter.cpp)
 
 set(socketdatafilter_MOC_HDRS
-    SocketDataFilter.h
-    SocketData.h)
+    SocketDataFilter.h)
 
 QT4_WRAP_CPP(socketdatafilter_MOC_SRCS ${socketdatafilter_MOC_HDRS})
 add_library(socketdatafilter SHARED ${socketdatafilter_SRCS}

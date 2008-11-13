@@ -3,7 +3,6 @@
 #include "ClientWidget.h"
 
 #include "MClientEvent.h"
-#include "SocketData.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -16,7 +15,6 @@ Q_EXPORT_PLUGIN2(simpletestdisplay, SimpleTestDisplay)
 
 SimpleTestDisplay::SimpleTestDisplay(QWidget* parent) 
         : MClientDisplayPlugin(parent) {
-//    _libName = "libsimpletestdisplay.so";
     _shortName = "simpletestdisplay";
     _longName = "Simple Test Display";
     _description = "A simple test display plugin.";
@@ -25,11 +23,11 @@ SimpleTestDisplay::SimpleTestDisplay(QWidget* parent)
     _dataTypes << "FilteredData";
     _configurable = true;
 
-    qDebug() << this->configurable();
 }
 
 
 SimpleTestDisplay::~SimpleTestDisplay() {
+    stopAllSessions();
 }
 
 
