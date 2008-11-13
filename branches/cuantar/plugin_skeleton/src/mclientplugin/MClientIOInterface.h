@@ -18,8 +18,8 @@ class MClientIOInterface {
         
         // Connects to something external (or perhaps internal) in an
         // implementation-specific way, getting all options from the object.
-        virtual void connectDevice()=0;
-        virtual void disconnectDevice()=0;
+        virtual void connectDevice(QString s)=0;
+        virtual void disconnectDevice(QString s)=0;
 
 
 };

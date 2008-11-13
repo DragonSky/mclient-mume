@@ -48,5 +48,7 @@ int main(int argc, char** argv) {
 
     pm->initDisplays();
     
-    return app.exec();
+    int retval = app.exec();
+    pm->destroy();
+    return retval;
 }

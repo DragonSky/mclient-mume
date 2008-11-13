@@ -19,7 +19,7 @@ MClientEvent::MClientEvent(MClientEventData* payload, const QStringList types)
 
 MClientEvent::MClientEvent(const MClientEvent& me) 
         : QEvent(QEvent::Type(10001)), _payload(me._payload),
-        _dataTypes(me._dataTypes) {
+        _dataTypes(me._dataTypes), _session(me.session()) {
      //       qDebug() << "copying shit, yo";
 /*
 //    MClientEvent& me2 = const_cast<MClientEvent&>(me);
@@ -40,7 +40,7 @@ QStringList MClientEvent::dataTypes() const {
 }
 
 
-const QString MClientEvent::session() const {
+const QString& MClientEvent::session() const {
     return _session;
 }
 

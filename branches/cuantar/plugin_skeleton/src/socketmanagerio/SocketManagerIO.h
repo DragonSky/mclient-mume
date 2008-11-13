@@ -30,8 +30,8 @@ class SocketManagerIO : public MClientIOPlugin {
         const bool stopSession(QString s);
 
         // IO members
-        void connectDevice();
-        void disconnectDevice();
+        void connectDevice(QString s);
+        void disconnectDevice(QString s);
         void sendData(const QByteArray data);
 
         void socketReadData(const QByteArray data, const QString socket);
