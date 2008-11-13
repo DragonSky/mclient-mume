@@ -29,7 +29,6 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _configurable = true;
 
     // SocketManager members
-    saveSettings();
 
 }
 
@@ -37,6 +36,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
 SocketManagerIO::~SocketManagerIO() {
     // Clean up the QHash of sockets.
     stopAllSessions();
+    saveSettings();
 }
 
 
@@ -81,29 +81,50 @@ void SocketManagerIO::configure() {
 
 
 const bool SocketManagerIO::loadSettings() {
-    // Here's one profile -- need to be able to load many
     QSettings s;
-    QMap<QString, QVariant> m;
-    m = s.value(_shortName+"/test").toMap();
-    qDebug() << m.value("host").toString();
-    qDebug() << m.value("port").toInt();
+    // Read in sessions
+    QStringList l = s.value(_shortName+"/profiles").toStringList();
+    qDebug() << l;
+    foreach(QString str, l) {
+        _settings.insert(str, 
+                QPair<QString, QVariant>("host",
+                    s.value(_shortName+"/"+str+"_host").toString()));
+        _settings.insert(str, 
+                QPair<QString, QVariant>("port",
+                    s.value(_shortName+"/"+str+"_port").toInt()));
+    }
+    qDebug() << _settings;
 }
 
 
 const bool SocketManagerIO::saveSettings() const {
     QSettings s;
-    QMap<QString, QVariant> m;
-    m.insert("host", "mume.org");
-    m.insert("port", 4242);
-    s.setValue(_shortName+"/test", QVariant(m));
+    QMultiHash<QString, QPair<QString, QVariant> >::const_iterator it;
+    for(it = _settings.begin(); it != _settings.end(); ++it) {
+        s.setValue(_shortName+"/"+it.key()+"_"+it.value().first, 
+                it.value().second);
+        qDebug() << "* saving" << _shortName+"/"+it.key()+"_"+it.value().first
+            << it.value().second;
+    }
 }
 
 
 const bool SocketManagerIO::startSession(QString s) {
+    
+    QString host;
+    int port = 0;
+    qDebug() << _settings.values(s);
+    QPair<QString, QVariant> p;
+    foreach(p, _settings.values(s)) {
+        if(p.first == "host") host = p.second.toString();
+        else if(p.first == "port") port = p.second.toInt();
+    }
     SocketReader* sr = new SocketReader(s, this);
     qDebug() << "* threads:" << sr->thread() << this->thread();
     sr->moveToThread(this->thread());
     qDebug() << "* threads:" << sr->thread() << this->thread();
+    sr->host(host);
+    sr->port(port);
     _sockets.insert(s, sr);
     _runningSessions << s;
     qDebug() << "* inserted SocketReader for session" << s;
@@ -128,7 +149,7 @@ void SocketManagerIO::connectDevice(QString s) {
     // Attempts to connect every socket associated with the session s
     foreach(SocketReader* sr, _sockets.values(s)) {
         qDebug() << "* threads:" << sr->thread() << this->thread();
-        sr->connectToHost("mume.org",4242);
+        sr->connectToHost();//"mume.org",4242);
         qDebug() << "* connected socket for session" << s;
     }
 }

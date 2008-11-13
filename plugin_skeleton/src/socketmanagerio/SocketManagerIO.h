@@ -5,6 +5,8 @@
 
 #include <QDialog>
 #include <QHash>
+#include <QMultiHash>
+#include <QPair>
 
 class SocketManagerIOConfig;
 class SocketReader;
@@ -12,6 +14,7 @@ class SocketReader;
 class QByteArray;
 class QEvent;
 class QString;
+class QVariant;
 
 
 class SocketManagerIO : public MClientIOPlugin {
@@ -40,6 +43,7 @@ class SocketManagerIO : public MClientIOPlugin {
     private:
         QHash<QString, SocketReader*> _sockets;
         QPointer<SocketManagerIOConfig> _configWidget;
+        QMultiHash<QString, QPair<QString, QVariant> > _settings;
     
 };
 

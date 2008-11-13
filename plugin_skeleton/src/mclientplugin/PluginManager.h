@@ -38,7 +38,7 @@ class PluginManager : public QThread {
         // for testing
         void configureTest();
         //const bool doneLoading() const;
-        void initDisplays();
+        void initSession(QString s);
     
     protected:
         // short name -> other info

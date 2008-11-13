@@ -41,9 +41,9 @@ SocketReader::SocketReader(QString s, SocketManagerIO* sm, QObject* parent)
 }
 
 
-void SocketReader::connectToHost(const QString host, const int& port) {
-    _host = host;
-    _port = port;
+void SocketReader::connectToHost() {//const QString host, const int& port) {
+    //_host = host;
+    //_port = port;
     //FIXME: HACK! :(
     if(_socket->thread() != this->thread()) {
         qDebug() << "* threads in SocketReader:" << this->thread() 
@@ -143,3 +143,14 @@ void SocketReader::sendToSocket(QByteArray* ba) {
 const QString& SocketReader::session() const {
     return _session;
 }
+
+
+void SocketReader::host(const QString host) {
+    _host = host;
+}
+
+
+void SocketReader::port(const int port) {
+    _port = port;
+}
+
