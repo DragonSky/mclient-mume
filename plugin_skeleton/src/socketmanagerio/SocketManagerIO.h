@@ -4,7 +4,6 @@
 #include "MClientIOPlugin.h"
 
 #include <QDialog>
-#include <QHash>
 #include <QMultiHash>
 #include <QPair>
 
@@ -41,7 +40,7 @@ class SocketManagerIO : public MClientIOPlugin {
 
 
     private:
-        QHash<QString, SocketReader*> _sockets;
+        QMultiHash<QString, SocketReader*> _sockets;
         QPointer<SocketManagerIOConfig> _configWidget;
         QMultiHash<QString, QPair<QString, QVariant> > _settings;
     
