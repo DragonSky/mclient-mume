@@ -53,6 +53,7 @@ ClientWidget::~ClientWidget() {
 
 void ClientWidget::sendUserInput() {
     _lineEdit->selectAll();
+    _textEdit->displayText(_lineEdit->selectedText().append("\n"));
     if (_lineEdit->selectedText().startsWith("#connect")) {
       QVariant* qv = new QVariant();
       QStringList sl("ConnectToHost");
