@@ -37,7 +37,7 @@ using std::string;
 
 Q_EXPORT_PLUGIN2(telnet, Telnet)
 
-#define HAVE_MCCP "true"
+//#define HAVE_MCCP "true"
 
 struct cTelnetPrivate {
   /** socket */
@@ -790,7 +790,7 @@ printf ("\n");
 
 	QVariant* qv = new QVariant(unicodeData);
 	QStringList sl;
-	sl << "FilteredData";
+	sl << "TelnetData";
     //FIXME: HACK! :(
     foreach(QString s, _runningSessions) {
         postEvent(qv, sl, s);
@@ -831,7 +831,7 @@ printf ("\n");
       QString unicodeData = d->inCoder->toUnicode (cleandata.data(), cleandata.length());
       QVariant* qv = new QVariant(unicodeData);
       QStringList sl;
-      sl << "FilteredData";
+      sl << "TelnetData";
       //FIXME: HACK! :(
       foreach(QString s, _runningSessions) {
           postEvent(qv, sl, s);

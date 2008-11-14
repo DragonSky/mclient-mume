@@ -20,7 +20,7 @@ SimpleTestDisplay::SimpleTestDisplay(QWidget* parent)
     _description = "A simple test display plugin.";
     _dependencies.insert("terrible_test_api", 1);
 //    _implemented.insert("some_other_api",1);
-    _dataTypes << "FilteredData";
+    _dataTypes << "XMLDisplayData";
     _configurable = true;
 
 }
@@ -38,7 +38,7 @@ void SimpleTestDisplay::customEvent(QEvent* e) {
     MClientEvent* me;
     me = static_cast<MClientEvent*>(e);
 
-    if(me->dataTypes().contains("FilteredData")) {
+    if(me->dataTypes().contains("XMLDisplayData")) {
         QByteArray ba = me->payload()->toByteArray();
         qDebug() << "Displayed: " << ba.data();
         emit dataReceived(QString(ba.data()));
