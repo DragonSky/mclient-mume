@@ -25,8 +25,8 @@ install(TARGETS
     plugin_skeleton 
     RUNTIME DESTINATION bin)
 
-add_subdirectory(mumexml)
 add_subdirectory(mclientplugin)
+add_subdirectory(mumexml)
 #add_subdirectory(socketdatafilter)
 add_subdirectory(socketmanagerio)
 add_subdirectory(simpletestdisplay)

@@ -31,6 +31,7 @@ MumeXML::MumeXML(QObject* parent)
 
     _readingTag = false;
     _readingRoomDesc = false;
+    _xmlMode = XML_NONE;
 }
 
 

@@ -52,7 +52,8 @@ void SocketManagerIO::customEvent(QEvent* e) {
 
     if(me->dataTypes().contains("SendToSocketData")) {
         QByteArray ba = me->payload()->toByteArray();
-        qDebug() << ba.data();
+        qDebug() << "* ba.data() in SocketManagerIO:" << ba.data();
+        qDebug() << "* me->payload() is" << me->payload();
         
         SocketReader* sr;
         foreach(sr, _sockets.values(me->session())) {

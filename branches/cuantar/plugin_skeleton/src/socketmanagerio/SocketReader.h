@@ -29,7 +29,7 @@ class SocketReader : public QThread {
 
         void closeSocket() const;
         
-        void sendToSocket(QByteArray* ba);
+        void sendToSocket(const QByteArray* ba);
 
         void run();
 

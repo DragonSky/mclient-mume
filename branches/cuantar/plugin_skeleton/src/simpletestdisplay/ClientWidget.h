@@ -19,6 +19,7 @@ class ClientWidget : public QWidget {
 
     public slots:
         void sendUserInput();
+        void displayText(const QString&);
 
 
     protected:
