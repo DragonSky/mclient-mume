@@ -310,11 +310,13 @@ void PluginManager::customEvent(QEvent* e) {
     
     for(it; it != _pluginTypes.end(); ++it) {
         if(me->dataTypes().contains(it.key())) {
-            qDebug() << "posting" << me->dataTypes() << "to" 
-                << it.value()->instance();
             // Need to make a copy, since the original event
             // will be deleted when this function returns
+            qDebug() << "* copying posted event with payload" << me->payload();
             MClientEvent* nme = new MClientEvent(*me);
+            qDebug() << "* copied payload to" << nme->payload();
+            qDebug() << "* posting" << nme->dataTypes() << "to" 
+                << it.value()->instance() << "with" << nme->payload();
             QApplication::postEvent(it.value()->instance(),nme);
         }
     }
