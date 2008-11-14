@@ -28,6 +28,9 @@ MumeXML::MumeXML(QObject* parent)
     _dependencies.insert("some_stupid_api", 10);
     _implemented.insert("some_other_api",1);
     _dataTypes << "TelnetData";
+
+    _readingTag = false;
+    _readingRoomDesc = false;
 }
 
 
@@ -37,8 +40,6 @@ MumeXML::~MumeXML() {
 
 
 void MumeXML::customEvent(QEvent* e) {
-    qDebug() << "MumeXML got an event";
-
     if(e->type() != 10001) {
         qDebug() << "Somehow received the wrong kind of event...";
     } else {
@@ -48,6 +49,7 @@ void MumeXML::customEvent(QEvent* e) {
         QStringList types = me->dataTypes();
         foreach(s, types) {
 	  if (s.startsWith("TelnetData")) {
+	    qDebug() << "MumeXML got an event";
 	    parse(me->payload()->toByteArray());
 	  }
 	}
@@ -81,6 +83,7 @@ const bool MumeXML::stopSession(QString s) {
 }
 
 void MumeXML::parse(const QByteArray& line) {
+  qDebug() << "Parsing the XML: " << line.data();
   int index;
   for (index = 0; index < line.size(); index++) {
     if (_readingTag) {
