@@ -1,4 +1,4 @@
 #!/bin/bash
 cd build
-./plugin_skeleton
+./bin/plugin_skeleton
 cd ..
