@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config version="1.0">
     <profile name="test">
-        <port>4242</port>
-        <host>mume.org</host>
+        <connection host="mume.org" port="4242"/>
+        <proxy host="proxy.example.com" port="8080">
+            <username>username</username>
+            <password>password</password>
+        </proxy>
     </profile>
 </config>
