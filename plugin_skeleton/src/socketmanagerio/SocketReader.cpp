@@ -90,21 +90,12 @@ void SocketReader::on_disconnect() {
     me = new MClientEvent(new MClientEventData(qv), tags);
     me->session(_session);
     QApplication::postEvent(PluginManager::instance(), me);
-
-    if(_delete == 0) {
-        _delete = 1;
-        deleteLater();
-    }
 }
 
-void SocketReader::on_error() {
 
-//    qWarning() << "Error involving" 
-//       << _host << _port << _socket->errorString();
-    if(_delete == 0) {
-        _delete = 1;
-        deleteLater();
-    }
+void SocketReader::on_error() {
+    qWarning() << "Error involving" 
+       << _host << _port << _socket->errorString();
 }
 
 
