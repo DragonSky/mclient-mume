@@ -131,6 +131,7 @@ void SocketReader::run() {
 
 
 void SocketReader::sendToSocket(const QByteArray* ba) {
+    if(_socket->state() != QAbstractSocket::ConnectedState) return;
     qDebug() << "Got user input:" << ba->data() << ba->count();
     //str << str.size();
     //int len = _socket->write(ba.toLatin1().data(), str.size());
