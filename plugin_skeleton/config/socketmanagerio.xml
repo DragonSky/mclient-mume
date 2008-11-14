@@ -1,4 +1,7 @@
-<profile name="test" version="1">
-    <host>mume.org</host>
-    <port>4242</port>
-</profile>
+<?xml version="1.0" encoding="UTF-8"?>
+<config version="1">
+    <profile name="test">
+        <port>4242</port>
+        <host>mume.org</host>
+    </profile>
+</config>

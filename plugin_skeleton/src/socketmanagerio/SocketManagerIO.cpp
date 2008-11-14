@@ -85,7 +85,7 @@ void SocketManagerIO::configure() {
 const bool SocketManagerIO::loadSettings() {
     QIODevice* device = new QFile(_settingsFile);
     if(!device->open(QIODevice::ReadOnly)) {
-        qCritical() << "Can't open file for writing:" << _settingsFile;
+        qCritical() << "Can't open file for reading:" << _settingsFile;
         return false;
     }
 
@@ -123,26 +123,15 @@ const bool SocketManagerIO::loadSettings() {
         }
     }
 
-
-    /*
-    QSettings s;
-    // Read in sessions
-    QStringList l = s.value(_shortName+"/profiles").toStringList();
-    qDebug() << l;
-    foreach(QString str, l) {
-        _settings.insert(str, 
-                QPair<QString, QVariant>("host",
-                    s.value(_shortName+"/"+str+"_host").toString()));
-        _settings.insert(str, 
-                QPair<QString, QVariant>("port",
-                    s.value(_shortName+"/"+str+"_port").toInt()));
-    }
-    qDebug() << _settings;
-    */
+    delete device;
+    delete xml;
+    
+    return true;
 }
 
 
 const bool SocketManagerIO::saveSettings() const {
+    /*
     QSettings s;
     QMultiHash<QString, QPair<QString, QVariant> >::const_iterator it;
     for(it = _settings.begin(); it != _settings.end(); ++it) {
@@ -151,6 +140,41 @@ const bool SocketManagerIO::saveSettings() const {
         qDebug() << "* saving" << _shortName+"/"+it.key()+"_"+it.value().first
             << it.value().second;
     }
+    */
+    QIODevice* device = new QFile(_settingsFile);
+    if(!device->open(QIODevice::WriteOnly)) {
+        qCritical() << "Can't open file for writing:" << _settingsFile;
+        return false;
+    }
+
+    QXmlStreamWriter* xml = new QXmlStreamWriter(device);
+    xml->setAutoFormatting(true);
+    xml->writeStartDocument();
+    xml->writeStartElement("config");
+    xml->writeAttribute("version", "1");
+
+    foreach(QString s, _settings.uniqueKeys()) {
+        xml->writeStartElement("profile");
+        xml->writeAttribute("name", s);
+        
+        QPair<QString, QVariant> p;
+        foreach(p, _settings.values(s)) {
+            xml->writeStartElement(p.first);
+            xml->writeCharacters(p.second.toString());
+            xml->writeEndElement();
+        }
+
+        xml->writeEndElement(); // profile
+    }
+
+    xml->writeEndElement(); // config
+    xml->writeEndDocument();
+    qDebug() << "* wrote xml";
+
+    delete device;
+    delete xml;
+
+    return true;
 }
 
 
