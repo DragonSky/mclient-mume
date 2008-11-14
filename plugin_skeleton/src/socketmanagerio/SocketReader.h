@@ -26,6 +26,7 @@ class SocketReader : public QThread {
         void port(const int);
         const QString& host() const;
         void host(const QString);
+        void proxy(const QNetworkProxy* proxy);
 
         void closeSocket() const;
         
