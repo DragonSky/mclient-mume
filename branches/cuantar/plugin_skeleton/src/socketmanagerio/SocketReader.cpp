@@ -156,3 +156,8 @@ void SocketReader::port(const int port) {
     _port = port;
 }
 
+
+void SocketReader::proxy(const QNetworkProxy* proxy) {
+    _proxy = *proxy;
+    _socket->setProxy(_proxy);
+}

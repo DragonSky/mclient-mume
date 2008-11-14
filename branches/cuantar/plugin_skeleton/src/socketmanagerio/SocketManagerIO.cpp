@@ -94,16 +94,26 @@ const bool SocketManagerIO::loadSettings() {
     QXmlStreamReader* xml = new QXmlStreamReader(device);
     QString profile;
     QPair<QString, QVariant> p;
+    bool in_proxy = false;
     while(!xml->atEnd()) {
         xml->readNext();
 
         if(xml->isEndElement()) {
             if(xml->name() == "profile") {
                 // found </profile>
+            } else if(xml->name() == "proxy") {
+                in_proxy = false;
             }
 
         } else if(xml->isStartElement()) {
-            if(xml->name() == "profile") {
+            if(xml->name() == "config") {
+                QXmlStreamAttributes attr = xml->attributes();
+                QString version = attr.value("version").toString();
+                if(version.toDouble() < _configVersion.toDouble()) {
+                    qWarning() << "Config file is too old! Trying anyway...";
+                }
+
+            } else if(xml->name() == "profile") {
                 QXmlStreamAttributes attr = xml->attributes();
                 profile = attr.value("name").toString();
                 qDebug() << "* found profile:" << profile;
@@ -133,6 +143,22 @@ const bool SocketManagerIO::loadSettings() {
                 p.second = port;
                 _settings.insert(profile, p);
                 qDebug() << "* inserted proxy_port:" << port;
+                
+                in_proxy = true;
+            
+            } else if(xml->name() == "username" && in_proxy == true) {
+                QString proxy_user = xml->readElementText();
+                p.first = "proxy_username";
+                p.second = proxy_user;
+                _settings.insert(profile, p);
+                qDebug() << "* inserted proxy_username:" << proxy_user;
+            
+            } else if(xml->name() == "password" && in_proxy == true) {
+                QString proxy_pass = xml->readElementText();
+                p.first = "proxy_password";
+                p.second = proxy_pass;
+                _settings.insert(profile, p);
+                qDebug() << "* inserted proxy_password:" << proxy_pass;
             }
         }
     }
@@ -162,12 +188,39 @@ const bool SocketManagerIO::saveSettings() const {
         xml->writeAttribute("name", s);
         
         QPair<QString, QVariant> p;
+        
+        xml->writeEmptyElement("connection");
         foreach(p, _settings.values(s)) {
-            xml->writeStartElement(p.first);
-            xml->writeCharacters(p.second.toString());
-            xml->writeEndElement();
+            if(p.first == "host") {
+                xml->writeAttribute("host", p.second.toString());
+            } else if(p.first == "port") {
+                xml->writeAttribute("port", p.second.toString());
+            }
         }
 
+        xml->writeStartElement("proxy");
+        foreach(p, _settings.values(s)) {
+            if(p.first == "proxy_host") {
+                xml->writeAttribute("host", p.second.toString());
+            } else if(p.first == "proxy_port") {
+                xml->writeAttribute("port", p.second.toString());
+            }
+        }
+        
+        foreach(p, _settings.values(s)) {
+            if(p.first == "proxy_username") {
+                xml->writeStartElement("username");
+                xml->writeCharacters(p.second.toString());
+                xml->writeEndElement();
+            }
+            else if(p.first == "proxy_password") {
+                xml->writeStartElement("password");
+                xml->writeCharacters(p.second.toString());
+                xml->writeEndElement();
+            }
+        }
+        xml->writeEndElement(); // proxy
+        
         xml->writeEndElement(); // profile
     }
 
@@ -186,13 +239,42 @@ const bool SocketManagerIO::startSession(QString s) {
     
     QString host;
     int port = 0;
-    qDebug() << _settings.values(s);
+    QString proxy_host;
+    int proxy_port = 0;
+    QString proxy_user;
+    QString proxy_pass;
+
+    //qDebug() << _settings.values(s);
+    
     QPair<QString, QVariant> p;
     foreach(p, _settings.values(s)) {
         if(p.first == "host") host = p.second.toString();
         else if(p.first == "port") port = p.second.toInt();
+        else if(p.first == "proxy_host") {
+            proxy_host = p.second.toString();
+            qDebug() << "* proxy_host" << proxy_host;
+
+        } else if(p.first == "proxy_port") proxy_port = p.second.toInt();
+        else if(p.first == "proxy_username") { 
+            proxy_host = p.second.toString();
+        } else if(p.first == "proxy_password") {
+            proxy_pass = p.second.toString();
+        }
     }
+
     SocketReader* sr = new SocketReader(s, this);
+    if(proxy_port != 0 && !proxy_host.isEmpty()) {
+        QNetworkProxy* proxy = new QNetworkProxy();
+        //proxy->setType(QNetworkProxy::Socks5Proxy);
+        proxy->setHostName(proxy_host);
+        proxy->setPort(proxy_port);
+        proxy->setUser(proxy_user);
+        proxy->setPassword(proxy_pass);
+        sr->proxy(proxy);
+        qDebug() << "* added proxy" << proxy_host << proxy_port
+            << "to SocketReader in session" << s;
+    }
+    
     qDebug() << "* threads:" << sr->thread() << this->thread();
     sr->moveToThread(this->thread());
     qDebug() << "* threads:" << sr->thread() << this->thread();
