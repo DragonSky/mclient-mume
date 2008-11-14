@@ -32,7 +32,7 @@ SimpleTestDisplay::~SimpleTestDisplay() {
 
 
 void SimpleTestDisplay::customEvent(QEvent* e) {
-    qDebug() << "* bork bork bork!";
+//    qDebug() << "* bork bork bork!";
     if(!e->type() == 10001) return;
     
     MClientEvent* me;
@@ -40,7 +40,7 @@ void SimpleTestDisplay::customEvent(QEvent* e) {
 
     if(me->dataTypes().contains("XMLDisplayData")) {
         QByteArray ba = me->payload()->toByteArray();
-        qDebug() << "Displayed: " << ba.data();
+//        qDebug() << "Displayed: " << ba.data();
         QVariant* qv = new QVariant(ba);
         emit dataReceived(qv->toByteArray());
     }
