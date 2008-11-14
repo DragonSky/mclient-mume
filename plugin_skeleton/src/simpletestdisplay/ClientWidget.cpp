@@ -31,6 +31,9 @@ ClientWidget::ClientWidget(QString s, SimpleTestDisplay* st, QWidget* parent)
     _layout->addWidget(_lineEdit);
 
     _textEdit->setFocusProxy(_lineEdit);
+    qDebug() << "* SimpleTestDisplay thread:" << _st->thread();
+    qDebug() << "* ClientWidget thread:" << this->thread();
+    qDebug() << "* ClientTextEdit thread:" << _textEdit->thread();
    
     // Send data when user presses return
     connect(_lineEdit, SIGNAL(returnPressed()), this, 
@@ -59,10 +62,14 @@ void ClientWidget::sendUserInput() {
       
     } else {
       //PowwowWrapper::Instance()->getUserInput(_lineEdit->selectedText());
-      QByteArray ba(_lineEdit->selectedText().toStdString().c_str());
+
+      QString str = _lineEdit->selectedText();
+      QByteArray ba(str.toLatin1());
+              //toStdString().c_str(), s
+              //_lineEdit->selectedText().toStdString().size());
+      qDebug() << "Input Entered:" << ba << ba.length();
       ba.append("\n");
-      qDebug() << "Input Entered: " << ba << " " << ba.length();
-      QVariant* qv = new QVariant(ba);
+      QVariant* qv = new QVariant(*const_cast<const QByteArray*>(&ba));
       QStringList sl("SendToSocketData");      
       MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
       me->session(_session);
