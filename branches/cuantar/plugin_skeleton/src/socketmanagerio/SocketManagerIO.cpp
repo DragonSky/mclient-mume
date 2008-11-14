@@ -28,7 +28,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _implemented.insert("some_stupid_api",10);
     _dataTypes << "SendToSocketData" << "ConnectToHost";
     _configurable = true;
-    _configVersion = "1.0";
+    _configVersion = "2.0";
 
     // SocketManager members
     _settingsFile = "config/"+_shortName+".xml";
@@ -108,19 +108,31 @@ const bool SocketManagerIO::loadSettings() {
                 profile = attr.value("name").toString();
                 qDebug() << "* found profile:" << profile;
 
-            } else if(xml->name() == "host") {
-                QString host = xml->readElementText();
+            } else if(xml->name() == "connection") {
+                QXmlStreamAttributes attr = xml->attributes();
+                QString host = attr.value("host").toString();
+                QString port = attr.value("port").toString();
                 p.first = "host";
                 p.second = host;
                 _settings.insert(profile, p);
                 qDebug() << "* inserted host:" << host;
-            
-            } else if(xml->name() == "port") {
-                QString port = xml->readElementText();
                 p.first = "port";
                 p.second = port;
                 _settings.insert(profile, p);
                 qDebug() << "* inserted port:" << port;
+            
+            } else if(xml->name() == "proxy") {
+                QXmlStreamAttributes attr = xml->attributes();
+                QString host = attr.value("host").toString();
+                QString port = attr.value("port").toString();
+                p.first = "proxy_host";
+                p.second = host;
+                _settings.insert(profile, p);
+                qDebug() << "* inserted proxy_host:" << host;
+                p.first = "proxy_port";
+                p.second = port;
+                _settings.insert(profile, p);
+                qDebug() << "* inserted proxy_port:" << port;
             }
         }
     }
