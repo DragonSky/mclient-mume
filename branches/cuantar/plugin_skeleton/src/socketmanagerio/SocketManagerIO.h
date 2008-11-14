@@ -42,7 +42,9 @@ class SocketManagerIO : public MClientIOPlugin {
     private:
         QMultiHash<QString, SocketReader*> _sockets;
         QPointer<SocketManagerIOConfig> _configWidget;
+
         QMultiHash<QString, QPair<QString, QVariant> > _settings;
+        QString _settingsFile;
     
 };
 
