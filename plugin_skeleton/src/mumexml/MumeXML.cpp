@@ -291,6 +291,8 @@ bool MumeXML::element( const QByteArray& line  ) {
 	  foreach(QString s, _runningSessions) {
 	    postEvent(qv, sl, s);
 	  }
+
+	  _multiBuffer = emptyString; // reset buffer for dynamic desc
 	}
         break;
       }
