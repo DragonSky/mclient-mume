@@ -57,7 +57,7 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
     
     // Does the index exist?  If so, load it.  If not, create it.
     if(!QFile::exists(_pluginIndex)) {
-        qDebug() << "index doesn't exist!";
+        qDebug() << "* index doesn't exist!";
         indexPlugins();
     } else {
         QDir pluginsDir = QDir(qApp->applicationDirPath());
@@ -81,7 +81,7 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
             }
         }
         if(reIndex) {
-            qDebug() << "index is older than some plugin";
+            qDebug() << "* index is old and needs to be regenerated";
             indexPlugins();
         } else {
             readPluginIndex();
@@ -434,7 +434,7 @@ const bool PluginManager::writePluginIndex() {
         xml->writeEndElement();
 
         foreach(QString s, e->apiList()) {
-            qDebug() << s << e->apiList();
+            //qDebug() << s << e->apiList();
             xml->writeEmptyElement("api");
             xml->writeAttribute("name", s);
             xml->writeAttribute("version", QString::number(e->version(s)));
@@ -449,7 +449,7 @@ const bool PluginManager::writePluginIndex() {
     delete device;
     delete xml;
 
-    qDebug("index written");
+    qDebug("* index written");
 }
 
 
