@@ -84,7 +84,7 @@ const bool MumeXML::stopSession(QString s) {
 }
 
 void MumeXML::parse(const QByteArray& line) {
-  qDebug() << "Parsing the XML: " << line.data();
+  qDebug() << "Parsing the XML: ";// << line.data();
   int index;
   for (index = 0; index < line.size(); index++) {
     if (_readingTag) {
