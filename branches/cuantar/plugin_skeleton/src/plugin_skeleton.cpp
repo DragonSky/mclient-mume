@@ -18,8 +18,8 @@ int main(int argc, char** argv) {
     PluginManager* pm = PluginManager::instance();
     pm->start(QThread::LowPriority);
 
-    //while(!pm->doneLoading()) ; // sleep(.1);
-    sleep(.5);
+//    while(!pm->doneLoading()) sleep(.1);
+    sleep(1);
     pm->configureTest();
 
     pm->initSession("test");

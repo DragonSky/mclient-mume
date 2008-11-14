@@ -18,6 +18,7 @@ PluginConfigWidget::PluginConfigWidget(QHash<QString, QPluginLoader*> plugins,
         QWidget* parent) : QWidget(parent) {
 
     _plugins = plugins;
+    //qDebug() << "* plugins for PluginConfigWidget:" << _plugins;
 
     QWidget* window = new QWidget();
     QStandardItemModel* model = new QStandardItemModel(window);
