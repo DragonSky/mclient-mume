@@ -6,19 +6,19 @@ add_definitions(-DQT_NO_DEBUG)
 add_definitions(-DQT_SHARED)
 
 
-# mumexml
-set(mumexml_SRCS
-    MumeXML.cpp)
+# socketdatafilter
+set(socketdatafilter_SRCS
+    SocketDataFilter.cpp)
 
-set(mumexml_MOC_HDRS
-    MumeXML.h)
+set(socketdatafilter_MOC_HDRS
+    SocketDataFilter.h)
 
-QT4_WRAP_CPP(mumexml_MOC_SRCS ${mumexml_MOC_HDRS})
-add_library(mumexml SHARED ${mumexml_SRCS}
-    ${mumexml_MOC_SRCS})
-target_link_libraries(mumexml mclientplugin ${QT_LIBRARIES})
+QT4_WRAP_CPP(socketdatafilter_MOC_SRCS ${socketdatafilter_MOC_HDRS})
+add_library(socketdatafilter SHARED ${socketdatafilter_SRCS}
+    ${socketdatafilter_MOC_SRCS})
+target_link_libraries(socketdatafilter mclientplugin ${QT_LIBRARIES})
 
-INSTALL(TARGETS mumexml
+INSTALL(TARGETS socketdatafilter
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
