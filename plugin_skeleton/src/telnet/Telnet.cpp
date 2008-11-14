@@ -1,4 +1,24 @@
+/***************************************************************************
+                          Telnet.cpp  -  handles telnet connection
+    begin                : Pi Jun 14 2002
+    copyright            : (C) 2002-2008 by Tomas Mecir
+    email                : kmuddy@kmuddy.com
+
+    This file has been modified for the mClient distribution from KMuddy.
+
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
 #include "Telnet.h"
+#include "MCCP.h"
 
 #include "MClientEvent.h"
 #include "PluginManager.h"
@@ -17,6 +37,8 @@ using std::string;
 
 Q_EXPORT_PLUGIN2(telnet, Telnet)
 
+#define HAVE_MCCP "true"
+
 struct cTelnetPrivate {
   /** socket */
   QString hostName;
@@ -30,7 +52,7 @@ struct cTelnetPrivate {
 
 #ifdef HAVE_MCCP
   /** object that handles MCCP */
-  cMCCP *MCCP;
+  MCCP *_MCCP;
   bool usingmccp;
 #endif
 
@@ -439,11 +461,11 @@ void Telnet::processTelnetCommand (const string &command)
               d->hisOptionState[option] = true;
               //inform MCCP object about the change
               if ((option == OPT_COMPRESS)) {
-                d->MCCP->setMCCP1 (true);
+                d->_MCCP->setMCCP1 (true);
                 puts ("KMuddy: MCCP v1 enabled !");
               }
               else {
-                d->MCCP->setMCCP2 (true);
+                d->_MCCP->setMCCP2 (true);
                 puts ("KMuddy: MCCP v2 enabled !");
               }
             }
@@ -475,13 +497,13 @@ void Telnet::processTelnetCommand (const string &command)
           d->hisOptionState[option] = false;
 #ifdef HAVE_MCCP
           //inform MCCP object about the change - won't cause problems in
-          //cMCCP - see cmccp.cpp for more info
+          //MCCP - see cmccp.cpp for more info
           if ((option == OPT_COMPRESS)) {
-            d->MCCP->setMCCP1 (false);
+            d->_MCCP->setMCCP1 (false);
             puts ("KMuddy: MCCP v1 disabled !");
           }
           if ((option == OPT_COMPRESS2)) {
-            d->MCCP->setMCCP2 (false);
+            d->_MCCP->setMCCP2 (false);
             puts ("KMuddy: MCCP v1 disabled !");
           }
 #endif
@@ -613,9 +635,7 @@ void Telnet::processTelnetCommand (const string &command)
 void Telnet::socketRead (const QByteArray &ba)
 {
   char data[32769]; //clean data after decompression
-
   int amount = ba.size();
-//   invokeEvent ("raw-data-comp", sess(), QString (buffer));
 
 //   //we'll need cProfileSettings later on
 //   cProfileSettings *sett = settings();
@@ -631,8 +651,8 @@ void Telnet::socketRead (const QByteArray &ba)
   //This has been fixed in MCCP v2, but some MUDs may still use the old
   //version.
 
-  d->MCCP->prepareDecompression (ba.data(), data, amount, 32768);
-  while ((datalen = d->MCCP->uncompressNext ()) != -1)
+  d->_MCCP->prepareDecompression ((char*)ba.data(), data, amount, 32768);
+  while ((datalen = d->_MCCP->uncompressNext ()) != -1)
 #else
   strncpy(data, ba.data(), amount);
   datalen = amount;

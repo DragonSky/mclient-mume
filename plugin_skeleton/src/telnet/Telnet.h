@@ -1,12 +1,10 @@
 /***************************************************************************
-                          ctelnet.h  -  handles telnet connection
-    This file is a part of KMuddy distribution.
-                             -------------------
+                          Telnet.h  -  handles telnet connection
     begin                : Pi Jun 14 2002
     copyright            : (C) 2002-2008 by Tomas Mecir
     email                : kmuddy@kmuddy.com
 
-    This file has been modified for the mClient distribution.
+    This file has been modified for the mClient distribution from KMuddy.
 
  ***************************************************************************/
 
