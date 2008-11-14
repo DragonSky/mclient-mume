@@ -28,6 +28,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _implemented.insert("some_stupid_api",10);
     _dataTypes << "SendToSocketData" << "ConnectToHost";
     _configurable = true;
+    _configVersion = "1.0";
 
     // SocketManager members
     _settingsFile = "config/"+_shortName+".xml";
@@ -141,7 +142,7 @@ const bool SocketManagerIO::saveSettings() const {
     xml->setAutoFormatting(true);
     xml->writeStartDocument();
     xml->writeStartElement("config");
-    xml->writeAttribute("version", "1");
+    xml->writeAttribute("version", _configVersion);
 
     foreach(QString s, _settings.uniqueKeys()) {
         xml->writeStartElement("profile");

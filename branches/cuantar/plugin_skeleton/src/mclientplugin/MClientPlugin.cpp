@@ -16,6 +16,7 @@ MClientPlugin::MClientPlugin(QObject* parent) : QThread(parent) {
     _longName = "The Original MClientPlugin";
     _description = "If you see this text, the plugin author did not replace the default description.";
     _configurable = false;
+    _configVersion = "none";
 }
 
 

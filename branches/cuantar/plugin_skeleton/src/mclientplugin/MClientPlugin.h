@@ -82,6 +82,7 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         QString _version;
 
         bool _configurable;
+        QString _configVersion;
 
         QHash<QString, int> _implemented;
         QHash<QString, int> _dependencies;
