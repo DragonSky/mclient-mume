@@ -131,16 +131,6 @@ const bool SocketManagerIO::loadSettings() {
 
 
 const bool SocketManagerIO::saveSettings() const {
-    /*
-    QSettings s;
-    QMultiHash<QString, QPair<QString, QVariant> >::const_iterator it;
-    for(it = _settings.begin(); it != _settings.end(); ++it) {
-        s.setValue(_shortName+"/"+it.key()+"_"+it.value().first, 
-                it.value().second);
-        qDebug() << "* saving" << _shortName+"/"+it.key()+"_"+it.value().first
-            << it.value().second;
-    }
-    */
     QIODevice* device = new QFile(_settingsFile);
     if(!device->open(QIODevice::WriteOnly)) {
         qCritical() << "Can't open file for writing:" << _settingsFile;
