@@ -1,0 +1,4 @@
+<profile name="test" version="1">
+    <host>mume.org</host>
+    <port>4242</port>
+</profile>

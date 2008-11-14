@@ -10,9 +10,10 @@
 #include <QByteArray>
 #include <QDebug>
 #include <QEvent>
-#include <QIODevice>
+#include <QFile>
 #include <QMap>
 #include <QSettings>
+#include <QtXml>
 
 Q_EXPORT_PLUGIN2(socketmanagerio, SocketManagerIO)
 
@@ -29,6 +30,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _configurable = true;
 
     // SocketManager members
+    _settingsFile = "config/"+_shortName+".xml";
 
 }
 
@@ -81,6 +83,48 @@ void SocketManagerIO::configure() {
 
 
 const bool SocketManagerIO::loadSettings() {
+    QIODevice* device = new QFile(_settingsFile);
+    if(!device->open(QIODevice::ReadOnly)) {
+        qCritical() << "Can't open file for writing:" << _settingsFile;
+        return false;
+    }
+
+    QXmlStreamReader* xml = new QXmlStreamReader(device);
+    QString profile;
+    QPair<QString, QVariant> p;
+    while(!xml->atEnd()) {
+        xml->readNext();
+
+        if(xml->isEndElement()) {
+            if(xml->name() == "profile") {
+                // found </profile>
+            }
+
+        } else if(xml->isStartElement()) {
+            if(xml->name() == "profile") {
+                QXmlStreamAttributes attr = xml->attributes();
+                profile = attr.value("name").toString();
+                qDebug() << "* found profile:" << profile;
+
+            } else if(xml->name() == "host") {
+                QString host = xml->readElementText();
+                p.first = "host";
+                p.second = host;
+                _settings.insert(profile, p);
+                qDebug() << "* inserted host:" << host;
+            
+            } else if(xml->name() == "port") {
+                QString port = xml->readElementText();
+                p.first = "port";
+                p.second = port;
+                _settings.insert(profile, p);
+                qDebug() << "* inserted port:" << port;
+            }
+        }
+    }
+
+
+    /*
     QSettings s;
     // Read in sessions
     QStringList l = s.value(_shortName+"/profiles").toStringList();
@@ -94,6 +138,7 @@ const bool SocketManagerIO::loadSettings() {
                     s.value(_shortName+"/"+str+"_port").toInt()));
     }
     qDebug() << _settings;
+    */
 }
 
 
