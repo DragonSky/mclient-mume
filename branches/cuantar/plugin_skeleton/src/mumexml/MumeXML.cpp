@@ -51,7 +51,9 @@ void MumeXML::customEvent(QEvent* e) {
         foreach(s, types) {
 	  if (s.startsWith("TelnetData")) {
 	    qDebug() << "MumeXML got an event";
-	    parse(me->payload()->toByteArray());
+        QByteArray ba = me->payload()->toByteArray();
+        _eventQueue.enqueue(ba);
+        if(!isRunning()) start(LowPriority);
 	  }
 	}
     }
@@ -127,6 +129,15 @@ void MumeXML::parse(const QByteArray& line) {
       characters( _tempCharacters );
     _tempCharacters.clear();
   }
+}
+
+
+void MumeXML::run() {
+    while(_eventQueue.count() > 0) {
+        QByteArray ba = _eventQueue.dequeue();
+	    parse(ba);
+    }
+    qDebug() << "* MumeXML::run() returning";
 }
 
 bool MumeXML::element( const QByteArray& line  ) {
