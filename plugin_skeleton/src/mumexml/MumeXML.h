@@ -3,6 +3,9 @@
 
 #include "MClientFilterPlugin.h"
 
+#include <QQueue>
+
+class QByteArray;
 class MClientEvent;
 class QEvent;
 
@@ -22,6 +25,7 @@ class MumeXML : public MClientFilterPlugin {
         const bool saveSettings() const;
         const bool startSession(QString s);
         const bool stopSession(QString s);
+        void run();
 
  protected:
 	static const QString nullString;
@@ -45,6 +49,8 @@ class MumeXML : public MClientFilterPlugin {
 	QByteArray _tempTag;
 	bool _readingTag;
 	XmlMode _xmlMode;
+
+    QQueue<QByteArray> _eventQueue;
 };
 
 
