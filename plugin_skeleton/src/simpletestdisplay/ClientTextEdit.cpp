@@ -40,6 +40,9 @@ ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     QFontMetrics fm(font());
     QScrollBar* scrollbar = verticalScrollBar();
     scrollbar->setSingleStep(fm.leading()+fm.height());
+
+    connect(scrollbar, SIGNAL(sliderReleased()), 
+                this, SLOT(scrollBarReleased()));
 }
 
 
@@ -115,6 +118,7 @@ void ClientTextEdit::addText(const QString& str) {
   ensureCursorVisible();
 }
 
+
 void ClientTextEdit::moveCursor(const int& diff) {
     int col = _cursor.columnNumber();
     int pos = _cursor.position();
@@ -131,3 +135,27 @@ void ClientTextEdit::moveCursor(const int& diff) {
     _cursor.movePosition(direction, QTextCursor::KeepAnchor, abs(diff));
 }
 
+
+void ClientTextEdit::scrollBarReleased() {
+//    if(action == QAbstractSlider::SliderReleased) {
+        QScrollBar* sb = verticalScrollBar();
+        int val = sb->value();
+        int singleStep = sb->singleStep();
+        qDebug() << "* singleStep is:" << singleStep;
+        int docSize = sb->maximum() - sb->minimum() + sb->pageStep();
+        if(val%singleStep != 0) {
+            qDebug() << "* val is:" << val;
+            // here's what's left over
+            int newVal = val/singleStep;
+            int pixels = newVal*singleStep;
+            qDebug() << "* newVal is:" << newVal;
+            if(val-pixels < singleStep/2) {
+                val = pixels;
+            } else {
+                val = pixels + singleStep;
+            }
+        }
+        sb->setSliderPosition(val);
+        qDebug() << "* set slider position to" << val;
+//    }
+}
