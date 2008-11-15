@@ -139,7 +139,7 @@ void ClientTextEdit::moveCursor(const int& diff) {
 void ClientTextEdit::scrollBarReleased() {
 //    if(action == QAbstractSlider::SliderReleased) {
         QScrollBar* sb = verticalScrollBar();
-        int val = sb->value();
+        int val = sb->value()+sb->pageStep();
         int singleStep = sb->singleStep();
         qDebug() << "* singleStep is:" << singleStep;
         int docSize = sb->maximum() - sb->minimum() + sb->pageStep();
@@ -155,7 +155,7 @@ void ClientTextEdit::scrollBarReleased() {
                 val = pixels + singleStep;
             }
         }
-        sb->setSliderPosition(val);
+        sb->setSliderPosition(val-sb->pageStep());
         qDebug() << "* set slider position to" << val;
 //    }
 }
