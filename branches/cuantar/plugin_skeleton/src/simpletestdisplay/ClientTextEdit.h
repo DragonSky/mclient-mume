@@ -17,6 +17,7 @@ class ClientTextEdit : public QTextEdit {
     public slots:
         void displayText(const QString& str);
         void moveCursor(const int& diff);
+        void scrollBarReleased();
 
 
     protected:
