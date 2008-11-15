@@ -3,8 +3,8 @@
     <profile name="test">
         <connection port="4242" host="mume.org"/>
         <proxy port="8080" host="proxy.example.com">
-            <username>username</username>
             <password>password</password>
+            <username>username</username>
         </proxy>
     </profile>
 </config>

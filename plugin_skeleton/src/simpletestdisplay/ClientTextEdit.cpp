@@ -1,6 +1,7 @@
 #include "ClientTextEdit.h"
 
 #include <QDebug>
+#include <QScrollBar>
 #include <QTextCursor>
 #include <QTextDocument>
 #include <QTextFrame>
@@ -26,6 +27,7 @@ ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     frame->setFrameFormat(frameFormat);
 
     _format = _cursor.charFormat();
+    _format.setFont(QFont("Monospace", 8));
     //_format.setFont(Config().serverOutputFont);
     _format.setBackground(Qt::black);
     _format.setForeground(Qt::lightGray);
@@ -35,6 +37,9 @@ ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     QFontMetrics fm(Config().serverOutputFont);
     setTabStopWidth(fm.width(" ") * 8); // A tab is 8 spaces wide
     */
+    QFontMetrics fm(font());
+    QScrollBar* scrollbar = verticalScrollBar();
+    scrollbar->setSingleStep(fm.leading()+fm.height());
 }
 
 
