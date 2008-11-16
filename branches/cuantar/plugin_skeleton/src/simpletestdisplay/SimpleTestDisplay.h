@@ -5,6 +5,7 @@
 
 #include <QHash>
 #include <QPointer>
+#include <QDomDocument>
 
 class QEvent;
 class QPushButton;
@@ -33,8 +34,15 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
 
     private:
         QPointer<QPushButton> _button;
-
         QHash<QString, ClientWidget*> _widgets;
+
+	QString _settingsFile;
+
+	QColor _blackColor, _redColor, _greenColor, _yellowColor, _blueColor, _magentaColor;
+	QColor _cyanColor, _grayColor, _darkGrayColor, _brightRedColor, _brightGreenColor;
+	QColor _brightYellowColor, _brightBlueColor, _brightMagentaColor, _brightCyanColor;
+	QColor _whiteColor, _foregroundColor, _backgroundColor;
+	QFont _serverOutputFont, _inputLineFont;
 
     signals: 
         void dataReceived(QString s);

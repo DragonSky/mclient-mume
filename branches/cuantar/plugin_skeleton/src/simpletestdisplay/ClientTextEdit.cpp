@@ -6,6 +6,7 @@
 #include <QTextDocument>
 #include <QTextFrame>
 #include <QTextCharFormat>
+#include <QBrush>
 
 ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     setReadOnly(true);
@@ -21,43 +22,62 @@ ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     QTextFrame* frame = _doc->rootFrame();
     _cursor = frame->firstCursorPosition();
 
+    // Default Colors
+    _foregroundColor = Qt::lightGray;
+    _backgroundColor = Qt::black;
+    _blackColor = Qt::darkGray;
+    _redColor = Qt::darkRed;
+    _greenColor = Qt::darkGreen;
+    _yellowColor = Qt::darkYellow;
+    _blueColor = Qt::darkBlue;
+    _magentaColor = Qt::darkMagenta;
+    _cyanColor = Qt::darkCyan;
+    _grayColor = Qt::lightGray;
+    _darkGrayColor = Qt::gray;
+    _brightRedColor = Qt::red;
+    _brightGreenColor = Qt::green;
+    _brightYellowColor = Qt::yellow;
+    _brightBlueColor = Qt::blue;
+    _brightMagentaColor = Qt::magenta;
+    _brightCyanColor = Qt::cyan;
+    _whiteColor = Qt::white;
+    // Default Fonts
+    _serverOutputFont = QFont("Monospace", 8);
+    _inputLineFont = QFont("Monospace", 8); //QApplication::font();
+
     QTextFrameFormat frameFormat = frame->frameFormat();
-    frameFormat.setBackground(Qt::black);
-    frameFormat.setForeground(Qt::lightGray);
+    frameFormat.setBackground(_backgroundColor);
+    frameFormat.setForeground(_foregroundColor);
     frame->setFrameFormat(frameFormat);
 
     _format = _cursor.charFormat();
-    _format.setFont(QFont("Monospace", 8));
-    //_format.setFont(Config().serverOutputFont);
-    _format.setBackground(Qt::black);
-    _format.setForeground(Qt::lightGray);
+    setDefaultFormat(_format);
+    _defaultFormat = _format;
     _cursor.setCharFormat(_format);
 
-    /*
-    QFontMetrics fm(Config().serverOutputFont);
+    QFontMetrics fm(_serverOutputFont);
     setTabStopWidth(fm.width(" ") * 8); // A tab is 8 spaces wide
-    */
-    QFontMetrics fm(font());
     QScrollBar* scrollbar = verticalScrollBar();
     scrollbar->setSingleStep(fm.leading()+fm.height());
 
     connect(scrollbar, SIGNAL(sliderReleased()), 
                 this, SLOT(scrollBarReleased()));
+
+    previous = 0;
 }
 
 
 ClientTextEdit::~ClientTextEdit() {
 }
 
-
-void ClientTextEdit::displayText(const QString& str) {
-    //qDebug() << "Received text:" << str;
-    //_doc->setPlainText(str);
-    addText(str);
+void ClientTextEdit::setDefaultFormat(QTextCharFormat& format) {
+  format.setFont(_serverOutputFont);
+  format.setBackground(_backgroundColor);
+  format.setForeground(_foregroundColor);
 }
 
 
-void ClientTextEdit::addText(const QString& str) {
+void ClientTextEdit::displayText(const QString& str) {
   // ANSI codes are formatted as the following:
   // escape + [ + n1 (+ n2) + m
   QRegExp ansiRx("\\0033\\[((?:\\d+;)*\\d+)m");
@@ -76,11 +96,8 @@ void ClientTextEdit::addText(const QString& str) {
     // split several semicoloned ansi codes into individual codes
     subAnsi = ansi[i].split(";"); 
     QStringListIterator ansiIterator(subAnsi);
-    /*
-    // HACK: ANSI support not included yet.
     while (ansiIterator.hasNext() && i != 0)
       updateFormat(_format, ansiIterator.next().toInt());
-    */
 
     // split the text into sub-blocks
     blocks[i].replace((char)20, " "); // replace hex-spaces with normal spaces
@@ -158,4 +175,197 @@ void ClientTextEdit::scrollBarReleased() {
         sb->setSliderPosition(val-sb->pageStep());
         qDebug() << "* set slider position to" << val;
 //    }
+}
+
+void ClientTextEdit::updateFormat(QTextCharFormat& format, int ansiCode)
+{
+  /*
+  if (ansiCode != previous)
+    qDebug("new code: %d", ansiCode);
+  else
+    qDebug("repeat");
+  */
+  previous = ansiCode;
+  QBrush tempBrush;
+  switch (ansiCode) {
+    case 0:
+      // turn ANSI off (i.e. return to normal defaults)
+      format = _defaultFormat;
+      //format.clearBackground();
+      //format.clearForeground();
+      break;
+    case 1:
+      // bold
+      format.setFontWeight(QFont::Bold);
+      updateFormatBoldColor(format);
+      break;
+    case 4:
+      // underline
+      format.setFontUnderline(true);
+      break;
+    case 5:
+      // blink
+      // TODO
+      break;
+    case 7:
+      // inverse
+      tempBrush = format.background();
+      format.setBackground(format.foreground());
+      format.setForeground(tempBrush);
+      break;
+    case 8:
+      // strike-through
+      format.setFontStrikeOut(true);
+      break;
+    case 30:
+      // black foreground
+      format.setForeground(_blackColor);
+      break;
+    case 31:
+      // red foreground
+      format.setForeground(_redColor);
+      break;
+    case 32:
+      // green foreground
+      format.setForeground(_greenColor);
+      break;
+    case 33:
+      // yellow foreground
+      format.setForeground(_yellowColor);
+      break;
+    case 34:
+      // blue foreground
+      format.setForeground(_blueColor);
+      break;
+    case 35:
+      // magenta foreground
+      format.setForeground(_magentaColor);
+      break;
+    case 36:
+      // cyan foreground
+      format.setForeground(_cyanColor);
+      break;
+    case 37:
+      // gray foreground
+      format.setForeground(_grayColor);
+      break;
+    case 40:
+      // black background
+      format.setBackground(_blackColor);
+      break;
+    case 41:
+      // red background
+      format.setBackground(_redColor);
+      break;
+    case 42:
+      // green background
+      format.setBackground(_greenColor);
+      break;
+    case 43:
+      // yellow background
+      format.setBackground(_yellowColor);
+      break;
+    case 44:
+      // blue background
+      format.setBackground(_blueColor);
+      break;
+    case 45:
+      // magenta background
+      format.setBackground(_magentaColor);
+      break;
+    case 46:
+      // cyan background
+      format.setBackground(_cyanColor);
+      break;
+    case 47:
+      // gray background
+      format.setBackground(_grayColor);
+      break;
+    case 90:
+      // high-black foreground
+      format.setForeground(_darkGrayColor);
+      break;
+    case 91:
+      // high-red foreground
+      format.setForeground(_brightRedColor);
+      break;
+    case 92:
+      // high-green foreground
+      format.setForeground(_brightGreenColor);
+      break;
+    case 93:
+      // high-yellow foreground
+      format.setForeground(_brightYellowColor);
+      break;
+    case 94:
+      // high-blue foreground
+      format.setForeground(_brightBlueColor);
+      break;
+    case 95:
+      // high-magenta foreground
+      format.setForeground(_brightMagentaColor);
+      break;
+    case 96:
+      // high-cyan foreground
+      format.setForeground(_brightCyanColor);
+      break;
+    case 97:
+      // high-white foreground
+      format.setForeground(_whiteColor);
+      break;
+    case 100:
+      // high-black background
+      format.setBackground(_darkGrayColor);
+      break;
+    case 101:
+      // high-red background
+      format.setBackground(_brightRedColor);
+      break;
+    case 102:
+      // high-green background
+      format.setBackground(_brightGreenColor);
+      break;
+    case 103:
+      // high-yellow background
+      format.setBackground(_brightYellowColor);
+      break;
+    case 104:
+      // high-blue background
+      format.setBackground(_brightBlueColor);
+      break;
+    case 105:
+      // high-magenta background
+      format.setBackground(_brightMagentaColor);
+      break;
+    case 106:
+      // high-cyan background
+      format.setBackground(_brightCyanColor);
+      break;
+    case 107:
+      // high-white background
+      format.setBackground(_whiteColor);
+      break;
+    default:
+      qDebug("Unknown!");
+      format.setBackground(Qt::gray);
+  };
+}
+
+void ClientTextEdit::updateFormatBoldColor(QTextCharFormat& format) {
+  if (format.foreground() == _blackColor)
+    format.setForeground(_darkGrayColor);
+  else if (format.foreground() == _redColor)
+    format.setForeground(_brightRedColor);
+  else if (format.foreground() == _greenColor)
+    format.setForeground(_brightGreenColor);
+  else if (format.foreground() == _yellowColor)
+    format.setForeground(_brightYellowColor);
+  else if (format.foreground() == _blueColor)
+    format.setForeground(_brightBlueColor);
+  else if (format.foreground() == _magentaColor)
+    format.setForeground(_brightMagentaColor);
+  else if (format.foreground() == _cyanColor)
+    format.setForeground(_brightCyanColor);
+  else if (format.foreground() == _grayColor)
+    format.setForeground(_whiteColor);
 }
