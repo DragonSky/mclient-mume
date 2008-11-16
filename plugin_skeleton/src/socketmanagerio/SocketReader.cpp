@@ -126,9 +126,21 @@ void SocketReader::sendToSocket(const QByteArray* ba) {
     qDebug() << "Got user input:" << ba->data() << ba->count();
     //str << str.size();
     //int len = _socket->write(ba.toLatin1().data(), str.size());
-    int len = _socket->write(*ba);
-    //_socket->write("\n");
-    qDebug() << len << "bytes written";
+    //int len = _socket->write(*ba);
+
+    const char *dd = ba->data();
+    int dataLength = ba->count();
+
+    int written = 0;
+    do {
+      int w = _socket->write(dd + written, dataLength - written);
+      // TODO: need some error diagnostics
+      if (w == -1)  // buffer full - try again
+	continue;
+      written += w;
+    } while (written < dataLength);
+
+    qDebug() << dataLength << "bytes written";
     delete ba;
 }
 

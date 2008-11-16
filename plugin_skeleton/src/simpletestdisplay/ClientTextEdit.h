@@ -12,7 +12,6 @@ class ClientTextEdit : public QTextEdit {
     public:
         ClientTextEdit(QWidget* parent=0);
         ~ClientTextEdit();
-        void addText(const QString& str);
     
     public slots:
         void displayText(const QString& str);
@@ -23,7 +22,21 @@ class ClientTextEdit : public QTextEdit {
     protected:
         QTextCursor _cursor;
         QTextDocument* _doc;
-        QTextCharFormat _format;
+        QTextCharFormat _format, _defaultFormat;
+
+ private:
+	QColor _blackColor, _redColor, _greenColor, _yellowColor, _blueColor, _magentaColor;
+	QColor _cyanColor, _grayColor, _darkGrayColor, _brightRedColor, _brightGreenColor;
+	QColor _brightYellowColor, _brightBlueColor, _brightMagentaColor, _brightCyanColor;
+	QColor _whiteColor, _foregroundColor, _backgroundColor;
+	QFont _serverOutputFont, _inputLineFont;
+
+	int previous;
+
+	void setDefaultFormat(QTextCharFormat& format);
+	void updateFormat(QTextCharFormat& format, int ansiCode);
+	void updateFormatBoldColor(QTextCharFormat& format);
+
 
 };
 
