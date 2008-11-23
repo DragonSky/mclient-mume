@@ -16,7 +16,8 @@ set(mclientplugin_SRCS
     MClientFilterPlugin.cpp
     MClientIOPlugin.cpp
     MClientDisplayPlugin.cpp
-    PluginConfigWidget.cpp)
+    PluginConfigWidget.cpp
+    ConfigManager.cpp)
 
 SET(mclientplugin_MOC_HDRS
     PluginManager.h
@@ -24,7 +25,8 @@ SET(mclientplugin_MOC_HDRS
     MClientFilterPlugin.h
     MClientIOPlugin.h
     MClientDisplayPlugin.h
-    PluginConfigWidget.h)
+    PluginConfigWidget.h
+    ConfigManager.h)
 
 QT4_WRAP_CPP(mclientplugin_MOC_SRCS ${mclientplugin_MOC_HDRS})
 add_library(mclientplugin ${mclientplugin_SRCS}

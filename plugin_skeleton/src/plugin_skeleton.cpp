@@ -1,5 +1,6 @@
 #include "MClientEvent.h"
 #include "MClientEventData.h"
+#include "ConfigManager.h"
 #include "PluginManager.h"
 
 #include <QApplication>
@@ -14,6 +15,8 @@ int main(int argc, char** argv) {
     QApplication::setOrganizationDomain("mume.org");
     QApplication::setApplicationName("mclient");
 
+    ConfigManager* cm = ConfigManager::instance();
+    cm->readPluginSettings();
     
     PluginManager* pm = PluginManager::instance();
     pm->start(QThread::LowPriority);
@@ -25,6 +28,9 @@ int main(int argc, char** argv) {
     pm->initSession("test");
     
     int retval = app.exec();
+
     pm->destroy();
+    cm->destroy();
+
     return retval;
 }
