@@ -16,10 +16,9 @@ int main(int argc, char** argv) {
     QApplication::setApplicationName("mclient");
 
     ConfigManager* cm = ConfigManager::instance();
-    cm->readPluginSettings();
     
     PluginManager* pm = PluginManager::instance();
-    pm->start(QThread::LowPriority);
+    pm->start(QThread::TimeCriticalPriority);
 
 //    while(!pm->doneLoading()) sleep(.1);
     sleep(1);

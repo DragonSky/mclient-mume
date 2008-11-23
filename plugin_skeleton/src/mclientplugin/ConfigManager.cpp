@@ -24,6 +24,7 @@ void ConfigManager::destroy() {
 
 ConfigManager::ConfigManager(QObject* parent) : QObject(parent) {
     readApplicationSettings();
+    readPluginSettings();
 }
 
 
@@ -60,11 +61,76 @@ const bool ConfigManager::readPluginSettings() {
 
         QXmlStreamReader* xml = new QXmlStreamReader(device);
 
+        QString plugin;
+        QString profile;
+        QString id;
+        while(!xml->atEnd()) {
+            xml->readNext();
+
+            if(xml->isEndElement()) {
+                if(xml->name() == "config") {
+                } else if(xml->name() == "profile") {
+                }
+            
+            } else if(xml->isStartElement()) {
+                if(xml->name() == "config") {
+                    // check version, get plugin name
+                    QXmlStreamAttributes attr = xml->attributes();
+                    QString version = attr.value("version").toString();
+                    plugin = attr.value("plugin").toString();
+
+                    QHash<QString,
+                        QHash<QString,
+                            QHash<QString, QString>
+                        >
+                    > h;
+
+                    _config.insert(plugin, h);
+
+                } else if(xml->name() == "profile") {
+                    QXmlStreamAttributes attr = xml->attributes();
+                    profile = attr.value("name").toString();
+                    
+                    QHash<QString,
+                        QHash<QString, QString>
+                    > h;
+
+                    _config[plugin].insert(profile, h);
+                    _profiles[profile] << plugin;
+                
+                } else {
+                    QString tag = xml->name().toString();
+                    QXmlStreamAttributes attr = xml->attributes();
+                    id = attr.value("id").toString();
+                    if(!_config[plugin][profile].contains(id)) {
+                        QHash<QString, QString> h;
+                        _config[plugin][profile].insert(id, h);
+                    }
+                    
+                    foreach(QXmlStreamAttribute a, attr) {
+                        QString key = a.name().toString();
+                        QString value = a.value().toString();
+                        _config[plugin][profile][id].insert(key, value);
+                    }
+                }
+            }
+        }
     }
+
+    qDebug() << "* config looks like:" << _config;
+    qDebug() << "* profiles look like:" << _profiles;
+
     return true;
 }
 
 
 const bool ConfigManager::writePluginSettings() const {
     return true;
+}
+
+
+const QHash<QString, QHash<QString, QString> >& 
+ConfigManager::pluginProfileConfig(const QString plugin, 
+        const QString profile) const {
+    return _config[plugin][profile];
 }
