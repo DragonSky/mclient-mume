@@ -32,7 +32,7 @@ class ConfigManager : public QObject {
 
     protected:
         // It's a singleton, so these go here
-        ConfigManager(QObject* parent);
+        ConfigManager(QObject* parent=0);
         ~ConfigManager();
 
         static ConfigManager* _pinstance;
