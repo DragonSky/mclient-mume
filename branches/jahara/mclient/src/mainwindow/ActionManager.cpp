@@ -54,19 +54,19 @@ void ActionManager::createActions() {
   exitAct->setStatusTip(tr("Exit the application"));
   //connect(exitAct, SIGNAL(triggered()), _mainWindow, SLOT(close()));
 
-  cutAct = new QAction(QIcon(":/editcut.png"), tr("Cu&t"), this);
+  cutAct = new QAction(QIcon(":/resources/cut.png"), tr("Cu&t"), this);
   cutAct->setShortcut(tr("Ctrl+X"));
   cutAct->setStatusTip(tr("Cut the current selection's contents to the "
       "clipboard"));
   //connect(cutAct, SIGNAL(triggered()), cliMgr->getTextEdit(), SLOT(cut()));
 
-  copyAct = new QAction(QIcon(":/editcopy.png"), tr("&Copy"), this);
+  copyAct = new QAction(QIcon(":/resources/copy.png"), tr("&Copy"), this);
   copyAct->setShortcut(tr("Ctrl+C"));
   copyAct->setStatusTip(tr("Copy the current selection's contents to the "
       "clipboard"));
   //connect(copyAct, SIGNAL(triggered()), cliMgr->getTextEdit(), SLOT(copy()));
 
-  pasteAct = new QAction(QIcon(":/editpaste.png"), tr("&Paste"), this);
+  pasteAct = new QAction(QIcon(":/resources/paste.png"), tr("&Paste"), this);
   pasteAct->setShortcut(tr("Ctrl+V"));
   pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
       "selection"));
