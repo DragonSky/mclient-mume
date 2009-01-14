@@ -11,7 +11,6 @@
 
 class QString;
 
-
 class MClientPlugin : public QThread, public MClientPluginInterface {
     Q_OBJECT
     Q_INTERFACES(MClientPluginInterface)
@@ -19,6 +18,9 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
     public:
         MClientPlugin(QObject* parent=0);
         ~MClientPlugin();
+
+        // The type of plugin
+        virtual const MClientPluginType& type() const;
 
         // The library filename relative to plugins dir
 //        const QString& libName() const;
@@ -80,6 +82,7 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         QString _longName;
         QString _description;
         QString _version;
+	MClientPluginType _type;
 
         bool _configurable;
         QString _configVersion;

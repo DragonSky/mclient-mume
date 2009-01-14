@@ -2,15 +2,18 @@
 #define MCLIENTPLUGININTERFACE_H
 
 #include <QtPlugin>
-
 #include <QHash>
 
 class QString;
 
+enum MClientPluginType { UNKNOWN = 0, FILTER, DISPLAY, IO };
 
 class MClientPluginInterface {
     
     public:
+        // The type of plugin
+        virtual const MClientPluginType& type() const=0;
+
         // The library filename relative to plugins dir
 //        virtual const QString& libName() const=0;
 

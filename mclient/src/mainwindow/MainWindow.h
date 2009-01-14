@@ -32,11 +32,21 @@ class MainWindow:public QMainWindow
   Q_OBJECT
 
   public:
-    MainWindow();
-    ~MainWindow();
+  // Singleton methods
+  static MainWindow* instance();
+  void destroy();
+
+  void receiveWidget(const QWidget *widget);
 
   protected:
+    // It's a singleton, so these go here
+    MainWindow();
+    ~MainWindow();
+    
+    static MainWindow* _pinstance;
+    
     void closeEvent(QCloseEvent *event);
+
 
   public slots:
     void start();
