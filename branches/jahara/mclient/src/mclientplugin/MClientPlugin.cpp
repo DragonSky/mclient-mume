@@ -24,6 +24,11 @@ MClientPlugin::~MClientPlugin() {
 }
 
 
+const MClientPluginType& MClientPlugin::type() const {
+    return _type;
+}
+
+
 /*
 const QString& MClientPlugin::libName() const {
     return _libName;

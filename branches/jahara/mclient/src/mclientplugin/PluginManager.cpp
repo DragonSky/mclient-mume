@@ -6,6 +6,8 @@
 #include "PluginConfigWidget.h"
 #include "PluginEntry.h"
 
+#include "MainWindow.h"
+
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
@@ -350,7 +352,16 @@ void PluginManager::initSession(QString s) {
         MClientPluginInterface* pi;
         pi = qobject_cast<MClientPluginInterface*>(pl->instance());
         if(pi) {
-            pi->startSession(s);
+	  pi->startSession(s);	    
+	  
+	  // Display type plugins need QWidget transfers
+	  if (pi->type() == DISPLAY) {
+	    qDebug("Found a DISPLAY plugin!");
+	    MainWindow* mw = MainWindow::instance();
+	    MClientDisplayInterface* pd;
+	    pd = qobject_cast<MClientDisplayInterface*>(pl->instance());
+	    mw->receiveWidget(pd->getWidget(s));
+	  }
         }
     }
 }

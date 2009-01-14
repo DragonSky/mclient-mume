@@ -30,6 +30,7 @@ class SimpleTestDisplay : public MClientDisplayPlugin {
 
         // Display members
         const bool initDisplay(QString s);
+        const QWidget* getWidget(QString s);
 
 
     private:

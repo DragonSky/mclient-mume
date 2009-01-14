@@ -4,6 +4,7 @@
 
 
 MClientDisplayPlugin::MClientDisplayPlugin(QWidget* parent) : MClientPlugin(parent) {
+  _type = DISPLAY;
 }
 
 
@@ -17,3 +18,8 @@ void MClientDisplayPlugin::customEvent(QEvent* e) {
 
 const bool MClientDisplayPlugin::initDisplay(QString s) {
 }
+
+
+const QWidget* MClientDisplayPlugin::getWidget(QString s) {
+}
+

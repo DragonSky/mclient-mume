@@ -21,17 +21,28 @@
 #include "MainWindow.h"
 #include "ActionManager.h"
 
-#include "MClientEvent.h"
-#include "MClientEventData.h"
 #include "ConfigManager.h"
 #include "PluginManager.h"
 
+MainWindow* MainWindow::_pinstance = 0;
+
+MainWindow* MainWindow::instance() {
+    if(!_pinstance) {
+        _pinstance = new MainWindow();
+    }
+
+    return _pinstance;
+}
+
+void MainWindow::destroy() {
+    delete this;
+}
+
 MainWindow::MainWindow() {
-  setWindowIcon(QIcon(":/icons/m.png"));
+  setWindowIcon(QIcon(":/resources/m.png"));
 
   /** Connect Other Necessary Widgets */
-  PluginManager* pm = PluginManager::instance();
-  connect(pm, SIGNAL(doneLoading()), this, SLOT(start()));
+  connect(PluginManager::instance(), SIGNAL(doneLoading()), SLOT(start()));
 
   /** Create Other Child Widgets */
   createActions();
@@ -48,11 +59,12 @@ void MainWindow::start() {
   show();
 
   PluginManager* pm = PluginManager::instance();
-  //sleep(3);
-  //pm->configureTest();
-
   pm->initSession("test");
-  qDebug("MainWindow started!");
+}
+
+void MainWindow::receiveWidget(const QWidget* widget) {
+  // TODO: Different widget locations
+  setCentralWidget((QWidget*)widget);  
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

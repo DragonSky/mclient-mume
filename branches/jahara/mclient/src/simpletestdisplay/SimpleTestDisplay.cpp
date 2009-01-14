@@ -227,7 +227,7 @@ const bool SimpleTestDisplay::saveSettings() const {
 
 
 const bool SimpleTestDisplay::startSession(QString s) {
-    initDisplay(s);
+    //initDisplay(s);
     return true;
 }
 
@@ -248,5 +248,18 @@ const bool SimpleTestDisplay::initDisplay(QString s) {
     emit dataReceived(QString("Type #connect to connect to MUME\n"));
 
     return true;
+
+}
+
+const QWidget* SimpleTestDisplay::getWidget(QString s) {
+    ClientWidget* cw = new ClientWidget(s, this);
+   
+    _widgets.insert(s, cw); 
+
+    //cw->show();
+
+    emit dataReceived(QString("Type #connect to connect to MUME\n"));
+
+    return cw;
 
 }

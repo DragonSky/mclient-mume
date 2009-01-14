@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     ConfigManager* cm = ConfigManager::instance();
     PluginManager* pm = PluginManager::instance();
-    MainWindow *mw = new MainWindow();
+    MainWindow* mw = MainWindow::instance();
     pm->start(QThread::TimeCriticalPriority);
 
     return app.exec();
