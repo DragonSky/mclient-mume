@@ -132,7 +132,7 @@ Telnet::Telnet(QObject* parent)
     d->_connected = false;
     d->curX = 0;
     d->curY = 0;
-    d->_startupneg = true;
+    d->_startupneg = false;
     d->encoding = DEFAULT_ENCODING;
     
     reset ();
@@ -295,23 +295,16 @@ bool Telnet::doSendData (const string &data)
   //write data to socket - it's so complicated because sometimes only a part of data
   //is accepted at a time
   int dataLength = data.length ();
-  //  const char *dd = data.c_str();
-//   int written = 0;
-//   do {
-//     int w = d->socket->write (dd + written, dataLength - written);
-//     // TODO: need some error diagnostics
-//     if (w == -1)  // buffer full - try again
-//       continue;
-//     written += w;
-//   } while (written < dataLength);
 
-  QByteArray ba(data.c_str(), dataLength);
-  QVariant* qv = new QVariant(ba);
-  QStringList sl("SendToSocketData");  
-  // FIXME: HACK! :(
-  foreach(QString s, _runningSessions) {
-      postEvent(qv, sl, s);
-  }
+//   QByteArray ba(data.c_str(), dataLength);
+//   QVariant* qv = new QVariant(ba);
+//   QStringList sl("SendToSocketData");  
+//   // FIXME: HACK! :(
+//   foreach(QString s, _runningSessions) {
+//       postEvent(qv, sl, s);
+//   }
+
+// HACK: This is BROKEN in the protocol, disabled.
 
   //update counter
   d->sentbytes += dataLength;
