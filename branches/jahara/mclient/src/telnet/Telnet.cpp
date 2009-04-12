@@ -112,7 +112,7 @@ Telnet::Telnet(QObject* parent)
     _description = "A telnet data filter.";
     // TODO
     _dependencies.insert("some_stupid_api", 10);
-    _implemented.insert("some_other_api",1);
+    _implemented.insert("telnet",1);
     _dataTypes << "SocketData" << "SocketConnected" << "SocketDisconnected";
 
     /** KMuddy Telnet */

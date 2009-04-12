@@ -24,7 +24,7 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _shortName = "socketmanagerio";
     _longName = "SocketManager";
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";
-//    _dependencies.insert("some_stupid_api", 10);
+    _dependencies.insert("commandmanager", 10);
     _implemented.insert("some_stupid_api",10);
     _dataTypes << "SendToSocketData" << "ConnectToHost";
     _configurable = true;
@@ -32,7 +32,6 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
 
     // SocketManager members
     _settingsFile = "config/"+_shortName+".xml";
-
 }
 
 
@@ -283,6 +282,17 @@ const bool SocketManagerIO::startSession(QString s) {
     _sockets.insert(s, sr);
     _runningSessions << s;
     qDebug() << "* inserted SocketReader for session" << s;
+
+    // register Commands for CommandManager
+    QStringList commands;
+    commands << _shortName << "connect" << "ConnectToHost";
+    QVariant* qv = new QVariant(commands);
+    QStringList sl;
+    sl << "CommandRegister";
+    foreach(QString s, _runningSessions) {
+      postEvent(qv, sl, s);
+    }
+
     return true;
 }
 

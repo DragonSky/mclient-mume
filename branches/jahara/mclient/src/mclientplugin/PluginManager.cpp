@@ -352,14 +352,14 @@ void PluginManager::initSession(QString s) {
         MClientPluginInterface* pi;
         pi = qobject_cast<MClientPluginInterface*>(pl->instance());
         if(pi) {
-	  pi->startSession(s);	    
+	  pi->startSession(s);
 	  
 	  // Display type plugins need QWidget transfers
 	  if (pi->type() == DISPLAY) {
-	    qDebug("Found a DISPLAY plugin!");
-	    MainWindow* mw = MainWindow::instance();
+	    qDebug() << "Found a DISPLAY plugin! " << pi->shortName();
 	    MClientDisplayInterface* pd;
 	    pd = qobject_cast<MClientDisplayInterface*>(pl->instance());
+	    MainWindow* mw = MainWindow::instance();
 	    mw->receiveWidget(pd->getWidget(s));
 	  }
         }
