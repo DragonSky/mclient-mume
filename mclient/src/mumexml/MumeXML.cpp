@@ -22,11 +22,11 @@ const QString MumeXML::emptyString("");
 
 MumeXML::MumeXML(QObject* parent) 
         : MClientFilterPlugin(parent) {
-    _shortName = "mumexml";
-    _longName = "Mume XML Parser";
+    _shortName = "mumexmlfilter";
+    _longName = "Mume XML Filter";
     _description = "Filters the XML tags.";
-    _dependencies.insert("some_stupid_api", 10);
-    _implemented.insert("some_other_api",1);
+    _dependencies.insert("telnet", 1);
+    _implemented.insert("mumexml",1);
     _dataTypes << "TelnetData";
 
     _readingTag = false;
@@ -91,7 +91,7 @@ void MumeXML::parse(const QByteArray& line) {
   for (index = 0; index < line.size(); index++) {
     if (_readingTag) {
       if (line.at(index) == '>') {
-        //send tag
+        // Parse line according to the element's tag
         if (!_tempTag.isEmpty())
           element( _tempTag );
 
@@ -162,7 +162,7 @@ bool MumeXML::element( const QByteArray& line  ) {
           break;
         case 'm':
 	  if (line.startsWith("movement")) {
-	    QString move = nullString;
+	    QString move;
 	    if (length > 8)
 	      switch (line.at(8)) {
 	      case ' ':
@@ -585,12 +585,15 @@ bool MumeXML::characters(QByteArray& ch) {
 	if (Config()._emulatedExits)
 	  emulateExits();
 	*/
-	// Empty QVariant for Exit Position Holder
-	qv = new QVariant(nullString); 
-	sl << "XMLExits";
-	foreach(QString s, _runningSessions) {
-	  postEvent(qv, sl, s);
-	}
+
+// 	// Empty QVariant for Exit Position Holder. IS THIS
+// 	NECESSARY!? Maybe for emulated exits?
+//
+// 	qv = new QVariant(nullString); 
+// 	sl << "XMLExits";
+// 	foreach(QString s, _runningSessions) {
+// 	  postEvent(qv, sl, s);
+// 	}
       }
       /*
       else
@@ -624,7 +627,7 @@ bool MumeXML::characters(QByteArray& ch) {
 
       _readingRoomDesc = true; //start of read desc mode
       _singleBuffer = ch;
-      _multiBuffer = nullString;
+      _multiBuffer.clear();
       /*
       _descriptionReady = false;
       _roomName=_stringBuffer;

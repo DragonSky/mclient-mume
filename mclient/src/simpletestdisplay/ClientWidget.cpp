@@ -54,9 +54,10 @@ ClientWidget::~ClientWidget() {
 void ClientWidget::sendUserInput() {
     _lineEdit->selectAll();
     _textEdit->displayText(_lineEdit->selectedText().append("\n"));
-    if (_lineEdit->selectedText().startsWith("#connect")) {
-      QVariant* qv = new QVariant();
-      QStringList sl("ConnectToHost");
+    if (_lineEdit->selectedText().startsWith("#")) {
+      QString input = _lineEdit->selectedText().section('#',1,1);
+      QVariant* qv = new QVariant(input);
+      QStringList sl("CommandInput");
       MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
       me->session(_session);
       QApplication::postEvent(PluginManager::instance(), me);
