@@ -35,6 +35,7 @@ class SocketReader : public QThread {
         void run();
 
         const QString& session() const;
+        const QString& id() const;
 
 
     private:
@@ -42,6 +43,7 @@ class SocketReader : public QThread {
         QNetworkProxy _proxy;
         SocketManagerIO* _sm;
         QString _session;
+        QString _id;
         
         bool _delete;
        

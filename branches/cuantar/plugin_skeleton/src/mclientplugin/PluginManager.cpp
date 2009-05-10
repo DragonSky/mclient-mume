@@ -281,9 +281,12 @@ const bool PluginManager::loadPlugin(const QString& libName) {
             // Insert datatypes this plugin wants into hash
             if(!iPlugin->dataTypes().isEmpty()) {
                 QString s;
-                foreach(s, iPlugin->dataTypes()) {
+                QStringList dataTypes = iPlugin->dataTypes();
+                foreach(s, dataTypes) {
+                    qDebug() << "* inserting" << s << loader;
                     _pluginTypes.insert(s, loader);
                 }
+                qDebug() << "* _pluginTypes looks like" << _pluginTypes;
             }
 
             // Each plugin takes care of its own settings
