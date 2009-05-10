@@ -5,6 +5,17 @@
 
 #include <QPointer>
 #include <QDomDocument>
+#include <QtWebKit>
+
+// for Qt 4.5, we use JQuery
+// for Qt >= 4.6, we use the QWebElement API
+#if QT_VERSION < 0x040600
+#define USE_JQUERY
+#endif
+
+#if QT_VERSION < 0x0040500
+#error You need Qt 4.5 or newer
+#endif
 
 class QEvent;
 
@@ -28,7 +39,22 @@ class WebKitDisplay : public MClientPlugin {
         const QWidget* getWidget(QString s);
 
     private:
-	QString _settingsFile;
+	QString _settingsFile, _pageSource;
+	QWebView* _view;
+#ifdef USE_JQUERY
+	QString _jQuery;
+#endif
+
+	void appendText(QString node, QByteArray text);
+
+ protected:
+	static const QByteArray greatherThanChar;
+	static const QByteArray lessThanChar;
+	static const QByteArray greatherThanTemplate;
+	static const QByteArray lessThanTemplate;
+
+protected slots:
+	void finishLoading(bool);
 
     signals: 
         void dataReceived(QString s);

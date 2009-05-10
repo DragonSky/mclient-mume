@@ -1,12 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-	<file>resources/m.png</file>
-	<file>resources/preferences.png</file>
-	<file>resources/copy.png</file>
-	<file>resources/cut.png</file>
-	<file>resources/paste.png</file>
-	<file>resources/new.png</file>
-	<file>resources/open.png</file>
-	<file>resources/save.png</file>
+<qresource prefix="/mainwindow">
+	<file alias="m.png">resources/m.png</file>
+	<file alias="preferences.png">resources/preferences.png</file>
+	<file alias="copy.png">resources/copy.png</file>
+	<file alias="cut.png">resources/cut.png</file>
+	<file alias="paste.png">resources/paste.png</file>
+	<file alias="new.png">resources/new.png</file>
+	<file alias="open.png">resources/open.png</file>
+	<file alias="save.png">resources/save.png</file>
 </qresource>
 </RCC>

@@ -38,9 +38,12 @@ void CommandManager::customEvent(QEvent* e) {
 	if (s.startsWith("CommandInput")) {
 	  QString command = me->payload()->toString();
 	  QString arguments;
-	  if (command.contains(' ')) {
-	    command = command.section(' ',1,1);
-	    arguments = command.section(' ',1); // test this
+
+	  QRegExp whitespace("\\s+");
+	  int whitespaceIndex = command.indexOf(whitespace);
+	  if (whitespaceIndex >= 0) {
+	    arguments = command.mid(whitespaceIndex+1);
+	    command = command.left(whitespaceIndex);
 	  }
 	  qDebug() << "CommandManager got an event: " << command << arguments;
 
@@ -56,6 +59,13 @@ void CommandManager::customEvent(QEvent* e) {
 	  } else {
 	    // Unknown command!
 	    qDebug() << "Unknown command!";
+	    QString errorString = "Unknown command: " + command + "\n";
+	    QVariant* qv = new QVariant(errorString);
+	    QStringList sl;
+	    sl << "XMLDisplayData";
+	    foreach(QString s, _runningSessions) {
+	      postEvent(qv, sl, s);
+	    }
 
 	  }
 	}

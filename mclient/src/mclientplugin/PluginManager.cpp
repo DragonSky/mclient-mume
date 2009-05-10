@@ -282,10 +282,11 @@ const bool PluginManager::loadPlugin(const QString& libName) {
            
             // Insert datatypes this plugin wants into hash
             if(!iPlugin->dataTypes().isEmpty()) {
-                QString s;
-                foreach(s, iPlugin->dataTypes()) {
-                    _pluginTypes.insert(s, loader);
-                }
+	      QString s;
+	      foreach(s, iPlugin->dataTypes()) {
+		qDebug() << "* adding type" << s << "for" << iPlugin->shortName() << loader->instance();
+		_pluginTypes.insert(s, loader);
+	      }
             }
 
             // Each plugin takes care of its own settings
@@ -308,19 +309,29 @@ const QPluginLoader* PluginManager::pluginWithAPI(const QString& api) const {
 void PluginManager::customEvent(QEvent* e) {
     MClientEvent* me = static_cast<MClientEvent*>(e);
   
-    QHash<QString, QPluginLoader*>::iterator it = _pluginTypes.begin();
-    
-    for(it; it != _pluginTypes.end(); ++it) {
-        if(me->dataTypes().contains(it.key())) {
-            // Need to make a copy, since the original event
-            // will be deleted when this function returns
-            qDebug() << "* copying posted event with payload" << me->payload();
-            MClientEvent* nme = new MClientEvent(*me);
-            qDebug() << "* copied payload to" << nme->payload();
-            qDebug() << "* posting" << nme->dataTypes() << "to" 
-                << it.value()->instance() << "with" << nme->payload();
-            QApplication::postEvent(it.value()->instance(),nme);
-        }
+    QString s;
+    foreach (s, me->dataTypes()) {
+      // Iterate through all the data types
+      qDebug() << "* finding data type" << s << "out of" << me->dataTypes();
+
+      QMultiHash<QString, QPluginLoader*>::iterator it = _pluginTypes.find(s);
+  
+      while (it != _pluginTypes.end() && it.key() == s) {
+	qDebug() << "* looking at" << it.value()->instance();
+
+	// Need to make a copy, since the original event
+	// will be deleted when this function returns
+	qDebug() << "* copying posted event with payload" << me->payload();
+	MClientEvent* nme = new MClientEvent(*me);
+	qDebug() << "* copied payload to" << nme->payload();
+	qDebug() << "* posting" << nme->dataTypes() << "to" 
+		 << it.value()->instance() << "with" << nme->payload();
+
+	// Post the event
+	QApplication::postEvent(it.value()->instance(), nme);
+	
+	++it;
+      }
     }
 }
 
