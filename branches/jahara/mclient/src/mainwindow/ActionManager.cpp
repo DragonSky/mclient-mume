@@ -38,35 +38,35 @@ ActionManager::~ActionManager() {
 }
 
 void ActionManager::createActions() {
-  connectAct = new QAction(QIcon(":/crystal/connect.png"), tr("&Connect..."), this);
+  connectAct = new QAction(QIcon(":/mainwindow/connect.png"), tr("&Connect..."), this);
   connectAct->setStatusTip(tr("Load a new session and connect to the remote host"));
   //connect(connectAct, SIGNAL(triggered()), _mainWindow, SLOT(selectProfile() ));
   
-  disconnectAct = new QAction(QIcon(":/crystal/disconnect.png"), tr("&Disconnect"), this);
+  disconnectAct = new QAction(QIcon(":/mainwindow/disconnect.png"), tr("&Disconnect"), this);
   disconnectAct->setStatusTip(tr("Disconnect from the current session"));
   //connect(disconnectAct, SIGNAL(triggered()), PowwowWrapper::self(), SLOT(disconnectSession()));
 
-  reconnectAct = new QAction(QIcon(":/crystal/reconnect.png"), tr("&Reconnect"), this);
+  reconnectAct = new QAction(QIcon(":/mainwindow/reconnect.png"), tr("&Reconnect"), this);
   reconnectAct->setStatusTip(tr("Reconnect to the current session's remote host"));
   //connect(reconnectAct, SIGNAL(triggered()), PowwowWrapper::self(), SLOT(connectSession()) );
 
-  exitAct = new QAction(QIcon(":/crystal/exit.png"), tr("E&xit"), this);
+  exitAct = new QAction(QIcon(":/mainwindow/exit.png"), tr("E&xit"), this);
   exitAct->setStatusTip(tr("Exit the application"));
   //connect(exitAct, SIGNAL(triggered()), _mainWindow, SLOT(close()));
 
-  cutAct = new QAction(QIcon(":/resources/cut.png"), tr("Cu&t"), this);
+  cutAct = new QAction(QIcon(":/mainwindow/cut.png"), tr("Cu&t"), this);
   cutAct->setShortcut(tr("Ctrl+X"));
   cutAct->setStatusTip(tr("Cut the current selection's contents to the "
       "clipboard"));
   //connect(cutAct, SIGNAL(triggered()), cliMgr->getTextEdit(), SLOT(cut()));
 
-  copyAct = new QAction(QIcon(":/resources/copy.png"), tr("&Copy"), this);
+  copyAct = new QAction(QIcon(":/mainwindow/copy.png"), tr("&Copy"), this);
   copyAct->setShortcut(tr("Ctrl+C"));
   copyAct->setStatusTip(tr("Copy the current selection's contents to the "
       "clipboard"));
   //connect(copyAct, SIGNAL(triggered()), cliMgr->getTextEdit(), SLOT(copy()));
 
-  pasteAct = new QAction(QIcon(":/resources/paste.png"), tr("&Paste"), this);
+  pasteAct = new QAction(QIcon(":/mainwindow/paste.png"), tr("&Paste"), this);
   pasteAct->setShortcut(tr("Ctrl+V"));
   pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
       "selection"));
@@ -77,7 +77,7 @@ void ActionManager::createActions() {
   alwaysOnTopAct->setStatusTip(tr("Toggle the window to always stay on the top"));
   connect(alwaysOnTopAct, SIGNAL(triggered()), this, SLOT(alwaysOnTop()));
 
-  settingsAct = new QAction(QIcon(":/crystal/settings.png"), tr("&Preferences..."), this);
+  settingsAct = new QAction(QIcon(":/mainwindow/settings.png"), tr("&Preferences..."), this);
   settingsAct->setStatusTip(tr("Change mClient settings"));
   connect(settingsAct, SIGNAL(triggered()), _mainWindow, SLOT(changeConfiguration()) );
 
@@ -90,15 +90,15 @@ void ActionManager::createActions() {
   forumAct = new QAction(tr("&Forum"), this);
   forumAct->setStatusTip(tr("Visit the MUME Forum"));
 
-  clientHelpAct = new QAction(QIcon(":/crystal/help.png"), tr("mClient &Help"), this);
+  clientHelpAct = new QAction(QIcon(":/mainwindow/help.png"), tr("mClient &Help"), this);
   clientHelpAct->setStatusTip(tr("View the mClient/Powwow help file"));
   connect(clientHelpAct, SIGNAL(triggered()), this, SLOT(clientHelp()));
 
-  aboutAct = new QAction(QIcon(":/icons/m.png"), tr("About &mClient"), this);
+  aboutAct = new QAction(QIcon(":/mainwindow/m.png"), tr("About &mClient"), this);
   aboutAct->setStatusTip(tr("Show the application's About box"));
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
-  aboutQtAct = new QAction(QIcon(":/crystal/qt.png"), tr("About &Qt"), this);
+  aboutQtAct = new QAction(QIcon(":/mainwindow/qt.png"), tr("About &Qt"), this);
   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
   connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 

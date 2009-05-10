@@ -54,8 +54,10 @@ ClientWidget::~ClientWidget() {
 void ClientWidget::sendUserInput() {
     _lineEdit->selectAll();
     _textEdit->displayText(_lineEdit->selectedText().append("\n"));
+
     if (_lineEdit->selectedText().startsWith("#")) {
-      QString input = _lineEdit->selectedText().section('#',1,1);
+      QString input = _lineEdit->selectedText().mid(1);
+      qDebug() << "posting INPUT " << input;
       QVariant* qv = new QVariant(input);
       QStringList sl("CommandInput");
       MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
@@ -71,7 +73,7 @@ void ClientWidget::sendUserInput() {
               //_lineEdit->selectedText().toStdString().size());
       qDebug() << "Input Entered:" << ba << ba.length();
       ba.append("\n");
-      QVariant* qv = new QVariant(*const_cast<const QByteArray*>(&ba));
+      QVariant* qv = new QVariant(ba); //*const_cast<const QByteArray*>(&ba));
       QStringList sl("SendToSocketData");      
       MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
       me->session(_session);

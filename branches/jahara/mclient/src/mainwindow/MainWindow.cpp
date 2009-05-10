@@ -39,7 +39,7 @@ void MainWindow::destroy() {
 }
 
 MainWindow::MainWindow() {
-  setWindowIcon(QIcon(":/resources/m.png"));
+  setWindowIcon(QIcon(":/mainwindow/m.png"));
 
   /** Connect Other Necessary Widgets */
   connect(PluginManager::instance(), SIGNAL(doneLoading()), SLOT(start()));
