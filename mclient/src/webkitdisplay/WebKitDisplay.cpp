@@ -81,14 +81,12 @@ void WebKitDisplay::appendText(QString node, QByteArray text) {
 
 #ifdef USE_JQUERY
   qDebug() << "* Add to" << node << "via Javascript:" << output;
-  //QString code = "$('" + node + "').each( function ()
-  //{$(this).append('" + output + "') } )";
+  QString code = "$('" + node + "').each( function () {$(this).append('" + output + "') } )";
 
-  QString code = "$('p').each( function () { $(this).css('background-color', 'yellow') } )";
+  //QString code = "$('p').each( function () { $(this).css('background-color', 'yellow') } )";
 
   // Debugging...
   QString testCode = "$('a').each( function () { $(this).css('background-color', 'yellow') } )";
-  code = testCode;
 
   qDebug() << code;
   _view->page()->mainFrame()->evaluateJavaScript(code);
@@ -119,8 +117,9 @@ const bool WebKitDisplay::saveSettings() const {
 const bool WebKitDisplay::startSession(QString s) {
     //initDisplay(s);
     _view = new QWebView;
-    _view->load(QUrl("http://google.com"));
-    //_view->setHtml(_pageSource);
+    //_view->load(QUrl("http://google.com"));
+    _view->setHtml(_pageSource);
+    finishLoading(true); // hack
     _view->show();
 
     connect(_view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
