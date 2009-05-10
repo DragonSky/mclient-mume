@@ -102,6 +102,7 @@ const bool ConfigManager::readPluginSettings() {
                     QString tag = xml->name().toString();
                     QXmlStreamAttributes attr = xml->attributes();
                     id = attr.value("id").toString();
+                    qDebug() << "id is" << id;
                     if(!_config[plugin][profile].contains(id)) {
                         QHash<QString, QString> h;
                         _config[plugin][profile].insert(id, h);
