@@ -56,7 +56,7 @@ class PluginManager : public QThread {
         // NOTE: this is used to keep track of what data types each plugin
         // wants for easy event handling.  This one also may have multiple
         // entries for a given plugin.
-        QHash<QString, QPluginLoader*> _pluginTypes;
+        QMultiHash<QString, QPluginLoader*> _pluginTypes;
 
         // Here are the parents
         QWidget* _displayParent;

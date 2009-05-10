@@ -57,6 +57,7 @@ void SocketManagerIO::customEvent(QEvent* e) {
         
         SocketReader* sr;
         foreach(sr, _sockets.values(me->session())) {
+            qDebug() << "* sending to SocketReader"; 
             sr->sendToSocket(new QByteArray(ba.data()));
         }
 
