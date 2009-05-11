@@ -1,10 +1,8 @@
 #ifndef WEBKITDISPLAY_H
 #define WEBKITDISPLAY_H
 
-#include "MClientPlugin.h"
+#include "MClientDisplayPlugin.h"
 
-#include <QPointer>
-#include <QDomDocument>
 #include <QtWebKit>
 
 // for Qt 4.5, we use JQuery
@@ -19,7 +17,7 @@
 
 class QEvent;
 
-class WebKitDisplay : public MClientPlugin {
+class WebKitDisplay : public MClientDisplayPlugin {
     Q_OBJECT
     
     public:
@@ -44,8 +42,10 @@ class WebKitDisplay : public MClientPlugin {
 #ifdef USE_JQUERY
 	QString _jQuery;
 #endif
-
-	void appendText(QString node, QByteArray text);
+	int _currentSection, _maxSections,
+	  _currentCharacterCount, _maxCharacterCount;
+	
+	void appendText(QByteArray text);
 
  protected:
 	static const QByteArray greatherThanChar;

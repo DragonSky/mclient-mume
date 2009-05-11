@@ -40,6 +40,7 @@ void MainWindow::destroy() {
 
 MainWindow::MainWindow() {
   setWindowIcon(QIcon(":/mainwindow/m.png"));
+  readSettings();
 
   /** Connect Other Necessary Widgets */
   connect(PluginManager::instance(), SIGNAL(doneLoading()), SLOT(start()));
@@ -138,21 +139,8 @@ void MainWindow::createStatusBar()
 
 void MainWindow::readSettings()
 {
-  /*
-  resize(Config().windowSize);
-  move(Config().windowPosition);
-  restoreState(Config().windowState);
-  ActionManager::self()->alwaysOnTopAct->setChecked(Config().alwaysOnTop);
-  if (Config().alwaysOnTop) {
-    ActionManager::self()->alwaysOnTop();
-  }
-  else
-  {
-    if (pos().x() < 0) pos().setX(0);
-    if (pos().y() < 0) pos().setY(0);
-    move(pos());
-  }
-  */
+  resize(QSize(640, 480));
+  move(QPoint(200, 200));
 }
 
 void MainWindow::writeSettings()
