@@ -44,7 +44,7 @@ install(TARGETS
 add_subdirectory(mainwindow)
 add_subdirectory(mclientplugin)
 add_subdirectory(socketmanagerio)
-add_subdirectory(simpletestdisplay)
+add_subdirectory(simplelineinput)
 add_subdirectory(telnet)
 add_subdirectory(mumexml)
 add_subdirectory(webkitdisplay)
