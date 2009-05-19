@@ -36,7 +36,8 @@ class PluginManager : public QThread {
         void run();
 
         // for testing
-        void configureTest();
+        void configure();
+
         //const bool doneLoading() const;
         void initSession(QString s);
     

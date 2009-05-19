@@ -197,6 +197,6 @@ MainWindow::~MainWindow() {
 
 void MainWindow::changeConfiguration() {
   PluginManager* pm = PluginManager::instance();
-  pm->configureTest();
+  pm->configure();
 }
 

@@ -100,8 +100,6 @@ bool CommandManager::parseInput(const QString& input) {
   if (!input.startsWith(_commandSymbol)) {
       // Send to Socket
       QByteArray ba(input.toAscii());
-      qDebug() << "Input Entered:" << ba << ba.length();
-
       QVariant* qv = new QVariant(ba.append("\n"));
       QStringList sl;
       sl << "SendToSocketData";
@@ -116,14 +114,14 @@ bool CommandManager::parseInput(const QString& input) {
     QString arguments("");
 
     QRegExp whitespace("\\s+");
-    int whitespaceIndex = input.indexOf(whitespace);
+    int whitespaceIndex = command.indexOf(whitespace);
     qDebug() << input << whitespaceIndex;
 
     if (whitespaceIndex >= 0) {
       arguments = command.mid(whitespaceIndex+1);
       command = command.left(whitespaceIndex);
     }
-    qDebug() << "CommandManager got an event: " << command << arguments;
+    qDebug() << "* CommandManager got an event: " << command << arguments;
   
     if (_commandHash.contains(command)) {
       // Relay command to corresponding plugin
@@ -137,8 +135,7 @@ bool CommandManager::parseInput(const QString& input) {
       
     } else {
       // Unknown command!
-      qDebug() << "Unknown command!";
-      QString errorString = "Unknown command: " + input + "\n";
+      QString errorString = "#unknown command \"" + command + "\"\n";
       QVariant* qv = new QVariant(errorString);
       QStringList sl;
       sl << "XMLDisplayData";

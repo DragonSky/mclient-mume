@@ -1,12 +1,6 @@
 #include "SocketReader.h"
-
 #include "SocketManagerIO.h"
 
-#include "MClientEvent.h"
-#include "PluginManager.h"
-#include <QVariant>
-
-#include <QApplication>
 #include <QDebug>
 #include <QString>
 #include <QTcpSocket>
@@ -16,40 +10,40 @@ SocketReader::SocketReader(QString s, SocketManagerIO* sm, QObject* parent)
     : QThread(parent) { 
    
     _session = s;
-//    _sm = qobject_cast<SocketManagerIO*>(parent);
-//    if(!_sm) qWarning() << "you can't set something else as a socketreader parent!";
     _sm = sm;
 
     _socket = new QTcpSocket(this);
     _proxy.setType(QNetworkProxy::NoProxy);
-    //_proxy.setType(QNetworkProxy::Socks5Proxy);
-    //_proxy.setHostName("proxy.example.com");
-    //_proxy.setPort(1080);
-    //_proxy.setUser("username");
-    //_proxy.setPassword("password");
-    //QNetworkProxy::setApplicationProxy(proxy)
     _socket->setProxy(_proxy);
     
-    _delete = 0;
+    connect(this, SIGNAL(displayMessage(const QString&, const QString&)),
+	    _sm, SLOT(displayMessage(const QString&, const QString&)));
+    connect(this, SIGNAL(socketOpened(SocketReader*, const QString&)),
+	    _sm, SLOT(socketOpened(SocketReader*, const QString&)));
+    connect(this, SIGNAL(socketClosed(SocketReader*, const QString&)),
+	    _sm, SLOT(socketClosed(SocketReader*, const QString&)));
 
     connect(_socket, SIGNAL(connected()), this, SLOT(on_connect())); 
     connect(_socket, SIGNAL(disconnected()), this, SLOT(on_disconnect())); 
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), 
             this, SLOT(on_error())); 
     connect(_socket, SIGNAL(readyRead()), this, SLOT(on_readyRead())); 
-
 }
 
 
 void SocketReader::connectToHost() {//const QString host, const int& port) {
     //_host = host;
-    //_port = port;
+    //_ports = port;
     //FIXME: HACK! :(
     if(_socket->thread() != this->thread()) {
         qDebug() << "* threads in SocketReader:" << this->thread() 
             << _socket->thread();
         _socket->moveToThread(this->thread());
     }
+
+    emit displayMessage(QString("#trying %1:%2... ").arg(_host).arg(_port),
+			_session);
+
     _socket->connectToHost(_host, _port);
 }
 
@@ -62,16 +56,8 @@ SocketReader::~SocketReader() {
 
 
 void SocketReader::on_connect() {
-  qDebug() << "\t!! Socket CONNECTED";
-
-    QVariant* qv = new QVariant();
-    QStringList tags;
-    tags << "SocketConnected";
-
-    MClientEvent* me;
-    me = new MClientEvent(new MClientEventData(qv), tags);
-    me->session(_session);
-    QApplication::postEvent(PluginManager::instance(), me);    
+    emit displayMessage(QString("connected!\n"), _session);
+    emit socketOpened(this, _session);
 }
 
 
@@ -81,21 +67,16 @@ void SocketReader::on_readyRead() {
 
 
 void SocketReader::on_disconnect() {
-  qDebug() << "\t!! Socket DISCONNECTED";
-
-    QVariant* qv = new QVariant();
-    QStringList tags;
-    tags << "SocketDisconnected";
-    MClientEvent* me;
-    me = new MClientEvent(new MClientEventData(qv), tags);
-    me->session(_session);
-    QApplication::postEvent(PluginManager::instance(), me);
+  emit displayMessage(QString("#connection on \"%1\" closed.\n").arg(_session),
+		      _session);
+  emit socketClosed(this, _session);
 }
 
 
 void SocketReader::on_error() {
     qWarning() << "Error involving" 
        << _host << _port << _socket->errorString();
+    emit displayMessage(_socket->errorString(), _session);
 }
 
 
