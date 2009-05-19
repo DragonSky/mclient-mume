@@ -1,9 +1,9 @@
-#include <QLineEdit>
 #include <QApplication>
 #include <QDebug>
 #include <QVariant>
 
 #include "SimpleLineInput.h"
+#include "InputWidget.h"
 
 #include "MClientEvent.h"
 #include "MClientEventData.h"
@@ -25,6 +25,10 @@ SimpleLineInput::SimpleLineInput(QWidget* parent)
 
     // SocketManager members
     _settingsFile = "config/"+_shortName+".xml";
+
+    // Allowable Display Locations
+    SET(_displayLocations, DL_FLOAT);
+    SET(_displayLocations, DL_BOTTOM);
 }
 
 
@@ -48,41 +52,23 @@ void SimpleLineInput::customEvent(QEvent* e) {
     }
 }
 
-void SimpleLineInput::sendUserInput() {
-    _lineEdit->selectAll();
-
+void SimpleLineInput::sendUserInput(const QString &session, const QString &input) {
     // Display Data
-    QString input = _lineEdit->selectedText();
     QVariant* qv = new QVariant(input);
     QStringList sl("XMLDisplayData");
     MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
-    me->session(_session);
+    me->session(session);
     QApplication::postEvent(PluginManager::instance(), me);
     
     sl.clear();
-    if (_lineEdit->selectedText().startsWith("#")) {
-      // Parse as Command
-      input = _lineEdit->selectedText().mid(1);
-      qDebug() << "posting INPUT " << input;
-      qv = new QVariant(input);
-      sl << "CommandInput";
-      me = new MClientEvent(new MClientEventData(qv),sl);
-      me->session(_session);
-      QApplication::postEvent(PluginManager::instance(), me);
-	  
-    } else {
-      // Send to Socket
-      QByteArray ba(_lineEdit->selectedText().toLatin1());
-      qDebug() << "Input Entered:" << ba << ba.length();
-      ba.append("\n");
-      qv = new QVariant(ba);
-      sl << "SendToSocketData";
-      me = new MClientEvent(new MClientEventData(qv),sl);
-      me->session(_session);
-      QApplication::postEvent(PluginManager::instance(), me);    
-    }
+    // Parse as Command
+    qDebug() << "posting command: " << input;
+    qv = new QVariant(input);
+    sl << "CommandInput";
+    me = new MClientEvent(new MClientEventData(qv),sl);
+    me->session(session);
+    QApplication::postEvent(PluginManager::instance(), me);
 }
-
 
 void SimpleLineInput::configure() {
 }
@@ -99,29 +85,26 @@ const bool SimpleLineInput::saveSettings() const {
 
 
 const bool SimpleLineInput::startSession(QString s) {
-    _session = s;
-    _lineEdit = new QLineEdit;
-    _lineEdit->setMaxLength(255);
-
-    // Send data when user presses return
-    connect(_lineEdit, SIGNAL(returnPressed()), this, SLOT(sendUserInput()));
-
     initDisplay(s);
+    _runningSessions << s;
     return true;
 }
 
 
 const bool SimpleLineInput::stopSession(QString s) {
-    return true;
+    int removed =  _runningSessions.removeAll(s);
+    return removed!=0?true:false;
 }
 
 
 // Display plugin members
 const bool SimpleLineInput::initDisplay(QString s) {
-  _lineEdit->show();
+    InputWidget* widget = new InputWidget(s, this);
+    _widgets.insert(s, widget); 
+    widget->show();
     return true;
 }
 
 const QWidget* SimpleLineInput::getWidget(QString s) {
-  return 0;
+    return (QWidget*)_widgets[s];
 }

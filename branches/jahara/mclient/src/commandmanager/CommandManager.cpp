@@ -18,6 +18,7 @@ CommandManager::CommandManager(QObject* parent)
     _implemented.insert("commandmanager",1);
     _dataTypes << "CommandInput" << "CommandRegister" << "CommandUnregister";
 
+    _commandSymbol = QChar('#');
 }
 
 
@@ -36,77 +37,119 @@ void CommandManager::customEvent(QEvent* e) {
       QStringList types = me->dataTypes();
       foreach(s, types) {
 	if (s.startsWith("CommandInput")) {
-	  QString command = me->payload()->toString();
-	  QString arguments;
+	  QString cmd = me->payload()->toString();
+	  parseInput(cmd);
 
-	  QRegExp whitespace("\\s+");
-	  int whitespaceIndex = command.indexOf(whitespace);
-	  if (whitespaceIndex >= 0) {
-	    arguments = command.mid(whitespaceIndex+1);
-	    command = command.left(whitespaceIndex);
-	  }
-	  qDebug() << "CommandManager got an event: " << command << arguments;
-
-	  if (commandHash.contains(command)) {
-	    // Relay command to corresponding plugin
-	    QVariant* qv = new QVariant(arguments);
-	    QStringList sl;
-	    sl << commandHash.value(command);
-	    foreach(QString s, _runningSessions) {
-	      postEvent(qv, sl, s);
-	    }
-
-	  } else {
-	    // Unknown command!
-	    qDebug() << "Unknown command!";
-	    QString errorString = "Unknown command: " + command + "\n";
-	    QVariant* qv = new QVariant(errorString);
-	    QStringList sl;
-	    sl << "XMLDisplayData";
-	    foreach(QString s, _runningSessions) {
-	      postEvent(qv, sl, s);
-	    }
-
-	  }
 	}
 	else if (s.startsWith("CommandRegister")) {
 	  qDebug() << "CommandManager Registering Plugin";
 	  QStringList sl = me->payload()->toStringList();
-	  // First Element is Registering Source
-	  QString source = sl.at(0);
-	  QStringList registeredCommands;
-	  // All Other Elements should be in pairs (command, dataType)
-	  for (int i = 2; i < sl.size(); i += 2) {
-	    QString command = sl.at(i-1);
-	    QString dataType = sl.at(i);
-	    if (commandHash.contains(command)) {
-	      qDebug() << "Error, command" << command << "was already added";
-	    } else {
-	      qDebug() << "Registering command " << command << " " << dataType;
-	      commandHash.insert(command, dataType);
-	      registeredCommands << command;
-	    }
-	  }
-	  pluginCommandHash.insert(source, registeredCommands);
+	  registerCommand(sl);
+
 	}
 	else if (s.startsWith("CommandUnregister")) {
 	  qDebug() << "CommandManager Unregistering Plugin";
 	  QString source = me->payload()->toString();
-	  if (!pluginCommandHash.contains(source)) {
-	    qDebug() << source << "was not registered! Unable to remove.";
-	    return ;
-	  }
-	  QString s;
-	  foreach(s, pluginCommandHash.value(source)) {
-	    if (commandHash.remove(s) == 0)
-	      qDebug() << "Unable to remove command" << s << "for plugin" << source;
-	  }
-	  pluginCommandHash.remove(source);
+	  unregisterCommand(source);
+
 	}
       }
     }
 }
 
+
+bool CommandManager::unregisterCommand(const QString& source) {
+  if (!_pluginCommandHash.contains(source)) {
+    qDebug() << source << "was not registered! Unable to remove.";
+    return false;
+  }
+
+  QString s;
+  foreach(s, _pluginCommandHash.value(source)) {
+    if (_commandHash.remove(s) == 0)
+      qDebug() << "Unable to remove command" << s << "for plugin" << source;
+  }
+  _pluginCommandHash.remove(source);
+  return true;
+}
+
+
+void CommandManager::registerCommand(const QStringList& sl) {
+  // First Element is Registering Source
+  QString source = sl.at(0);
+  QStringList registeredCommands;
+
+  // All Other Elements should be in pairs (command, dataType)
+  // TODO: Rewrite this as a QHash rather than a QStringList
+  for (int i = 2; i < sl.size(); i += 2) {
+    QString command = sl.at(i-1);
+    QString dataType = sl.at(i);
+    if (_commandHash.contains(command)) {
+      qDebug() << "Error, command" << command << "was already added";
+    } else {
+      qDebug() << "Registering command " << command << " " << dataType;
+      _commandHash.insert(command, dataType);
+      registeredCommands << command;
+    }
+  }
+  _pluginCommandHash.insert(source, registeredCommands);
+}
+
+
+bool CommandManager::parseInput(const QString& input) {    
+  if (!input.startsWith(_commandSymbol)) {
+      // Send to Socket
+      QByteArray ba(input.toAscii());
+      qDebug() << "Input Entered:" << ba << ba.length();
+
+      QVariant* qv = new QVariant(ba.append("\n"));
+      QStringList sl;
+      sl << "SendToSocketData";
+      foreach(QString s, _runningSessions) {
+	postEvent(qv, sl, s);
+      }
+      return true;
+
+  } else {
+    // Parse as a Plugin's Command
+    QString command(input.mid(1));
+    QString arguments("");
+
+    QRegExp whitespace("\\s+");
+    int whitespaceIndex = input.indexOf(whitespace);
+    qDebug() << input << whitespaceIndex;
+
+    if (whitespaceIndex >= 0) {
+      arguments = command.mid(whitespaceIndex+1);
+      command = command.left(whitespaceIndex);
+    }
+    qDebug() << "CommandManager got an event: " << command << arguments;
+  
+    if (_commandHash.contains(command)) {
+      // Relay command to corresponding plugin
+      QVariant* qv = new QVariant(arguments);
+      QStringList sl;
+      sl << _commandHash.value(command);
+      foreach(QString s, _runningSessions) {
+	postEvent(qv, sl, s);
+      }
+      return true;
+      
+    } else {
+      // Unknown command!
+      qDebug() << "Unknown command!";
+      QString errorString = "Unknown command: " + input + "\n";
+      QVariant* qv = new QVariant(errorString);
+      QStringList sl;
+      sl << "XMLDisplayData";
+      foreach(QString s, _runningSessions) {
+	postEvent(qv, sl, s);
+      }
+      
+    }
+  }
+  return false;
+}
 
 void CommandManager::configure() {
 }

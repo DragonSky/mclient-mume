@@ -1,4 +1,5 @@
 #include "WebKitDisplay.h"
+#include "DisplayWidget.h"
 
 #include "MClientEvent.h"
 
@@ -6,8 +7,7 @@
 #include <QDebug>
 #include <QEvent>
 #include <QVariant>
-
-#include <QFile>
+#include <QtWebKit>
 
 Q_EXPORT_PLUGIN2(webkitdisplay, WebKitDisplay)
 
@@ -35,23 +35,11 @@ WebKitDisplay::WebKitDisplay(QWidget* parent)
     QWebSettings::globalSettings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, false);
 
-#ifdef USE_JQUERY
-    QFile file;
-    file.setFileName(":/webkitdisplay/jquery.min.js");
-    file.open(QIODevice::ReadOnly);
-    _jQuery = file.readAll();
-    file.close();
-#endif
-    
-    file.setFileName(":/webkitdisplay/page.html");
-    file.open(QIODevice::ReadOnly);
-    _pageSource = file.readAll();
-    file.close();
-    
-    _currentSection = 0;
-    _maxSections = 100;
-    _currentCharacterCount = 0;
-    _maxCharacterCount = 2000;
+    // Debugging
+    QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+
+    // Allowable Display Locations
+    SET(_displayLocations, DL_CENTER);
 }
 
 
@@ -70,59 +58,26 @@ void WebKitDisplay::customEvent(QEvent* e) {
 
     if(me->dataTypes().contains("XMLDisplayData")) {
         QByteArray ba = me->payload()->toByteArray();
-//        qDebug() << "Displayed: " << ba.data();
         QVariant* qv = new QVariant(ba);
-        appendText(qv->toByteArray());
+	parseDisplayData(qv->toByteArray());
     }
 }
 
-void WebKitDisplay::appendText(QByteArray text) {
-  qDebug() << "appending Text!";
+void WebKitDisplay::parseDisplayData(const QByteArray& output) {
+  QString text(output);
+  qDebug() << "* WebKit appending text:" << text;
   text.replace(greatherThanChar, greatherThanTemplate);
   text.replace(lessThanChar, lessThanTemplate);
   text.replace(QByteArray("\n"), QByteArray("<br>"));
-  QString output = QRegExp::escape(text);
+  text.replace(QByteArray("'"), QByteArray("\\'"));
+  text.replace(QByteArray("`"), QByteArray("\\`"));
+  text.replace(QByteArray("$"), QByteArray("\\$"));
 
-  // Maximum Amount of Permitted Characters/Sections
-  _currentCharacterCount += output.size();
-  if (_currentCharacterCount >= _maxCharacterCount) {
-    _currentCharacterCount = 0;
-
-    if (_currentSection >= _maxSections)
-      _currentSection = 0;
-    else
-      _currentSection++;
-
-    // Replace/Blank Section
-#ifdef USE_JQUERY
-    QString code = QString("$('.section:first').appendTo('.container').text('%1').show()").arg(output);
-    qDebug() << "* Blanking Section:" << code;
-    _view->page()->mainFrame()->evaluateJavaScript(code);
-    return;
-#endif
-  }
+  // ANSI Removal
+  QRegExp ansiRx("\\0033\\[((?:\\d+;)*\\d+)m");
+  QStringList blocks = text.split(ansiRx);
   
-  // Append text to Section
-#ifdef USE_JQUERY
-  QString code = QString("$('.section:last').append('%1')").arg(output);
-  qDebug() << "* Appending Section:" << code;
-  _view->page()->mainFrame()->evaluateJavaScript(code);
-#endif
-}
-
-void WebKitDisplay::finishLoading(bool) {
-#ifdef USE_JQUERY
-  _view->page()->mainFrame()->evaluateJavaScript(_jQuery);
-
-  // Populate Page with Sections
-  QString code = QString("$('.section:first').each( function () { for (var id=1;id<%1;id++) { $('.section:first').clone(true).insertAfter(this); } $('.section').hide(); $('.section:last').show(); } )").arg(_maxSections);
-  _view->page()->mainFrame()->evaluateJavaScript(code);
-  
-  code = "$('h1').fadeOut(100000, $(this).remove())";
-  _view->page()->mainFrame()->evaluateJavaScript(code);
-
-  qDebug() << "* PAGE LOADED, evaluating jQuery!";
-#endif
+  emit dataReceived(blocks.join(""));
 }
 
 void WebKitDisplay::configure() {
@@ -140,29 +95,27 @@ const bool WebKitDisplay::saveSettings() const {
 
 
 const bool WebKitDisplay::startSession(QString s) {
-    _view = new QWebView;
-
-    _view->setHtml(_pageSource);
-#ifdef USE_JQUERY
-    finishLoading(true); // load jQuery
-#endif
-
-    connect(_view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
+    initDisplay(s);
+    _runningSessions << s;
     return true;
 }
 
 
 const bool WebKitDisplay::stopSession(QString s) {
-    return true;
+    int removed =  _runningSessions.removeAll(s);
+    return removed!=0?true:false;
 }
 
 
 // Display plugin members
 const bool WebKitDisplay::initDisplay(QString s) {
-    _view->show();
+    DisplayWidget* dw = new DisplayWidget(s, this);
+    _widgets.insert(s, dw); 
+    dw->show();
+
     return true;
 }
 
 const QWidget* WebKitDisplay::getWidget(QString s) {
-    return (QWidget*)_view;
+    return (QWidget*)_widgets[s];
 }

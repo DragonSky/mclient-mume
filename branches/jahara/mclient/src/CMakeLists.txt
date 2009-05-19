@@ -1,51 +1,73 @@
-INCLUDE_DIRECTORIES(${mclient_SOURCE_DIR}/ui 
-    mclientplugin
-    mainwindow)
+add_definitions(${QT_DEFINITIONS})
+add_definitions(-DQT_NO_DEBUG)
+add_definitions(-DQT_SHARED)
 
-ADD_DEFINITIONS(${QT_DEFINITIONS})
-#ADD_DEFINITIONS(-DQT_PLUGIN)
-ADD_DEFINITIONS(-DQT_NO_DEBUG)
-ADD_DEFINITIONS(-DQT_SHARED)
-
-
-set(mclient_SRCS
-    main.cpp)
-
-set(mclient_MOC_HDRS
-    )
-
-MESSAGE( "\n\n\tStarting to compile mClient...")
-# Resource Allocation
-file(GLOB sub-dir RELATIVE ${mclient_SOURCE_DIR} "*")
-set(mclient_resources "")
-foreach(dir ${sub-dir})
-  if(IS_DIRECTORY ${mclient_SOURCE_DIR}/${dir})
-    file(GLOB sub-res RELATIVE ${mclient_SOURCE_DIR} "${mclient_SOURCE_DIR}/${dir}/*.qrc")
-    if (sub-res)
-      string(REGEX REPLACE "src/" "" sub-res ${sub-res})
-      MESSAGE("\tFound Qt4 resource:\t" ${sub-res})
-      set(mclient_resources ${mclient_resources} ${sub-res})
-    endif()
-  endif()
+# Core Source Files
+foreach(dir ${CMAKE_CURRENT_SOURCE_DIR})
+    file(GLOB files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.cpp")
+    set(mclient_SRCS ${mclient_SRCS} ${files})
 endforeach()
-MESSAGE("\n")
 
-QT4_ADD_RESOURCES(mclient_RCC_SRCS ${mclient_resources})
+# Core Header Files
+foreach(dir ${CMAKE_CURRENT_SOURCE_DIR})
+    file(GLOB files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.h")
+    set(mclient_MOC_HDRS ${mclient_MOC_HDRS} ${files})
+endforeach()
+
+# Resource Files
+foreach(dir mainwindow mclientplugin)
+    file(GLOB files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.qrc")
+    set(mclient_RCS ${mclient_RCS} ${files})
+endforeach()
+
+# UI Files
+foreach(dir mainwindow mclientplugin)
+    file(GLOB files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.ui")
+    set(mclient_UIS ${mclient_UIS} ${files})
+endforeach()
+
+# Add Windows Resource File
+if(WIN32)
+    set(mclient_SRCS ${mclient_SRCS} mclient.rc)
+endif(WIN32)
+
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    mainwindow
+    mclientplugin
+)
+  
+QT4_WRAP_UI(mclient_UIS_H ${mclient_UIS})
 QT4_WRAP_CPP(mclient_MOC_SRCS ${mclient_MOC_HDRS})
+QT4_ADD_RESOURCES(mclient_RCC_SRCS ${mclient_RCS})
 
-add_executable(mclient ${mclient_SRCS} ${mclient_MOC_SRCS} ${mclient_RCC_SRCS})
-target_link_libraries(mclient mclientplugin mainwindow ${QT_LIBRARIES})
+add_executable(mclient
+    ${mclient_SRCS}
+    ${mclient_MOC_SRCS}
+    ${mclient_UIS_H}
+    ${mclient_RCC_SRCS}
+)
 
+target_link_libraries(mclient
+    ${QT_QTMAIN_LIBRARY}
+    ${QT_LIBRARIES}
+    mclientplugin
+    mainwindow
+)
 
-install(TARGETS 
-    mclient 
-    RUNTIME DESTINATION bin)
+# Installation Location
+install(TARGETS mclient RUNTIME DESTINATION bin)
 
-add_subdirectory(mainwindow)
+# mClient's Core Engine
 add_subdirectory(mclientplugin)
+add_subdirectory(mainwindow)
+
+# Various Dynamic Plugins
 add_subdirectory(socketmanagerio)
 add_subdirectory(simplelineinput)
 add_subdirectory(telnet)
 add_subdirectory(mumexml)
 add_subdirectory(webkitdisplay)
 add_subdirectory(commandmanager)
+#add_subdirectory(simpletestdisplay)

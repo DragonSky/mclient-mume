@@ -6,7 +6,6 @@ ADD_DEFINITIONS(-DQT_NO_DEBUG)
 ADD_DEFINITIONS(-DQT_SHARED)
 add_definitions(-fPIC)
 
-
 set(mclientplugin_SRCS
     PluginEntry.cpp
     PluginManager.cpp
@@ -26,14 +25,12 @@ SET(mclientplugin_MOC_HDRS
     MClientIOPlugin.h
     MClientDisplayPlugin.h
     PluginConfigWidget.h
-    ConfigManager.h)
+    ConfigManager.h
+    MClientDefinitions.h)
 
 QT4_WRAP_CPP(mclientplugin_MOC_SRCS ${mclientplugin_MOC_HDRS})
-add_library(mclientplugin ${mclientplugin_SRCS}
+
+add_library(mclientplugin
+    ${mclientplugin_SRCS}
     ${mclientplugin_MOC_SRCS})
 target_link_libraries(mclientplugin ${QT_LIBRARIES})
-
-
-#install(TARGETS 
-#    mclient_plugin 
-#    ARCHIVE DESTINATION lib)

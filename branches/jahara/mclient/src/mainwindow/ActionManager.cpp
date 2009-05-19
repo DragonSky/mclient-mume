@@ -52,7 +52,7 @@ void ActionManager::createActions() {
 
   exitAct = new QAction(QIcon(":/mainwindow/exit.png"), tr("E&xit"), this);
   exitAct->setStatusTip(tr("Exit the application"));
-  //connect(exitAct, SIGNAL(triggered()), _mainWindow, SLOT(close()));
+  connect(exitAct, SIGNAL(triggered()), _mainWindow, SLOT(close()));
 
   cutAct = new QAction(QIcon(":/mainwindow/cut.png"), tr("Cu&t"), this);
   cutAct->setShortcut(tr("Ctrl+X"));
@@ -136,22 +136,13 @@ void ActionManager::alwaysOnTop()
 void ActionManager::about()
 {
 #ifdef SVN_REVISION
-  QString version = tr("Subversion Revision ") + QString::number(SVN_REVISION));
+QString version = tr("<b>Subversion Revision ") + QString::number(SVN_REVISION) + tr("</b><br><br>");
 #else
-  QString version = tr("Alpha Release 0.2.3");
+ QString version = tr("<b>mClient Release ") + QString(MCLIENT_VERSION)+ tr("</b><br><br>");
 #endif
   QMessageBox::about(_mainWindow, tr("About mClient"),
                      tr("<FONT SIZE=\"+1\"><B>mClient ") + version + tr("</B></FONT><P>"
                          "Copyright \251 2008 Jahara<P>"
-                         "mClient is a modern, fully functional, and highly portable fork of the mud client "
-                         "powwow<P>"
-                         "mClient has incorporated code and ideas from the mud clients "
-                         "<A HREF=\"http://www.kmuddy.com\">KMuddy</A> and JMC respectively.<P>"
-                         "Powwow is a console-based mud client written for Unix machines which prevented "
-                         "its portability to other systems and ease of use for new-comers. Its main engine "
-                         "has been rewritten with Qt libraries allowing it to run on any operating system "
-                         "supported by Trolltech's Qt framework.<P>"
-                         "Contributors: Cuantar, Kalev, Mint, Yants<BR>"
                          "Visit the <A HREF=\"http://code.google.com/p/mclient-mume/\">mClient website</A> "
                          "for more information."));
 }
