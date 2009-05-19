@@ -3,18 +3,9 @@
 
 #include "MClientDisplayPlugin.h"
 
-#include <QtWebKit>
+#include <QHash>
 
-// for Qt 4.5, we use JQuery
-// for Qt >= 4.6, we use the QWebElement API
-#if QT_VERSION < 0x040600
-#define USE_JQUERY
-#endif
-
-#if QT_VERSION < 0x0040500
-#error You need Qt 4.5 or newer
-#endif
-
+class DisplayWidget;
 class QEvent;
 
 class WebKitDisplay : public MClientDisplayPlugin {
@@ -36,27 +27,19 @@ class WebKitDisplay : public MClientDisplayPlugin {
         const bool initDisplay(QString s);
         const QWidget* getWidget(QString s);
 
-    private:
-	QString _settingsFile, _pageSource;
-	QWebView* _view;
-#ifdef USE_JQUERY
-	QString _jQuery;
-#endif
-	int _currentSection, _maxSections,
-	  _currentCharacterCount, _maxCharacterCount;
-	
-	void appendText(QByteArray text);
-
- protected:
+  protected:
 	static const QByteArray greatherThanChar;
 	static const QByteArray lessThanChar;
 	static const QByteArray greatherThanTemplate;
 	static const QByteArray lessThanTemplate;
 
-protected slots:
-	void finishLoading(bool);
+    private:
+	QString _settingsFile;
+	QHash<QString, DisplayWidget*> _widgets;
 
-    signals: 
+	void parseDisplayData(const QByteArray& text);
+	
+    signals:
         void dataReceived(QString s);
 };
 

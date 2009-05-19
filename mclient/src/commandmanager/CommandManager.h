@@ -24,12 +24,16 @@ class CommandManager : public MClientPlugin {
         const bool startSession(QString s);
         const bool stopSession(QString s);
 
- protected:
+  protected:
+        QChar _commandSymbol;
 
     private:
-	QHash<QString, QString> commandHash;
-	QHash<QString, QStringList> pluginCommandHash;
+	QHash<QString, QString> _commandHash;
+	QHash<QString, QStringList> _pluginCommandHash;
 
+	bool parseInput(const QString& input);
+	bool unregisterCommand(const QString& source);
+	void registerCommand(const QStringList& sl);
 };
 
 

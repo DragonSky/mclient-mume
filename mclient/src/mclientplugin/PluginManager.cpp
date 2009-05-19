@@ -308,6 +308,7 @@ const QPluginLoader* PluginManager::pluginWithAPI(const QString& api) const {
 
 void PluginManager::customEvent(QEvent* e) {
     MClientEvent* me = static_cast<MClientEvent*>(e);
+    qDebug() << "* copying posted event with payload" << me->payload();
   
     QString s;
     foreach (s, me->dataTypes()) {
@@ -317,20 +318,17 @@ void PluginManager::customEvent(QEvent* e) {
       QMultiHash<QString, QPluginLoader*>::iterator it = _pluginTypes.find(s);
   
       while (it != _pluginTypes.end() && it.key() == s) {
-	qDebug() << "* looking at" << it.value()->instance();
-
-	// Need to make a copy, since the original event
-	// will be deleted when this function returns
-	qDebug() << "* copying posted event with payload" << me->payload();
 	MClientEvent* nme = new MClientEvent(*me);
 	qDebug() << "* copied payload to" << nme->payload();
+	// Need to make a copy, since the original event
+	// will be deleted when this function returns
 	qDebug() << "* posting" << nme->dataTypes() << "to" 
 		 << it.value()->instance() << "with" << nme->payload();
 
 	// Post the event
 	QApplication::postEvent(it.value()->instance(), nme);
 	
-	++it;
+	++it; // Iterate
       }
     }
 }
@@ -365,9 +363,13 @@ void PluginManager::initSession(QString s) {
         if(pi) {
 	  pi->startSession(s);
 	  
+	  /*
 	  // Display type plugins need QWidget transfers
 	  if (pi->type() == DISPLAY) {
-	    qDebug() << "Found a DISPLAY plugin! " << pi->shortName();
+	  */
+	  if (pi->displayLocations() > 0 &&
+	      ISNOTSET(pi->displayLocations(), DL_FLOAT)) {
+	    qDebug() << "* Found a DISPLAY plugin! " << pi->shortName();
 	    MClientDisplayInterface* pd;
 	    pd = qobject_cast<MClientDisplayInterface*>(pl->instance());
 	    MainWindow* mw = MainWindow::instance();

@@ -3,8 +3,9 @@
 
 #include "MClientIOPlugin.h"
 
-#include <QLineEdit>
+#include <QHash>
 
+class InputWidget;
 class QEvent;
 
 class SimpleLineInput : public MClientIOPlugin {
@@ -26,13 +27,11 @@ class SimpleLineInput : public MClientIOPlugin {
         const bool initDisplay(QString s);
         const QWidget* getWidget(QString s);
 
-       public slots:
-        void sendUserInput();
+        void sendUserInput(const QString&, const QString&);
 
     private:
-	QLineEdit* _lineEdit;
 	QString _settingsFile;
-        QString _session;
+	QHash<QString, InputWidget*> _widgets;
 };
 
 
