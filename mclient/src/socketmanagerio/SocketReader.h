@@ -43,8 +43,6 @@ class SocketReader : public QThread {
         SocketManagerIO* _sm;
         QString _session;
         
-        bool _delete;
-       
         // Config
         QString _host;
         int _port;
@@ -56,6 +54,11 @@ class SocketReader : public QThread {
         void on_readyRead();
         void on_error();
         
+    signals:
+	void displayMessage(const QString&, const QString&);
+        void socketOpened(SocketReader*, const QString&);
+        void socketClosed(SocketReader*, const QString&);
+
 };
 
 

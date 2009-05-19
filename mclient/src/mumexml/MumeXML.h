@@ -36,9 +36,9 @@ class MumeXML : public MClientFilterPlugin {
 	static const QByteArray lessThanTemplate;
 
     private:
-	void parse(const QByteArray& line);
-	bool element(const QByteArray& line);
-	bool characters(QByteArray& ch);
+	void parse(const QByteArray&, const QString&);
+	bool element(const QByteArray&, const QString&);
+	bool characters(QByteArray&, const QString&);
 
 	QString _singleBuffer;
 	QString _multiBuffer;
@@ -50,7 +50,7 @@ class MumeXML : public MClientFilterPlugin {
 	bool _readingTag;
 	XmlMode _xmlMode;
 
-    QQueue<QByteArray> _eventQueue;
+	QQueue< QPair<QByteArray, QString> > _eventQueue;
 };
 
 

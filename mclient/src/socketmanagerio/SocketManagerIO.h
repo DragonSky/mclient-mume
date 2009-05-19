@@ -34,18 +34,23 @@ class SocketManagerIO : public MClientIOPlugin {
         // IO members
         void connectDevice(QString s);
         void disconnectDevice(QString s);
-        void sendData(const QByteArray data);
-
-        void socketReadData(const QByteArray data, const QString socket);
+        void sendData(const QByteArray&, const QString&);
+        void socketReadData(const QByteArray&, const QString&);
 
 
     private:
-        QMultiHash<QString, SocketReader*> _sockets;
+        QMultiHash<QString, SocketReader*> _socketReaders, _openSockets;
         QPointer<SocketManagerIOConfig> _configWidget;
 
         QMultiHash<QString, QPair<QString, QVariant> > _settings;
         QString _settingsFile;
-    
+
+
+public slots:
+  void displayMessage(const QString&, const QString&);
+  void socketOpened(SocketReader*, const QString&);
+  void socketClosed(SocketReader*, const QString&);
+
 };
 
 

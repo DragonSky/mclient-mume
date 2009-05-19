@@ -90,35 +90,7 @@ PluginManager::PluginManager(QObject* parent) : QThread(parent) {
         }
     }
 
-
     // Load plugins using data in that file, which should now be accurate.
-
-    /*
-    // Testing
-    PluginEntry* e = new PluginEntry();
-    e->shortName("socketdatafilter");
-    e->longName("Socket Data Filter");
-    e->libName("libsocketdatafilter.so");
-    e->addAPI("terrible_test_api", 1);
-    qDebug() << e->libName();
-    _availablePlugins.insert(e->libName(), e);
-    
-    e = new PluginEntry();
-    e->shortName("socketmanagerio");
-    e->longName("SocketManager");
-    e->libName("libsocketmanagerio.so");
-    e->addAPI("some_stupid_api", 10);
-    qDebug() << e->libName();
-    _availablePlugins.insert(e->libName(), e);
-    
-    e = new PluginEntry();
-    e->shortName("simpletestdisplay");
-    e->longName("Simple Test Display");
-    e->libName("libsimpletestdisplay.so");
-    qDebug() << e->libName();
-    _availablePlugins.insert(e->libName(), e);
-    */
-
     _doneLoading = false;
 }
 
@@ -142,23 +114,6 @@ PluginManager::~PluginManager() {
 
 
 void PluginManager::loadAllPlugins() {
-
-    /*
-    QDir pluginsDir = QDir(qApp->applicationDirPath());
-    pluginsDir.cdUp();
-    pluginsDir.cd("plugins");
-
-    foreach(QString fileName, pluginsDir.entryList(QDir::Files)) {
-        bool loader = loadPlugin(pluginsDir.absoluteFilePath(fileName));
-        if(!loader) {
-            qDebug() << "Could not load plugin" << fileName;//pe->shortName();
-
-        } else {
-            //qDebug() << "Successfully loaded plugin" << pe->shortName();
-        }
-       
-    }
-    */
     PluginEntry* pe;
     foreach(pe, _availablePlugins) {
         if(_loadedPlugins.find(pe->shortName()) == _loadedPlugins.end()) {
@@ -180,14 +135,7 @@ void PluginManager::loadAllPlugins() {
 const bool PluginManager::loadPlugin(const QString& libName) {
     qDebug() << "loadPlugin call for" << libName;
 
-    /*
-    QDir pluginsDir = QDir(qApp->applicationDirPath());
-    pluginsDir.cdUp();
-    pluginsDir.cd(_pluginDir);
-    */
-
     QString fileName = _pluginDir + "/" + libName;
-    //QString fileName = libName;
 
     if(!QLibrary::isLibrary(fileName)) {
         // Error handling
@@ -342,15 +290,8 @@ void PluginManager::run() {
 }
 
 
-/*
-// For testing
-const bool PluginManager::doneLoading() const {
-    return _doneLoading;
-}
-*/
 
-
-void PluginManager::configureTest() { 
+void PluginManager::configure() { 
     if(!_configWidget) _configWidget = new PluginConfigWidget(_loadedPlugins);
     if(!_configWidget->isVisible()) _configWidget->show();
 }

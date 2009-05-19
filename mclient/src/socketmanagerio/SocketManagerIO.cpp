@@ -7,12 +7,8 @@
 #include "PluginManager.h"
 
 #include <QApplication>
-#include <QByteArray>
 #include <QDebug>
-#include <QEvent>
 #include <QFile>
-#include <QMap>
-#include <QSettings>
 #include <QtXml>
 
 Q_EXPORT_PLUGIN2(socketmanagerio, SocketManagerIO)
@@ -26,7 +22,8 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";
     _dependencies.insert("commandmanager", 10);
     _implemented.insert("some_stupid_api",10);
-    _dataTypes << "SendToSocketData" << "ConnectToHost";
+    _dataTypes << "SendToSocketData" << "ConnectToHost"
+	       << "DisconnectFromHost";
     _configurable = true;
     _configVersion = "2.0";
 
@@ -53,19 +50,19 @@ void SocketManagerIO::customEvent(QEvent* e) {
         QByteArray ba = me->payload()->toByteArray();
         //qDebug() << "* ba.data() in SocketManagerIO:" << ba.data();
         qDebug() << "* me->payload() is" << me->payload();
-        
-        SocketReader* sr;
-        foreach(sr, _sockets.values(me->session())) {
-            sr->sendToSocket(new QByteArray(ba.data()));
-        }
+	sendData(ba, me->session());
 
-    } else if(me->dataTypes().contains("ConnectToHost")) {
-        /*
-        QList<QVariant> ls = me->payload()->toList();
-        qDebug() << ls;
-        */
+    } else if (me->dataTypes().contains("ConnectToHost")) {
+        QString arg = me->payload()->toString();
+        qDebug() << "* ConnectToHost arguments: " << arg;
         connectDevice(me->session());
+
+    } else if (me->dataTypes().contains("DisconnectFromHost")) {
+        QString arg = me->payload()->toString();
+        qDebug() << "* DisconnectToHost arguments: " << arg;
+        disconnectDevice(me->session());
     }
+
 }
 
 
@@ -109,8 +106,7 @@ const bool SocketManagerIO::loadSettings() {
                 QXmlStreamAttributes attr = xml->attributes();
                 QString version = attr.value("version").toString();
                 if(version.toDouble() < _configVersion.toDouble()) {
-                    qWarning() << "Config file is too old! Trying anyway...";
-                }
+                    qWarning() << "Config file is too old! Trying anyway...";                }
 
             } else if(xml->name() == "profile") {
                 QXmlStreamAttributes attr = xml->attributes();
@@ -279,13 +275,15 @@ const bool SocketManagerIO::startSession(QString s) {
     qDebug() << "* threads:" << sr->thread() << this->thread();
     sr->host(host);
     sr->port(port);
-    _sockets.insert(s, sr);
+    _socketReaders.insert(s, sr);
     _runningSessions << s;
     qDebug() << "* inserted SocketReader for session" << s;
 
     // register Commands for CommandManager
     QStringList commands;
-    commands << _shortName << "connect" << "ConnectToHost";
+    commands << _shortName
+	     << "connect" << "ConnectToHost"
+	     << "zap" << "DisconnectFromHost";
     QVariant* qv = new QVariant(commands);
     QStringList sl;
     sl << "CommandRegister";
@@ -298,11 +296,11 @@ const bool SocketManagerIO::startSession(QString s) {
 
 
 const bool SocketManagerIO::stopSession(QString s) {
-    foreach(SocketReader* sr, _sockets.values(s)) {
+    foreach(SocketReader* sr, _socketReaders.values(s)) {
         delete sr;
         qDebug() << "* removed SocketReader for session" << s;
     }
-    _sockets.remove(s);
+    _socketReaders.remove(s);
     int removed = _runningSessions.removeAll(s);
     return removed!=0?true:false;
 }
@@ -312,7 +310,7 @@ const bool SocketManagerIO::stopSession(QString s) {
 void SocketManagerIO::connectDevice(QString s) {
     qDebug() << "* SocketManagerIO thread:" << this->thread();
     // Attempts to connect every socket associated with the session s
-    foreach(SocketReader* sr, _sockets.values(s)) {
+    foreach(SocketReader* sr, _socketReaders.values(s)) {
         qDebug() << "* threads:" << sr->thread() << this->thread();
         sr->connectToHost();//"mume.org",4242);
         qDebug() << "* connected socket for session" << s;
@@ -322,18 +320,30 @@ void SocketManagerIO::connectDevice(QString s) {
 
 void SocketManagerIO::disconnectDevice(QString s) {
     // Disconnect a particular session's sockets.
-    foreach(SocketReader* sr, _sockets.values(s)) {
+    foreach(SocketReader* sr, _socketReaders.values(s)) {
         sr->closeSocket();
     }
 }
 
 
-void SocketManagerIO::sendData(const QByteArray data) {
+void SocketManagerIO::sendData(const QByteArray& ba, const QString& session) {
     // Send data to the sockets.
+    if (_openSockets.values(session).size() == 0) {
+
+      displayMessage("#no open connections. Use '#connect' to open a connection.\n", session);
+
+    } else {
+      
+      SocketReader* sr;
+      foreach(sr, _openSockets.values(session)) {
+        sr->sendToSocket(new QByteArray(ba.data()));
+      }
+
+    }
 }
 
 
-void SocketManagerIO::socketReadData(const QByteArray data, const QString s) {
+void SocketManagerIO::socketReadData(const QByteArray& data, const QString& s) {
     qDebug() << "received data from" << s;
 
     QVariant* qv = new QVariant(data);
@@ -343,5 +353,30 @@ void SocketManagerIO::socketReadData(const QByteArray data, const QString s) {
     postEvent(qv, tags, s);
 }
 
-
 // Implementation-specific details: slots for successful operations
+
+void SocketManagerIO::displayMessage(const QString& message, const QString& s) {
+    QVariant* qv = new QVariant(message);
+    QStringList sl;
+    sl << "XMLDisplayData";
+    postEvent(qv, sl, s);
+}
+
+
+void SocketManagerIO::socketOpened(SocketReader* sr, const QString& session) {
+    _openSockets.insert(session, sr);
+
+    QVariant* qv = new QVariant();
+    QStringList sl;
+    sl << "SocketConnected";
+    postEvent(qv, sl, session);
+}
+
+void SocketManagerIO::socketClosed(SocketReader* sr, const QString& session) {
+    _openSockets.remove(session, sr);
+
+    QVariant* qv = new QVariant();
+    QStringList sl;
+    sl << "SocketDisconnected";
+    postEvent(qv, sl, session);
+}
