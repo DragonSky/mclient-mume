@@ -8,6 +8,7 @@
 #include "MClientEvent.h"
 #include "MClientEventData.h"
 #include "PluginManager.h"
+#include "CommandManager.h"
 
 Q_EXPORT_PLUGIN2(simplelineinput, SimpleLineInput)
 
@@ -53,21 +54,9 @@ void SimpleLineInput::customEvent(QEvent* e) {
 }
 
 void SimpleLineInput::sendUserInput(const QString &session, const QString &input) {
-    // Display Data
-    QVariant* qv = new QVariant(input);
-    QStringList sl("XMLDisplayData");
-    MClientEvent* me = new MClientEvent(new MClientEventData(qv),sl);
-    me->session(session);
-    QApplication::postEvent(PluginManager::instance(), me);
-    
-    sl.clear();
-    // Parse as Command
     qDebug() << "posting command: " << input;
-    qv = new QVariant(input);
-    sl << "CommandInput";
-    me = new MClientEvent(new MClientEventData(qv),sl);
-    me->session(session);
-    QApplication::postEvent(PluginManager::instance(), me);
+    CommandManager *cmdmgr = CommandManager::instance();
+    cmdmgr->parseInput(input, session);
 }
 
 void SimpleLineInput::configure() {

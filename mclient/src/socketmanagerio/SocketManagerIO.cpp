@@ -5,6 +5,7 @@
 
 #include "MClientEvent.h"
 #include "PluginManager.h"
+#include "CommandManager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -20,8 +21,8 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _shortName = "socketmanagerio";
     _longName = "SocketManager";
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";
-    _dependencies.insert("commandmanager", 10);
-    _implemented.insert("some_stupid_api",10);
+    //    _dependencies.insert("commandmanager", 10);
+    _implemented.insert("socketmanager",10);
     _dataTypes << "SendToSocketData" << "ConnectToHost"
 	       << "DisconnectFromHost";
     _configurable = true;
@@ -284,12 +285,8 @@ const bool SocketManagerIO::startSession(QString s) {
     commands << _shortName
 	     << "connect" << "ConnectToHost"
 	     << "zap" << "DisconnectFromHost";
-    QVariant* qv = new QVariant(commands);
-    QStringList sl;
-    sl << "CommandRegister";
-    foreach(QString s, _runningSessions) {
-      postEvent(qv, sl, s);
-    }
+    CommandManager *cm = CommandManager::instance();
+    cm->registerCommand(commands);
 
     return true;
 }
@@ -363,20 +360,20 @@ void SocketManagerIO::displayMessage(const QString& message, const QString& s) {
 }
 
 
-void SocketManagerIO::socketOpened(SocketReader* sr, const QString& session) {
-    _openSockets.insert(session, sr);
+void SocketManagerIO::socketOpened(SocketReader* sr) {
+    _openSockets.insert(sr->session(), sr);
 
     QVariant* qv = new QVariant();
     QStringList sl;
     sl << "SocketConnected";
-    postEvent(qv, sl, session);
+    postEvent(qv, sl, sr->session());
 }
 
-void SocketManagerIO::socketClosed(SocketReader* sr, const QString& session) {
-    _openSockets.remove(session, sr);
+void SocketManagerIO::socketClosed(SocketReader* sr) {
+    _openSockets.remove(sr->session(), sr);
 
     QVariant* qv = new QVariant();
     QStringList sl;
     sl << "SocketDisconnected";
-    postEvent(qv, sl, session);
+    postEvent(qv, sl, sr->session());
 }

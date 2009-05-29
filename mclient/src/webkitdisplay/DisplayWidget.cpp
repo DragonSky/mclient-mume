@@ -15,9 +15,9 @@ DisplayWidget::DisplayWidget(QString s, WebKitDisplay* wkd, QWidget* parent)
 
     // Sections Information
     _currentSection = 0;
-    _maxSections = 50;
+    _maxSections = 1;
     _currentCharacterCount = 0;
-    _maxCharacterCount = 1;
+    _maxCharacterCount = 300000000;
 
     // Create WebKit Display
     load(QUrl("qrc:/webkitdisplay/page.html"));
@@ -29,7 +29,6 @@ DisplayWidget::DisplayWidget(QString s, WebKitDisplay* wkd, QWidget* parent)
     // Debugging Information
     qDebug() << "* WebKitDisplay thread:" << _wkd->thread();
     qDebug() << "* DisplayWidget thread:" << this->thread();
-    //qDebug() << "* QWebView thread:" << _view->thread();
     
     /*
 #ifdef USE_JQUERY
@@ -61,9 +60,8 @@ void DisplayWidget::appendText(const QString &output) {
     // Replace/Blank Section
 #ifdef USE_JQUERY
     QString code = QString("$('.section:first').appendTo('.container').html('%1').show();").arg(output);
-    qDebug() << "* Blanking Section:" << code;
-    //_view->page()->mainFrame()->evaluateJavaScript(code);
-    page()->mainFrame()->evaluateJavaScript(code);
+    //qDebug() << "* Blanking Section:" << code;
+
 #endif
   } else {
   
@@ -74,8 +72,7 @@ void DisplayWidget::appendText(const QString &output) {
     //QString code = QString("$('.section').css('background-color', 'yellow');");
     
     QString code = QString("$('.section:last').append('%1');").arg(output);
-    qDebug() << "* Appending Section:" << code;
-    //_view->page()->mainFrame()->evaluateJavaScript(code);
+    //qDebug() << "* Appending Section:" << code;
     page()->mainFrame()->evaluateJavaScript(code);
   }
 
@@ -87,12 +84,9 @@ void DisplayWidget::appendText(const QString &output) {
 
 void DisplayWidget::finishLoading(bool) {
 #ifdef USE_JQUERY
-  //_view->page()->mainFrame()->evaluateJavaScript(_jQuery);
-
   // Populate Page with Sections
   QString code = QString("$('.section:first').each( function () { for (var id=1;id<%1;id++) { $('.section:first').clone(true).insertAfter(this); } $('.section').hide(); $('.section:last').show(); } )").arg(_maxSections);
-  //_view->page()->mainFrame()->evaluateJavaScript(code);
-  page()->mainFrame()->evaluateJavaScript(code);
+  //page()->mainFrame()->evaluateJavaScript(code);
 #endif
 
   qDebug() << "* WebKit page loaded";
