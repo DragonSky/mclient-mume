@@ -337,7 +337,7 @@ const bool PluginManager::indexPlugins() {
             new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
 
         if(!loader->load()) {
-            qDebug() << "couldn't load!";
+	  qCritical() << "* ERROR: Couldn't load!" << fileName;
             continue;
         }
 
@@ -345,7 +345,7 @@ const bool PluginManager::indexPlugins() {
         MClientPluginInterface* pi = 
             qobject_cast<MClientPluginInterface*>(loader->instance());
         if(!pi) {
-            qDebug() << "couldn't cast";
+	    qCritical() << "* ERROR: Couldn't cast" << fileName;
             continue;
         }
         

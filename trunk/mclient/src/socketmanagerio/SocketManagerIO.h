@@ -37,6 +37,10 @@ class SocketManagerIO : public MClientIOPlugin {
         void sendData(const QByteArray&, const QString&);
         void socketReadData(const QByteArray&, const QString&);
 
+	void displayMessage(const QString&, const QString&);
+	void socketOpened(SocketReader*);
+	void socketClosed(SocketReader*);
+
 
     private:
         QMultiHash<QString, SocketReader*> _socketReaders, _openSockets;
@@ -44,12 +48,6 @@ class SocketManagerIO : public MClientIOPlugin {
 
         QMultiHash<QString, QPair<QString, QVariant> > _settings;
         QString _settingsFile;
-
-
-public slots:
-  void displayMessage(const QString&, const QString&);
-  void socketOpened(SocketReader*, const QString&);
-  void socketClosed(SocketReader*, const QString&);
 
 };
 

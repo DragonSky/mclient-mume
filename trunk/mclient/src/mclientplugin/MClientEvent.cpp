@@ -6,6 +6,15 @@
 #include <QVariant>
 #include <QString>
 
+MClientEvent::MClientEvent(MClientEventData* payload, const QStringList types,
+			   const QString session) 
+        : QEvent(QEvent::Type(10001)) {
+
+    _payload = QSharedDataPointer<MClientEventData>(payload);
+    _dataTypes = types;
+    _session = session;
+}
+
 
 MClientEvent::MClientEvent(MClientEventData* payload, const QStringList types) 
         : QEvent(QEvent::Type(10001)) {

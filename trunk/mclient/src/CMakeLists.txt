@@ -27,15 +27,22 @@ foreach(dir mainwindow mclientplugin)
 endforeach()
 
 # Add Windows Resource File
-if(WIN32)
-    set(mclient_SRCS ${mclient_SRCS} mclient.rc)
-endif(WIN32)
+if (MINGW)
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mclient_rc.o
+                       COMMAND windres.exe -I ${CMAKE_CURRENT_SOURCE_DIR}
+                                           -i ${CMAKE_CURRENT_SOURCE_DIR}/client.rc
+                                           -o ${CMAKE_CURRENT_BINARY_DIR}/mclient_rc.o)
+    set(mmapper_WINRC ${CMAKE_CURRENT_BINARY_DIR}/mclient_rc.o)
+else (MINGW)
+    set(mmapper_WINRC mclient.rc)
+endif (MINGW)
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     mainwindow
     mclientplugin
+    commandmanager
 )
   
 QT4_WRAP_UI(mclient_UIS_H ${mclient_UIS})
@@ -47,6 +54,7 @@ add_executable(mclient
     ${mclient_MOC_SRCS}
     ${mclient_UIS_H}
     ${mclient_RCC_SRCS}
+    ${mclient_WINRC}
 )
 
 target_link_libraries(mclient
@@ -54,14 +62,18 @@ target_link_libraries(mclient
     ${QT_LIBRARIES}
     mclientplugin
     mainwindow
+    commandmanager
 )
 
 # Installation Location
-install(TARGETS mclient RUNTIME DESTINATION bin)
+install(TARGETS mclient
+        RUNTIME DESTINATION bin
+        COMPONENT applications)
 
 # mClient's Core Engine
 add_subdirectory(mclientplugin)
 add_subdirectory(mainwindow)
+add_subdirectory(commandmanager)
 
 # Various Dynamic Plugins
 add_subdirectory(socketmanagerio)
@@ -69,5 +81,26 @@ add_subdirectory(simplelineinput)
 add_subdirectory(telnet)
 add_subdirectory(mumexml)
 add_subdirectory(webkitdisplay)
-add_subdirectory(commandmanager)
 #add_subdirectory(simpletestdisplay)
+
+# Installer
+set(CPACK_RESOURCE_FILE_LICENSE )
+set(CPACK_PACKAGE_ICON "mainwindow/resources/m.png")
+set(CPACK_PACKAGE_NAME "mClient")
+set(CPACK_PACKAGE_VENDOR "Nils Schimmelmann")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "mClient Installer")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "mClient Installer")
+include(CPack)
+cpack_add_component(applications
+  DISPLAY_NAME "mClient"
+  DESCRIPTION "A mud client especially written for the mud MUME"
+  REQUIRED
+)
+cpack_add_component(plugins
+  DISPLAY_NAME "Plugins"
+  DESCRIPTION "Plugins for mClient to function"
+)

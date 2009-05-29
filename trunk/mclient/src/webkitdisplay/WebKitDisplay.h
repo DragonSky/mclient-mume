@@ -34,10 +34,14 @@ class WebKitDisplay : public MClientDisplayPlugin {
 	static const QByteArray lessThanTemplate;
 
     private:
+	bool _foreground, _background, _bold, _underline;
+	bool _blink, _inverse, _strikethrough;
+
 	QString _settingsFile;
 	QHash<QString, DisplayWidget*> _widgets;
 
 	void parseDisplayData(const QByteArray& text);
+	QString convertANSI(int code);
 	
     signals:
         void dataReceived(QString s);

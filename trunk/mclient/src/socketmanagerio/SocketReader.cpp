@@ -16,13 +16,6 @@ SocketReader::SocketReader(QString s, SocketManagerIO* sm, QObject* parent)
     _proxy.setType(QNetworkProxy::NoProxy);
     _socket->setProxy(_proxy);
     
-    connect(this, SIGNAL(displayMessage(const QString&, const QString&)),
-	    _sm, SLOT(displayMessage(const QString&, const QString&)));
-    connect(this, SIGNAL(socketOpened(SocketReader*, const QString&)),
-	    _sm, SLOT(socketOpened(SocketReader*, const QString&)));
-    connect(this, SIGNAL(socketClosed(SocketReader*, const QString&)),
-	    _sm, SLOT(socketClosed(SocketReader*, const QString&)));
-
     connect(_socket, SIGNAL(connected()), this, SLOT(on_connect())); 
     connect(_socket, SIGNAL(disconnected()), this, SLOT(on_disconnect())); 
     connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), 
@@ -41,7 +34,7 @@ void SocketReader::connectToHost() {//const QString host, const int& port) {
         _socket->moveToThread(this->thread());
     }
 
-    emit displayMessage(QString("#trying %1:%2... ").arg(_host).arg(_port),
+    _sm->displayMessage(QString("#trying %1:%2... ").arg(_host).arg(_port),
 			_session);
 
     _socket->connectToHost(_host, _port);
@@ -56,8 +49,8 @@ SocketReader::~SocketReader() {
 
 
 void SocketReader::on_connect() {
-    emit displayMessage(QString("connected!\n"), _session);
-    emit socketOpened(this, _session);
+    _sm->displayMessage(QString("connected!\n"), _session);
+    _sm->socketOpened(this);
 }
 
 
@@ -67,16 +60,15 @@ void SocketReader::on_readyRead() {
 
 
 void SocketReader::on_disconnect() {
-  emit displayMessage(QString("#connection on \"%1\" closed.\n").arg(_session),
-		      _session);
-  emit socketClosed(this, _session);
+    _sm->displayMessage(QString("#connection on \"%1\" closed.\n").arg(_session), _session);
+    _sm->socketClosed(this);
 }
 
 
 void SocketReader::on_error() {
     qWarning() << "Error involving" 
        << _host << _port << _socket->errorString();
-    emit displayMessage(_socket->errorString(), _session);
+    _sm->displayMessage(_socket->errorString().append("\n"), _session);
 }
 
 

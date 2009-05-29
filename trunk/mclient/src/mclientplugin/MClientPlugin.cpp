@@ -91,10 +91,12 @@ void MClientPlugin::run() {
 void MClientPlugin::postEvent(QVariant* payload, QStringList tags, 
         QString session) {
     PluginManager* pm = PluginManager::instance();
-    MClientEvent* me = new MClientEvent(new MClientEventData(payload), tags);
-    me->session(session);
+    MClientEvent* me = new MClientEvent(new MClientEventData(payload), tags,
+					session);
 
-    QApplication::postEvent(pm, me);
+    //QApplication::postEvent(pm, me);
+    // Why post it if you can access the object directly!?
+    pm->customEvent(me);
 }
 
 
