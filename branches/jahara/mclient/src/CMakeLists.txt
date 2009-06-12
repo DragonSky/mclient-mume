@@ -27,9 +27,9 @@ foreach(dir mainwindow mclientplugin)
 endforeach()
 
 # Add Windows Resource File
-if(WIN32)
-    set(mclient_SRCS ${mclient_SRCS} mclient.rc)
-endif(WIN32)
+#if(WIN32)
+#    set(mclient_SRCS ${mclient_SRCS} mclient.rc)
+#endif(WIN32)
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
