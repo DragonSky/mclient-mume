@@ -8,6 +8,8 @@ set(QT_USE_QTXML TRUE)
 set(QT_USE_QTWEBKIT TRUE)
 include(${QT_USE_FILE})
 
+add_definitions(-DMCLIENT_VERSION="Alpha")
+
 # Get SVN revision number
 find_package(Subversion)
 if (Subversion_FOUND)
@@ -19,9 +21,9 @@ if (Subversion_FOUND)
 endif (Subversion_FOUND)
 
 # 64bit Support
-if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+if(UNIX AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIC"  )
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC"  )
-endif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+endif(UNIX AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
 
 add_subdirectory(src)
