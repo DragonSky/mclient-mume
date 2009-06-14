@@ -2,17 +2,20 @@
 #define MCLIENTPLUGININTERFACE_H
 
 #include <QtPlugin>
-
 #include <QHash>
 
-class QString;
 class PluginManager;
+
+enum MClientPluginType { UNKNOWN_PLUGIN = 0,
+			 FILTER_PLUGIN,
+			 DISPLAY_PLUGIN,
+			 IO_PLUGIN };
 
 class MClientPluginInterface {
     
     public:
-        // The library filename relative to plugins dir
-//        virtual const QString& libName() const=0;
+        // The type of plugin
+        virtual const MClientPluginType& type() const=0;
 
         // The short name of the plugin used in hashes and maps
         virtual const QString& shortName() const=0;
@@ -62,7 +65,8 @@ class MClientPluginInterface {
         virtual void postEvent(QVariant* payload, QStringList types,
                 QString session)=0;
 
-	virtual void setPluginManager(PluginManager *pm)=0;
+	// Receive the PluginManager reference upon load
+	virtual void setPluginManagar(PluginManager *pm)=0;
 };
 
 Q_DECLARE_INTERFACE(MClientPluginInterface,
