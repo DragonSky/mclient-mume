@@ -9,8 +9,7 @@
 #include <QHash>
 #include <QStringList>
 
-class QString;
-
+class PluginManager;
 
 class MClientPlugin : public QThread, public MClientPluginInterface {
     Q_OBJECT
@@ -20,8 +19,8 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         MClientPlugin(QObject* parent=0);
         ~MClientPlugin();
 
-        // The library filename relative to plugins dir
-//        const QString& libName() const;
+        // The type of plugin
+        const MClientPluginType& type() const;
 
         // The short name of the plugin used in hashes and maps
         const QString& shortName() const;
@@ -72,16 +71,17 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
 
         // Post an event to the PluginManager
         virtual void postEvent(QVariant* payload, QStringList types, 
-                QString session);
-	
+		       QString session);
+
+	// Receive the PluginManager reference upon load
 	void setPluginManager(PluginManager *pm);
 
     protected:
-//        QString _libName;
         QString _shortName;
         QString _longName;
         QString _description;
         QString _version;
+	MClientPluginType _type;
 
         bool _configurable;
         QString _configVersion;
@@ -95,6 +95,7 @@ class MClientPlugin : public QThread, public MClientPluginInterface {
         QStringList _runningSessions;
         void stopAllSessions();
 
+	// References
 	PluginManager *_pluginManager;
 };
 
