@@ -5,13 +5,13 @@ project(mclient)
 find_package(Qt4 REQUIRED)
 set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
-set(QT_USE_QTWEBKIT TRUE)
+#set(QT_USE_QTWEBKIT TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTOPENGL TRUE)
 include(${QT_USE_FILE})
 
 # mClient's version number
-set(MCLIENT_VERSION "pre-release alpha")
+set(MCLIENT_VERSION "Lite Alpha 0.1")
 add_definitions(-DMCLIENT_VERSION="${MCLIENT_VERSION}")
 message(STATUS "mClient version ${MCLIENT_VERSION} (${CMAKE_BUILD_TYPE} distribution)")
 
