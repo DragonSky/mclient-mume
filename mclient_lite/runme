@@ -1,0 +1,4 @@
+#!/bin/bash
+cd build
+./mclient -profile Default
+cd ..
