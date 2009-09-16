@@ -654,6 +654,22 @@ void EventHandler::postBuffer(const QStringList &tags) {
 
 void EventHandler::postFragment() {
   if (!_buffer.isEmpty()) {
+    // If this fragment matches a MUME prompt exactly, then we know we
+    // need to enable XML mode!
+    const QRegExp rx("^[o\\*!\\)]" // light
+		     "[\\[#\\.f\\(<\\%~WU\\+:=O]" // terrain
+		     "[^>]*>$"); // other stuff and a terminating ">"
+    if (rx.exactMatch(_buffer)) {
+      QVariant *qv = new QVariant(QByteArray("change xml\n"));
+      QStringList sl("SendToSocketData");
+      postSession(qv, sl);
+
+      sl.clear();
+      qv = new QVariant(QByteArray("\r\n#mClient just enabled XML mode by toggling '\033[1mchange xml\033[0m'\r\n"));
+      sl << "DisplayData";
+      postSession(qv, sl);
+    }
+
     QStringList sl;
     sl << "XMLPrompt" << "XMLAll";
     postBuffer(sl);

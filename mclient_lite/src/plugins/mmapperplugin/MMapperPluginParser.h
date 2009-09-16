@@ -14,8 +14,6 @@ class MMapperPluginParser : public AbstractParser {
     MMapperPluginParser(MapperManager*, QObject *parent=0);
     ~MMapperPluginParser();
 
-    //void parseNewMudInput(IncomingData& que) {} // Unused
-
 public slots:
     void name(QString);
     void description(const QString &);
@@ -28,7 +26,6 @@ public slots:
     void mudOutput(const QString&);
 
    private:
-    QString _session;
     CommandIdType _move;
 
     void submit();
