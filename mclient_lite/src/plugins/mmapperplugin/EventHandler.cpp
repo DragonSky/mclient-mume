@@ -145,31 +145,18 @@ const MenuData& EventHandler::createMenus() {
   QAction *zoomInAct;
   QAction *zoomOutAct;
 
-  QAction *layerUpAct;
-  QAction *layerDownAct;
-
-  zoomInAct = new QAction(QIcon(":/icons/viewmag+.png"), tr("Zoom In"), 0);
+  zoomInAct = new QAction(QIcon(":/icons/viewmag+.png"), tr("Zoom &In"), 0);
   zoomInAct->setStatusTip(tr("Zooms In current map"));
   connect(zoomInAct, SIGNAL(triggered()), _mapper->getMapWindow()->getCanvas(), SLOT(zoomIn()));
 
-  zoomOutAct = new QAction(QIcon(":/icons/viewmag-.png"), tr("Zoom Out"), 0);  zoomOutAct->setStatusTip(tr("Zooms Out current map"));
+  zoomOutAct = new QAction(QIcon(":/icons/viewmag-.png"), tr("Zoom &Out"), 0);  zoomOutAct->setStatusTip(tr("Zooms Out current map"));
   connect(zoomOutAct, SIGNAL(triggered()), _mapper->getMapWindow()->getCanvas(), SLOT(zoomOut()));
 
-  layerUpAct = new QAction(QIcon(":/icons/layerup.png"), tr("Layer Up"), 0);
-  layerUpAct->setStatusTip(tr("Layer Up"));
-  connect(layerUpAct, SIGNAL(triggered()), _mapper, SLOT(onLayerUp()));
-  layerDownAct = new QAction(QIcon(":/icons/layerdown.png"), tr("Layer Down"), 0);
-  layerDownAct->setStatusTip(tr("Layer Down"));
-  connect(layerDownAct, SIGNAL(triggered()), _mapper, SLOT(onLayerDown()));
-
-
-  SmartMenu *viewMenu = new SmartMenu(tr("&Map"), 5, 2);
-
+  SmartMenu *viewMenu = new SmartMenu(tr("&View"), 10, 2);
+  
+  viewMenu->addSeparator();
   viewMenu->addAction(zoomInAct);
   viewMenu->addAction(zoomOutAct);
-  viewMenu->addSeparator();
-  viewMenu->addAction(layerUpAct);
-  viewMenu->addAction(layerDownAct);
 
   _menus.insert(viewMenu);
 

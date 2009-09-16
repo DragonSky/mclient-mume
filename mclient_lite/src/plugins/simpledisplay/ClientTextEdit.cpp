@@ -57,8 +57,6 @@ ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     _defaultFormat = _format;
     _cursor.setCharFormat(_format);
 
-    _cursor.insertText("Type #help for help.\n", _format);
-
     QFontMetrics fm(_serverOutputFont);
     setTabStopWidth(fm.width(" ") * 8); // A tab is 8 spaces wide
     QScrollBar* scrollbar = verticalScrollBar();

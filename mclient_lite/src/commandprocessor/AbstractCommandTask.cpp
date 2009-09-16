@@ -94,7 +94,7 @@ bool AbstractCommandTask::processStack() {
     }
     else {
       displayData("#no open connections. "
-		  "Use '\033[1m#connect\033[0m' to open a connection.\r\n");
+		  "Type '\033[1m#connect\033[0m' to open a connection.\r\n");
 
     }
   }

@@ -55,7 +55,6 @@ void WindowActionManager::createActions() {
   cutAct->setShortcut(tr("Ctrl+X"));
   cutAct->setStatusTip(tr("Cut the current selection's contents to the "
       "clipboard"));
-  connect(cutAct, SIGNAL(triggered()), _mainWindow->displayWidget(), SLOT(cut()));
 
   copyAct = new QAction(QIcon(":/mainwindow/copy.png"), tr("&Copy"), this);
   copyAct->setShortcut(tr("Ctrl+C"));
@@ -78,13 +77,13 @@ void WindowActionManager::createActions() {
   fullScreenAct->setStatusTip(tr("Toggle full screen mode"));
   connect(fullScreenAct, SIGNAL(triggered()), this, SLOT(fullScreen()));
 
-  mumeWebsiteAct = new QAction(tr("MUME &Website"), this);
+  mumeWebsiteAct = new QAction(tr("&Website"), this);
   mumeWebsiteAct->setStatusTip(tr("The official MUME website"));
   connect(mumeWebsiteAct, SIGNAL(triggered()), this, SLOT(openMumeWebsite()));
-  mumeForumAct = new QAction(tr("MUME &Forum"), this);
+  mumeForumAct = new QAction(tr("&Forum"), this);
   mumeForumAct->setStatusTip(tr("Talk to other MUMErs"));
   connect(mumeForumAct, SIGNAL(triggered()), this, SLOT(openMumeForum()));
-  mumeWikiAct = new QAction(tr("MUME &Wiki"), this);
+  mumeWikiAct = new QAction(tr("W&iki"), this);
   mumeWikiAct->setStatusTip(tr("View the MUME help files"));
   connect(mumeWikiAct, SIGNAL(triggered()), this, SLOT(openMumeWiki()));
 
@@ -99,6 +98,10 @@ void WindowActionManager::createActions() {
   aboutQtAct = new QAction(QIcon(":/mainwindow/qt.png"), tr("About &Qt"), this);
   aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
   connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+  newbieHelpAct = new QAction(tr("&Information for Newcomers"), this);
+  newbieHelpAct->setStatusTip("Newbie help on the MUME website");
+  connect(newbieHelpAct, SIGNAL(triggered()), this, SLOT(newbieHelp()));
 
   cutAct->setEnabled(false);
   copyAct->setEnabled(false);
@@ -148,14 +151,20 @@ void WindowActionManager::createMenus() {
   menuBar->addSeparator();
 
   helpMenu = menuBar->addMenu(tr("&Help"));
-  helpMenu->addAction(mumeWebsiteAct);
-  helpMenu->addAction(mumeForumAct);
-  helpMenu->addAction(mumeWikiAct);
-  helpMenu->addSeparator();
   helpMenu->addAction(clientHelpAct);
+  helpMenu->addSeparator();
+  newbieMenu = helpMenu->addMenu(tr("&Newbie Tutorials"));  
+  newbieMenu->addAction(newbieHelpAct);
+  helpMenu->addSeparator();
+  mumeMenu = helpMenu->addMenu(tr("M&UME"));
+  mumeMenu->addAction(mumeWebsiteAct);
+  mumeMenu->addAction(mumeForumAct);
+  mumeMenu->addAction(mumeWikiAct);
   helpMenu->addSeparator();
   helpMenu->addAction(aboutAct);
   helpMenu->addAction(aboutQtAct);
+
+
 }
 
 
@@ -212,8 +221,7 @@ void WindowActionManager::about() {
 #endif
     + tr("</b><br><br>");
   QMessageBox::about(_mainWindow, tr("About mClient Lite"),
-                     tr("<FONT SIZE=\"+1\"><B>mClient ") +
-		     version +
+                     tr("<FONT SIZE=\"+1\"><B>") + version +
 		     tr("</B></FONT><P>"
 			"Copyright \251 2008 by Jahara<P>"
 			"Visit the <A HREF=\"http://code.google.com/p/mclient-mume/\">mClient website</A> "
@@ -249,4 +257,9 @@ void WindowActionManager::openMumeForum()
 void WindowActionManager::openMumeWiki()
 {
         QDesktopServices::openUrl(QUrl("http://mume.org/wiki/"));
+}
+
+
+void WindowActionManager::newbieHelp() {
+  QDesktopServices::openUrl(QUrl("http://mume.org/newbie.php"));
 }

@@ -35,6 +35,10 @@ void EventHandler::customEvent(QEvent *e) {
     emit displayText(me->payload()->toString());
 
   }
+  else if (me->dataTypes().contains("DoneLoading")) {
+    emit displayText(QString("Type \033[1m#help\033[0m for help.\r\n"));
+
+  }
 }
 
 QWidget* EventHandler::createWidget() {
@@ -53,6 +57,7 @@ const MenuData& EventHandler::createMenus() {
   connect(settingsAct, SIGNAL(triggered()), _widget, SLOT(changeFont()) );
 
   SmartMenu *viewMenu = new SmartMenu(tr("&View"), 10, 2);
+  viewMenu->addSeparator();
   viewMenu->addAction(settingsAct);
 
   _menus.insert(viewMenu);
