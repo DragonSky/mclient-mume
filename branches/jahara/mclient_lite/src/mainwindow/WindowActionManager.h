@@ -44,10 +44,6 @@ public slots:
     void alwaysOnTop();
     void fullScreen();
 
-    void connectSession();
-    void disconnectSession();
-    void reconnectSession();
-
     void openMumeWebsite();
     void openMumeForum();
     void openMumeWiki();

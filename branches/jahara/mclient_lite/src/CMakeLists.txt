@@ -94,6 +94,7 @@ add_subdirectory(plugins)
 if (NOT APPLE)
    install(TARGETS mclient
            RUNTIME DESTINATION .
+	   LIBRARY DESTINATION plugins
 	   COMPONENT applications)
 endif (NOT APPLE)
 
@@ -112,7 +113,7 @@ if (WIN32)
            "${QT_LIBRARY_DIR}/QtNetwork${QT_VERSION_MAJOR}.dll"
            "${QT_LIBRARY_DIR}/QtXml${QT_VERSION_MAJOR}.dll"
            "${QT_LIBRARY_DIR}/QtOpenGL${QT_VERSION_MAJOR}.dll"
-           "${QT_LIBRARY_DIR}/QtWebKit${QT_VERSION_MAJOR}.dll"
+           #"${QT_LIBRARY_DIR}/QtWebKit${QT_VERSION_MAJOR}.dll"
            DESTINATION .
            COMPONENT libraries
        )
@@ -127,7 +128,7 @@ if (WIN32)
            "${QT_LIBRARY_DIR}/QtNetworkd${QT_VERSION_MAJOR}.dll"
            "${QT_LIBRARY_DIR}/QtXmld${QT_VERSION_MAJOR}.dll"
            "${QT_LIBRARY_DIR}/QtOpenGLd${QT_VERSION_MAJOR}.dll"
-           "${QT_LIBRARY_DIR}/QtWebKitd${QT_VERSION_MAJOR}.dll"
+           #"${QT_LIBRARY_DIR}/QtWebKitd${QT_VERSION_MAJOR}.dll"
            DESTINATION .
            COMPONENT libraries
        )

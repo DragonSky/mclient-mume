@@ -47,20 +47,6 @@ WindowActionManager::~WindowActionManager() {
 }
 
 void WindowActionManager::createActions() {
-  /*
-  connectAct = new QAction(QIcon(":/mainwindow/connect.png"), tr("&Connect..."), this);
-  connectAct->setStatusTip(tr("Load a new session and connect to the remote host"));
-  connect(connectAct, SIGNAL(triggered()), SLOT(connectSession()) );
-  
-  disconnectAct = new QAction(QIcon(":/mainwindow/disconnect.png"), tr("&Disconnect"), this);
-  disconnectAct->setStatusTip(tr("Disconnect from the current session"));
-  connect(disconnectAct, SIGNAL(triggered()), SLOT(disconnectSession()) );
-
-  reconnectAct = new QAction(QIcon(":/mainwindow/reconnect.png"), tr("&Reconnect"), this);
-  reconnectAct->setStatusTip(tr("Reconnect to the current session's remote host"));
-  connect(reconnectAct, SIGNAL(triggered()), SLOT(reconnectSession()) );
-  */
-
   exitAct = new QAction(/*QIcon(":/mainwindow/exit.png"),*/ tr("E&xit"), this);
   exitAct->setStatusTip(tr("Exit the application"));
   connect(exitAct, SIGNAL(triggered()), _mainWindow, SLOT(close()));
@@ -175,13 +161,6 @@ void WindowActionManager::createMenus() {
 
 void WindowActionManager::createToolBars() {
   /*
-  connectToolBar = _mainWindow->addToolBar(tr("Connection"));
-  connectToolBar->setObjectName("ToolBarConnect");
-  connectToolBar->addAction(connectAct);
-  connectToolBar->addAction(disconnectAct);
-  connectToolBar->addAction(reconnectAct);
-  connectToolBar->setVisible(false);
-
   editToolBar = _mainWindow->addToolBar(tr("Edit"));
   editToolBar->setObjectName("ToolBarEdit");
   editToolBar->addAction(cutAct);
@@ -226,14 +205,14 @@ void WindowActionManager::about() {
     tr("<b>Subversion Revision ") + QString::number(SVN_REVISION)
 #else
 #ifdef MCLIENT_VERSION
-    tr("<b>mClient Release ") + QString(MCLIENT_VERSION)
+    tr("<b>mClient ") + QString(MCLIENT_VERSION)
 #else
     tr("<b>Unknown Release")
 #endif
 #endif
     + tr("</b><br><br>");
   QMessageBox::about(_mainWindow, tr("About mClient Lite"),
-                     tr("<FONT SIZE=\"+1\"><B>mClient Lite ") +
+                     tr("<FONT SIZE=\"+1\"><B>mClient ") +
 		     version +
 		     tr("</B></FONT><P>"
 			"Copyright \251 2008 by Jahara<P>"
@@ -244,23 +223,6 @@ void WindowActionManager::about() {
 void WindowActionManager::clientHelp() {
   if (!QDesktopServices::openUrl(QUrl::fromEncoded("http://mume.org/wiki/index.php/mClient_Help")))
     qWarning() << "Failed to open web browser";
-}
-
-void WindowActionManager::connectSession() {
-  QVariant *payload = new QVariant();
-  QStringList tags("ConnectToHost");
-  postEvent(payload, tags);
-}
-
-void WindowActionManager::disconnectSession() {
-  QVariant *payload = new QVariant();
-  QStringList tags("DisconnectFromHost");
-  postEvent(payload, tags);  
-}
-
-void WindowActionManager::reconnectSession() {
-  disconnectSession();
-  connectSession();
 }
 
 void WindowActionManager::postEvent(QVariant *payload, const QStringList& tags) {

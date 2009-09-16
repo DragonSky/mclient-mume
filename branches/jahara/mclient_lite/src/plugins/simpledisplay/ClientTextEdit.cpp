@@ -8,6 +8,8 @@
 #include <QTextCharFormat>
 #include <QBrush>
 
+#include <QFontDialog>
+
 ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     setReadOnly(true);
     setOverwriteMode(true);
@@ -43,6 +45,7 @@ ClientTextEdit::ClientTextEdit(QWidget* parent) : QTextEdit(parent) {
     // Default Fonts
     _serverOutputFont = QFont("Monospace", 10);
     _inputLineFont = QFont("Monospace", 10); //QApplication::font();
+    _serverOutputFont.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
 
     QTextFrameFormat frameFormat = frame->frameFormat();
     frameFormat.setBackground(_backgroundColor);
@@ -377,4 +380,17 @@ void ClientTextEdit::updateFormatBoldColor(QTextCharFormat& format) {
 
 void ClientTextEdit::splitterResized() {
   ensureCursorVisible();
+}
+
+
+void ClientTextEdit::changeFont() {
+  bool ok;
+  QFont font
+    = QFontDialog::getFont(&ok, _serverOutputFont, this);
+  if (ok) {
+    _serverOutputFont = font;
+    _defaultFormat.setFont(_serverOutputFont);
+    _cursor.setCharFormat(_defaultFormat);
+    _format = _defaultFormat;
+  }
 }
