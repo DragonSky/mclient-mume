@@ -75,6 +75,7 @@ private slots:
    signals:
     void startSession(const QString &s);
     void stopSession(const QString &s);
+    void doneLoading();
 
 };
 

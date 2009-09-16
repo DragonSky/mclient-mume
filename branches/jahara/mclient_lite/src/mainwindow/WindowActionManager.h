@@ -47,6 +47,7 @@ public slots:
     void openMumeWebsite();
     void openMumeForum();
     void openMumeWiki();
+    void newbieHelp();
 
  protected:
     WindowActionManager(MainWindow*);
@@ -67,6 +68,7 @@ public slots:
     QAction *mumeWebsiteAct;
     QAction *mumeWikiAct;
     QAction *mumeForumAct;
+    QAction *newbieHelpAct;
 
     QAction *aboutAct;
     QAction *aboutQtAct;
@@ -78,6 +80,8 @@ public slots:
     QMenu *viewMenu;
     QMenu *editMenu;
     QMenu *helpMenu;
+    QMenu *newbieMenu;
+    QMenu *mumeMenu;
 
     QToolBar *editToolBar;
     QToolBar *connectToolBar;

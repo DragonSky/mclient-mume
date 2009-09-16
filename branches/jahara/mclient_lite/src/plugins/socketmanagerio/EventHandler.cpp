@@ -61,7 +61,7 @@ EventHandler::EventHandler(PluginSession *ps, MClientPlugin *mp)
 	  SLOT(socketOpened()));
   connect(_socketReader, SIGNAL(socketClosed()),
 	  SLOT(socketClosed()));
-  
+
 }
 
 
@@ -93,6 +93,10 @@ void EventHandler::customEvent(QEvent *e) {
       //do not allow server to suppress go-aheads (MUME is backwards)
       sendData(QByteArray("~$#EP2\nG\n"));
       
+    } else if (me->dataTypes().contains("DoneLoading")) {
+      // autoconnect
+      connectDevice();
+
     }
 
     
@@ -125,7 +129,7 @@ const MenuData& EventHandler::createMenus() {
 void EventHandler::connectDevice() {
     if (_openSocket) {
       displayMessage("#connection is already open. "
-		     "Use '#zap' to disconnect it.\n");
+		     "Type '#zap' to disconnect it.\n");
 
     } else {
       // Connect a particular session's sockets.

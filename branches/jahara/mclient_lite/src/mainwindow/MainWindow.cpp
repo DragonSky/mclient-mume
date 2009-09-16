@@ -201,7 +201,7 @@ void MainWindow::initDisplay(PluginSession *ps) {
 			      );
       dockWidget->setWidget(widgetList[i].second);
       dockWidget->setFloating(false);
-      addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
+      addDockWidget(Qt::RightDockWidgetArea, dockWidget);
       _dockWidgets.insert("test", dockWidget);
       //widgetList.at(i).second->show();
       
@@ -226,9 +226,12 @@ void MainWindow::initDisplay(PluginSession *ps) {
 	    _actMgr->cutAct, SLOT(setEnabled(bool)));
     connect(_display, SIGNAL(copyAvailable(bool)),
 	    _actMgr->copyAct, SLOT(setEnabled(bool)));
+    connect(_actMgr->cutAct, SIGNAL(triggered()),
+	    _display, SLOT(cut()));
 
   }
 
+  emit doneLoading();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -19,11 +19,12 @@ SocketManagerIO::SocketManagerIO(QObject* parent)
     _shortName = "socketmanagerio";
     _longName = "SocketManager";
     _description = "A socket plugin that reads from sockets and inserts the data back into the stream.";
-    //    _dependencies.insert("commandmanager", 10);
+    _dependencies.insert("display", 1);
     _implemented.insert("socketmanager",10);
     _receivesDataTypes << "SendToSocketData" << "ConnectToHost"
 		       << "DisconnectFromHost"
-		       << "MUMEPromptGARequest";
+		       << "MUMEPromptGARequest"
+		       << "DoneLoading";
     /*
     _deliversDataTypes << "SocketReadData" << "SocketConnected"
 		       << "SocketDisconnected" << "DisplayData";

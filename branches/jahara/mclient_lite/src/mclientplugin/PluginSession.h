@@ -45,6 +45,10 @@ class PluginSession : public QThread {
     // For EventHandlers to easily receive the ConfigEntry
     ConfigEntry* retrievePluginSettings(const QString &pluginName) const;
 
+public slots:
+    // All plugins have been loaded and the widgets/menus were created
+    void doneLoading();
+
  protected:
     void run();
 
