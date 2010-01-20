@@ -1,0 +1,6 @@
+[Event/mume-tell-received]
+Action=Sound|Popup
+Execute=
+KTTS=
+Logfile=
+Sound=KDE-Im-New-Mail.ogg
